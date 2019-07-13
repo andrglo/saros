@@ -12,7 +12,7 @@ const config = {
     extensions: ['.js', '.jsx']
   },
   output: {
-    path: path.resolve(__dirname, '../', 'public'),
+    path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
     publicPath: '/',
     globalObject: 'this'
