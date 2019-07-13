@@ -1,6 +1,4 @@
-node_modules
-.DS_Store
+public/*
+node_modules/*
 *.log
-coverage
-public
 .history
