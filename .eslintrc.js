@@ -14,6 +14,7 @@ module.exports = {
     'prettier/prettier': ['error'],
     'import/no-extraneous-dependencies': 0,
     'react/require-default-props': 0,
-    'global-require': 0
+    'global-require': 0,
+    'no-console': 0
   }
 }
