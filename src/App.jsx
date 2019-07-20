@@ -1,14 +1,33 @@
-import React from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+import {connect} from 'react-redux'
+import serializeError from 'serialize-error'
 
-import './index.css'
+class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
 
-const App = ({title}) => (
-  <div className="text-red-600">{title || 'Hello World!'}</div>
-)
+  componentDidCatch(err, info) {
+    const {dispatch} = this.props
+    // dispatch(fatalError(serializeError(err), {info, home: true}))
+    // this.setState({info})
+  }
 
-App.propTypes = {
-  title: PropTypes.string
+  render() {
+    const {uid} = this.props
+    return <div className="text-red-600">{uid || 'No user!'}</div>
+  }
 }
 
-export default App
+App.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  uid: PropTypes.string
+}
+
+export default connect(state => {
+  return {
+    uid: state.app.uid
+  }
+})(App)
