@@ -24,5 +24,7 @@ module.exports = {
     'prefer-const': ['error', {destructuring: 'all'}],
     'no-use-before-define': 0,
     'no-nested-ternary': 0,
+    'import/no-webpack-loader-syntax': 0,
+    'import/no-unresolved': 0,
   }
 }

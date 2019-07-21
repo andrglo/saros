@@ -14,8 +14,8 @@ import merge from 'lodash/merge'
 import axios from 'axios'
 import debug from 'debug'
 
-import {version, revision} from './loaders/version'
-import reducersConfig from './loaders/reducers'
+import {version, revision} from './loaders/version!'
+import reducersConfig from './loaders/reducers!'
 
 import openLocalDb from './lib/localDb'
 import firebase, {

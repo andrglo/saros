@@ -21,16 +21,8 @@ const config = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: [/node_modules/, /loaders/],
+        exclude: /node_modules/,
         use: ['babel-loader']
-      },
-      {
-        test: /loaders\/version.js$/,
-        use: [path.resolve(__dirname, 'src/loaders/version.js')]
-      },
-      {
-        test: /loaders\/reducers.js$/,
-        use: [path.resolve(__dirname, 'src/loaders/reducers.js')]
       },
       {
         test: /\.css$/,
