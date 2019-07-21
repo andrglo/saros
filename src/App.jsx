@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import serializeError from 'serialize-error'
 
+import './index.css'
+
 class App extends Component {
   constructor(props) {
     super(props)

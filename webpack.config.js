@@ -20,7 +20,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.jsx$/,
         exclude: /node_modules/,
         use: ['babel-loader']
       },
@@ -72,7 +72,18 @@ const config = {
 }
 
 if (production) {
-  // todo
+  config.optimization = {
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
+  }
 } else {
   config.devtool = 'eval-source-map'
   config.devServer = {

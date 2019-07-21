@@ -1,12 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-
-import './index.css'
-import {createStore} from './controller'
-import App from './App'
-
-createStore().then(store => {
+const boot = async () => {
+  const {createStore} = await import('./controller')
+  const store = await createStore()
+  const {default: App} = await import('./App')
+  const {default: React} = await import('react')
+  const {default: ReactDOM} = await import('react-dom')
+  const {Provider} = await import('react-redux')
   ReactDOM.render(
     React.createElement(
       Provider,
@@ -17,7 +15,9 @@ createStore().then(store => {
     ),
     document.getElementById('saros')
   )
-})
+}
+
+boot()
 
 if (module.hot) {
   module.hot.accept()
