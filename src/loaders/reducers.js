@@ -1,26 +1,5 @@
-const fs = require('fs')
 const path = require('path')
 const glob = require('glob')
-
-const scanDir = dir =>
-  fs
-    .readdirSync(dir)
-    .filter(
-      file =>
-        !['index', 'loader', 'test'].reduce(
-          (r, v) => r || file.indexOf(v) > -1,
-          false
-        )
-    )
-    .map(file => path.basename(file, '.js'))
-    .map(
-      file => `import ${file} from '${path
-        .join(dir, file)
-        .replace(/\\/g, '/')}';
-                export {${file}};
-                names.push('${file}');
-                `
-    )
 
 module.exports = function reducersLoader() {
   const callback = this.async()
@@ -29,15 +8,23 @@ module.exports = function reducersLoader() {
     process.exit(1)
   }
 
-  const reducersDirs = glob.sync(path.join(__dirname, '**/reducers'))
+  const reducersFiles = glob
+    .sync(path.join(__dirname, '../reducers/**/*.js'))
+    .filter(dir => !dir.includes('test'))
 
-  let reducers = []
-  for (const dirName of reducersDirs) {
-    reducers = [...reducers, ...scanDir(dirName)]
+  const reducers = []
+  for (const fullName of reducersFiles) {
+    const name = path.basename(fullName, '.js')
+    reducers.push(
+      `import ${name} from '${fullName}';
+       reducers.${name} = ${name};
+       names.push('${name}')`
+    )
   }
 
   const source = `
     const names = [];
+    const reducers = {}
     ${reducers.join(';')}
     const duplicateNames = [];
     const uniqueNames = [];
@@ -50,7 +37,8 @@ module.exports = function reducersLoader() {
     });
     if (duplicateNames.length) {
       console.error('Reducer names are duplicated:', duplicateNames);
-    }
+    };
+    export default reducers;
   `
   callback(null, source)
 }
