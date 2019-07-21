@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+  })
+}
+
 const boot = async () => {
   const {createStore} = await import('./controller')
   const store = await createStore()

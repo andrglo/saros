@@ -73,6 +73,7 @@ const config = {
 }
 
 if (production) {
+  const WorkboxPlugin = require('workbox-webpack-plugin')
   config.optimization = {
     splitChunks: {
       cacheGroups: {
@@ -85,6 +86,7 @@ if (production) {
       }
     }
   }
+  config.plugins.push(new WorkboxPlugin.GenerateSW())
 } else {
   config.devtool = 'eval-source-map'
   config.devServer = {
