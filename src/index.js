@@ -11,7 +11,7 @@ const boot = async () => {
       {
         store
       },
-      App
+      React.createElement(App)
     ),
     document.getElementById('saros')
   )
