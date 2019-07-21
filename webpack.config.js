@@ -14,6 +14,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'saros.js',
+    chunkFilename: '[name].[chunkhash].js',
     publicPath: '/',
     globalObject: 'this'
   },
