@@ -85,7 +85,7 @@ if (production) {
   }
   config.plugins.push(
     new Dotenv({
-      path: './.env.production'
+      path: './.env.development' // todo Change to production
     })
   )
   config.plugins.push(
