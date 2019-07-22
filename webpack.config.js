@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -56,6 +57,12 @@ const config = {
     ]
   },
   plugins: [
+    new FaviconsWebpackPlugin({
+      logo: './src/assets/institution_icon.svg',
+      prefix: 'icons/',
+      inject: false,
+      persistentCache: true
+    }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': `"${process.env.NODE_ENV ||
         'development'}"`,
@@ -68,7 +75,7 @@ const config = {
       'process.env.FIREBASE_APP_ID': `"${process.env.FIREBASE_APP_ID}"`
     }),
     new CleanWebpackPlugin(),
-    new CopyWebpackPlugin(['./src/index.html'])
+    new CopyWebpackPlugin(['./src/index.html', './src/manifest.json'])
   ]
 }
 
@@ -86,7 +93,28 @@ if (production) {
       }
     }
   }
-  config.plugins.push(new WorkboxPlugin.GenerateSW())
+  config.plugins.push(
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: false,
+      exclude: [
+        /\.(?:png|jpg|jpeg|svg)$/,
+        /\/__\/auth\/{*.*,.*}/ // to allow firebase google auth
+      ],
+      runtimeCaching: [
+        {
+          urlPattern: /\.(?:png|jpg|jpeg|svg)$/,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'images',
+            expiration: {
+              maxEntries: 10
+            }
+          }
+        }
+      ]
+    })
+  )
 } else {
   config.devtool = 'eval-source-map'
   config.devServer = {

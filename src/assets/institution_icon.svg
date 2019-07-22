@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" id="svg3137" viewBox="0 0 64 64" version="1.1">
+  <title id="title4042">institution icon</title>
+  <defs id="defs3139">
+    <linearGradient id="linearGradient4334" x1="-987.07" gradientUnits="userSpaceOnUse" y1="171.03" gradientTransform="matrix(.41463 0 0 .43437 432.99 -42.298)" x2="-987.79" y2="192.75">
+      <stop id="stop4330" stop-color="#005c94" offset="0"/>
+      <stop id="stop4332" stop-color="#19aeff" offset="1"/>
+    </linearGradient>
+  </defs>
+  <g id="layer1" stroke-width="0">
+    <rect id="rect4285" ry="2.1233" height="24.536" width="4.0537" y="27.588" x="14.71" fill="url(#linearGradient4334)"/>
+    <rect id="rect4289" ry="2.1233" height="24.536" width="4.0537" y="27.588" x="21.344" fill="url(#linearGradient4334)"/>
+    <rect id="rect4291" ry="2.1233" height="24.536" width="4.0537" y="27.588" x="27.978" fill="url(#linearGradient4334)"/>
+    <rect id="rect4293" ry="2.1233" height="24.536" width="4.0537" y="27.588" x="34.612" fill="url(#linearGradient4334)"/>
+    <rect id="rect4295" ry="2.1233" height="24.536" width="4.0537" y="27.588" x="41.246" fill="url(#linearGradient4334)"/>
+    <rect id="rect4297" ry="2.1233" height="24.536" width="4.0537" y="27.588" x="47.88" fill="url(#linearGradient4334)"/>
+    <rect id="rect4299" ry="0" height="2.5165" width="49.395" y="54.483" x="9.6051" fill="#19aeff"/>
+    <path id="path4301" fill="#005c94" d="m31.805 7.0036c-0.2505 0.00134-0.53621 0.10303-0.84223 0.31221l-20.188 13.791c-0.9791 0.67-1.775 2.196-1.775 3.421 0 0.82946 0.36952 1.3057 0.90701 1.3167 0.31848 0.29859 0.74203 0.48867 1.205 0.48867h44.431c0.99811 0 1.8011-0.84118 1.8011-1.8868 0-0.17427-0.02296-0.34225-0.0648-0.50225 0.09574-0.05319 0.03191-0.19452-0.15549-0.40722-0.01012-0.01146-0.01506-0.01524-0.0259-0.02714-0.20759-0.37973-0.52315-0.6738-0.91998-0.82803-3.273-2.652-12.758-8.748-18.568-12.421l-4.315-2.9452c-0.446-0.3051-0.856-0.3847-1.166-0.2579-0.099-0.0408-0.208-0.055-0.324-0.0543z"/>
+    <rect id="rect3216" opacity="0" height="64" width="64" y="0" x="0"/>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

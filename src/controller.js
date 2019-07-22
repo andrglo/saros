@@ -1045,36 +1045,35 @@ export const seekEntity = async (path, keyword, options = {}) => {
   return [recordset, startAfter]
 }
 
-let serviceWorker
+const serviceWorker = window.sarosSW
 let updateAvailable
-// if (process.env.NODE_ENV === 'production') {
-//   serviceWorker = require('offline-plugin/runtime')
-//   serviceWorker.install({
-//     onUpdating: () => {
-//       console.log('SW Event:', 'onUpdating')
-//     },
-//     onUpdateReady: () => {
-//       console.log('SW Event:', 'onUpdateReady')
-//       updateAvailable = true
-//       if (store) {
-//         // store ready then use store to rerender App immediately
-//         store.dispatch({type: UPDATE_AVAILABLE})
-//       }
-//     },
-//     onUpdated: () => {
-//       console.log('SW Event:', 'onUpdated')
-//       window.location.reload()
-//     },
-//     onUpdateFailed: () => {
-//       console.log('SW Event:', 'onUpdateFailed')
-//     }
-//   })
-// }
+if (serviceWorker) {
+  serviceWorker.addEventListener('updatefound', () => {
+    console.log('SW event:', 'updatefound')
+    updateAvailable = true
+    navigator.serviceWorker.addEventListener(
+      'controllerchange',
+      () => {
+        console.log('SW event:', 'controllerchange')
+        updateApp()
+      }
+    )
+    store.dispatch({type: UPDATE_AVAILABLE})
+    // todo remove confirm
+    // eslint-disable-next-line no-alert
+    if (window.confirm('Update?')) {
+      setTimeout(() => {
+        serviceWorker.waiting.postMessage({type: 'SKIP_WAITING'})
+      }, 100)
+    }
+    // end removal
+  })
+}
 export const hasUpdateAvailable = () => updateAvailable
 export const updateApp = () => {
   if (updateAvailable) {
     store.dispatch({type: UPDATE_AVAILABLE, clear: true}) // to hide notification immediately
-    serviceWorker.applyUpdate()
+    window.location.reload()
   }
 }
 
