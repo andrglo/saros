@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const Dotenv = require('dotenv-webpack')
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -63,17 +64,6 @@ const config = {
       inject: false,
       persistentCache: true
     }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': `"${process.env.NODE_ENV ||
-        'development'}"`,
-      'process.env.FIREBASE_API_KEY': `"${process.env.FIREBASE_API_KEY}"`,
-      'process.env.FIREBASE_AUTH_DOMAIN': `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
-      'process.env.FIREBASE_DATABASE_URL': `"${process.env.FIREBASE_DATABASE_URL}"`,
-      'process.env.FIREBASE_PROJECT_ID': `"${process.env.FIREBASE_PROJECT_ID}"`,
-      'process.env.FIREBASE_STORAGE_BUCKET': `"${process.env.FIREBASE_STORAGE_BUCKET}"`,
-      'process.env.FIREBASE_MESSAGING_SENDER_ID': `"${process.env.FIREBASE_MESSAGING_SENDER_ID}"`,
-      'process.env.FIREBASE_APP_ID': `"${process.env.FIREBASE_APP_ID}"`
-    }),
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin(['./src/index.html', './src/manifest.json'])
   ]
@@ -93,6 +83,11 @@ if (production) {
       }
     }
   }
+  config.plugins.push(
+    new Dotenv({
+      path: './.env.production'
+    })
+  )
   config.plugins.push(
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
@@ -128,6 +123,11 @@ if (production) {
       warnings: true
     }
   }
+  config.plugins.push(
+    new Dotenv({
+      path: './.env.development'
+    })
+  )
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
