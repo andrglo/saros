@@ -3,7 +3,9 @@ import React from 'react'
 
 import './index.css'
 
-const Signin = () => <div className="text-red-600">Signin</div>
+const Signin = () => (
+  <div className="font-sans text-red-600">Signin</div>
+)
 
 Signin.propTypes = {}
 

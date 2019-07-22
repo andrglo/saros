@@ -27,7 +27,7 @@ import firebase, {
 axios.defaults.baseURL =
   'https://us-central1-saros-development.cloudfunctions.net'
 
-const log = debug('warden')
+const log = debug('controller')
 
 log('State configuration started')
 

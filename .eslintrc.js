@@ -26,5 +26,17 @@ module.exports = {
     'no-nested-ternary': 0,
     'import/no-webpack-loader-syntax': 0,
     'import/no-unresolved': 0,
+    'react/jsx-wrap-multilines': [
+      'error',
+      {
+        declaration: 'parens',
+        assignment: 'parens',
+        return: 'parens',
+        arrow: 'parens',
+        condition: 'parens',
+        logical: 'parens',
+        prop: 'ignore'
+      }
+    ]
   }
 }

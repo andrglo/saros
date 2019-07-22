@@ -13,6 +13,7 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-react": "^7.0.0",
     "@fullhuman/postcss-purgecss": "^1.2.0",
     "autoprefixer": "^9.6.1",
@@ -39,6 +40,7 @@
     "redux-logger": "^3.0.6",
     "style-loader": "^0.23.1",
     "tailwindcss": "^1.0.5",
+    "tailwindcss-spinner": "^1.0.0",
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2",

@@ -1,9 +1,16 @@
-import React, {Component} from 'react'
+import React, {Component, Suspense} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+import debug from 'debug'
 import serializeError from 'serialize-error'
 
 import './index.css'
+import {setError} from './reducers/app'
+
+const log = debug('app')
+
+const Dashboard = React.lazy(() => import('./Dashboard'))
+const Signin = React.lazy(() => import('./Signin'))
 
 class App extends Component {
   constructor(props) {
@@ -12,14 +19,27 @@ class App extends Component {
   }
 
   componentDidCatch(err, info) {
+    log('componentDidCatch', err, info)
     const {dispatch} = this.props
-    // dispatch(fatalError(serializeError(err), {info, home: true}))
-    // this.setState({info})
+    dispatch(
+      setError({message: serializeError(err), info, home: true})
+    )
   }
 
   render() {
+    log('render', this.props)
     const {uid} = this.props
-    return <div className="text-red-600">{uid || 'No user!'}</div>
+    return (
+      <Suspense
+        fallback={
+          <div className="container mx-auto h-screen flex justify-center items-center">
+            <div className="w-1/3 spinner" />
+          </div>
+        }
+      >
+        {uid ? <Dashboard /> : <Signin />}
+      </Suspense>
+    )
   }
 }
 
