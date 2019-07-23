@@ -90,9 +90,17 @@ class AssetsPlugin {
             }
           }
           if (this.options.html) {
+            let entry
+            for (const filename in compilation.assets) {
+              if (filename.includes('main')) {
+                entry = filename
+                break
+              }
+            }
             const str = fs.readFileSync(this.options.html).toString()
             const html = ejs.render(str, {
-              assets: response.html.join('\n  ')
+              assets: response.html.join('\n  '),
+              entry
             })
             compilation.assets['index.html'] = {
               source: () => html,

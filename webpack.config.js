@@ -13,8 +13,8 @@ const config = {
   },
   output: {
     path: path.resolve(__dirname, 'public'),
-    filename: 'saros.js',
-    chunkFilename: '[name].[contenthash].js',
+    filename: '[name].[contenthash].js',
+    // chunkFilename: '[name].[contenthash].js',
     publicPath: '/',
     globalObject: 'this'
   },
