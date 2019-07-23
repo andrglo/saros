@@ -1,9 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
-const Dotenv = require('dotenv-webpack')
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -16,7 +15,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'saros.js',
-    chunkFilename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[contenthash].js',
     publicPath: '/',
     globalObject: 'this'
   },
@@ -58,18 +57,22 @@ const config = {
     ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': `"${process.env.NODE_ENV ||
+        'development'}"`
+    }),
     new FaviconsWebpackPlugin({
       logo: './src/assets/institution_icon.svg',
       prefix: 'icons/',
       inject: false,
       persistentCache: true
     }),
-    new CleanWebpackPlugin(),
     new CopyWebpackPlugin(['./src/index.html', './src/manifest.json'])
   ]
 }
 
 if (production) {
+  const {CleanWebpackPlugin} = require('clean-webpack-plugin')
   const WorkboxPlugin = require('workbox-webpack-plugin')
   config.optimization = {
     splitChunks: {
@@ -83,11 +86,7 @@ if (production) {
       }
     }
   }
-  config.plugins.push(
-    new Dotenv({
-      path: './.env.development' // todo Change to production
-    })
-  )
+  config.plugins.push(new CleanWebpackPlugin())
   config.plugins.push(
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
@@ -123,11 +122,6 @@ if (production) {
       warnings: true
     }
   }
-  config.plugins.push(
-    new Dotenv({
-      path: './.env.development'
-    })
-  )
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
