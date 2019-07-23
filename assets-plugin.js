@@ -68,6 +68,7 @@ class AssetsPlugin {
         favicons(this.options.source, config, (err, response) => {
           if (err) {
             callback(err)
+            return
           }
           for (const image of response.images) {
             const fileName =
