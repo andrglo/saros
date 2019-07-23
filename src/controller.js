@@ -23,6 +23,10 @@ import firebase, {
   firestoreDb,
   toDate
 } from './lib/firebase'
+import {
+  setUpdateAvailable,
+  clearUpdateAvailable
+} from './reducers/app'
 
 axios.defaults.baseURL =
   'https://us-central1-saros-development.cloudfunctions.net'
@@ -37,7 +41,6 @@ const PENDENT_STORE_NAME = 'pendent'
 const INTERVAL_TO_SAVE_IN_CLOUD = 20000
 const INTERVAL_TO_SAVE_IN_LOCAL_DB = 500
 const REHYDRATE_STATE_KEY = 'REHYDRATE_STATE_KEY'
-const UPDATE_AVAILABLE = 'app/UPDATE_AVAILABLE'
 const SET_FORM = 'forma/SET_FORM'
 const CLEAR_STATE = 'CLEAR_STATE'
 const APP_REDUCER_NAME = 'app'
@@ -1046,34 +1049,23 @@ export const seekEntity = async (path, keyword, options = {}) => {
 }
 
 const serviceWorker = window.sarosSW
-let updateAvailable
 if (serviceWorker) {
   serviceWorker.addEventListener('updatefound', () => {
     console.log('SW event:', 'updatefound')
-    updateAvailable = true
     navigator.serviceWorker.addEventListener(
       'controllerchange',
       () => {
         console.log('SW event:', 'controllerchange')
-        updateApp()
+        store.dispatch(clearUpdateAvailable()) // to hide notification immediately
+        window.location.reload()
       }
     )
-    store.dispatch({type: UPDATE_AVAILABLE})
-    // todo remove confirm
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Update?')) {
-      setTimeout(() => {
-        serviceWorker.waiting.postMessage({type: 'SKIP_WAITING'})
-      }, 100)
-    }
-    // end removal
+    store.dispatch(setUpdateAvailable())
   })
 }
-export const hasUpdateAvailable = () => updateAvailable
 export const updateApp = () => {
-  if (updateAvailable) {
-    store.dispatch({type: UPDATE_AVAILABLE, clear: true}) // to hide notification immediately
-    window.location.reload()
+  if (serviceWorker && serviceWorker.waiting) {
+    serviceWorker.waiting.postMessage({type: 'SKIP_WAITING'})
   }
 }
 

@@ -6,6 +6,9 @@ import serializeError from 'serialize-error'
 
 import './index.css'
 import {setError} from './reducers/app'
+import {getUid, getUpdateAvailable} from './selectors/app'
+import {updateApp} from './controller'
+import Alert from './components/Alert'
 
 const log = debug('app')
 
@@ -28,7 +31,7 @@ class App extends Component {
 
   render() {
     log('render', this.props)
-    const {uid} = this.props
+    const {uid, updateAvailable} = this.props
     return (
       <Suspense
         fallback={
@@ -38,6 +41,14 @@ class App extends Component {
         }
       >
         {uid ? <Dashboard /> : <Signin />}
+        {updateAvailable && (
+          <Alert
+            title="Update available!"
+            message="Update now?"
+            buttonCaption="Yes"
+            onClick={updateApp}
+          />
+        )}
       </Suspense>
     )
   }
@@ -45,11 +56,13 @@ class App extends Component {
 
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  uid: PropTypes.string
+  uid: PropTypes.string,
+  updateAvailable: PropTypes.bool
 }
 
 export default connect(state => {
   return {
-    uid: state.app.uid
+    uid: getUid(state),
+    updateAvailable: getUpdateAvailable(state)
   }
 })(App)
