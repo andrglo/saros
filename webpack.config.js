@@ -1,8 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const AssetsPlugin = require('./assets-plugin')
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -61,13 +60,18 @@ const config = {
       'process.env.NODE_ENV': `"${process.env.NODE_ENV ||
         'development'}"`
     }),
-    new FaviconsWebpackPlugin({
-      logo: './src/assets/institution_icon.svg',
-      prefix: 'icons/',
-      inject: false,
-      persistentCache: true
-    }),
-    new CopyWebpackPlugin(['./src/index.html', './src/manifest.json'])
+    new AssetsPlugin({
+      source: './src/assets/institution_icon.svg',
+      html: './src/index.html.ejs',
+      manifest: {
+        appName: 'Cash easy notes', // Your application's name. `string`
+        appShortName: 'CashNotes', // Your application's short_name. `string`. Optional. If not set, appName will be used
+        appDescription: 'Budgeting web app', // Your application's description. `string`
+        background: '#2d6987', // Background colour for flattened icons. `string`
+        theme_color: '#2d6987', // Theme color user for example in Android's task switcher. `string`
+        start_url: '/?homescreen=1' // Start URL when launching the application from a device. `string`
+      }
+    })
   ]
 }
 
