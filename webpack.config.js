@@ -13,8 +13,7 @@ const config = {
   },
   output: {
     path: path.resolve(__dirname, 'public'),
-    filename: '[name].[contenthash].js',
-    // chunkFilename: '[name].[contenthash].js',
+    filename: `[name].[${production ? 'contenthash' : 'hash'}].js`,
     publicPath: '/',
     globalObject: 'this'
   },
@@ -61,7 +60,9 @@ const config = {
         'development'}"`
     }),
     new AssetsPlugin({
-      source: './src/assets/institution_icon.svg',
+      source: `./src/assets/${
+        production ? 'dispersarpago' : 'institution_icon'
+      }.svg`,
       html: './src/index.html.ejs',
       manifest: {
         appName: 'Cash easy notes', // Your application's name. `string`
@@ -69,7 +70,7 @@ const config = {
         appDescription: 'Budgeting web app', // Your application's description. `string`
         background: '#2d6987', // Background colour for flattened icons. `string`
         theme_color: '#2d6987', // Theme color user for example in Android's task switcher. `string`
-        start_url: '/?homescreen=1' // Start URL when launching the application from a device. `string`
+        start_url: '/index.html' // Start URL when launching the application from a device. `string`
       }
     })
   ]

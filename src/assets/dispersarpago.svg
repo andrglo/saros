@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" viewBox="0 0 16 16" version="1.0">
+  <g id="layer1" transform="translate(0,-3)">
+    <g id="g2873" transform="translate(0 -1.8605)">
+      <path id="rect2849" stroke="#232323" stroke-width=".64502" fill="#aad500" d="m0.94138 10.633c1.9725 1.29 3.9451 2.579 5.9176 3.869 2.8563-1.12 5.713-2.241 8.569-3.361-1.294-0.698-2.588-1.3957-3.882-2.0933-3.535 0.5285-7.0698 1.0573-10.605 1.5853z"/>
+      <use id="use3624" xlink:href="#rect2849" transform="translate(0 -1.1492)" height="16" width="16" y="0" x="0"/>
+      <use id="use3626" xlink:href="#use3624" transform="translate(0 -1.2929)" height="16" width="16" y="0" x="0"/>
+      <use id="use3628" xlink:href="#use3626" transform="translate(0 -1.221)" height="16" width="16" y="0" x="0"/>
+      <path id="rect3630" stroke="#232323" stroke-width=".85339" fill="#009bff" d="m6.4613 6.6071 1.8256-0.33154 3.5745 2.2949 0.01355 3.8658-1.8103 0.50378-0.02892-3.6789-3.5745-2.6541z"/>
+    </g>
+    <g id="g2868" transform="translate(-.046512 -.093023)">
+      <path id="path2847" d="m7.4884 14.628c0 0.70641-1.5514 1.2791-3.4651 1.2791s-3.4651-0.57266-3.4651-1.2791c0-0.70641 1.5514-1.2791 3.4651-1.2791s3.4651 0.57266 3.4651 1.2791z" transform="translate(.41860 2.1628)" stroke="#ffa900" stroke-width="1.2" fill="#ffe200"/>
+      <use id="use2851" xlink:href="#path2847" transform="translate(0,-2)" height="16" width="16" y="0" x="0"/>
+      <use id="use2853" xlink:href="#use2851" transform="translate(0,-2)" height="16" width="16" y="0" x="0"/>
+    </g>
+    <g id="g2863" transform="translate(-.23256 -2.9302)">
+      <use id="use2857" xlink:href="#use2853" transform="matrix(.55950 0 0 .69059 11.05 7.1901)" height="16" width="16" y="0" x="0"/>
+      <use id="use2859" xlink:href="#use2857" transform="translate(0 -1.3953)" height="16" width="16" y="0" x="0"/>
+      <use id="use2861" xlink:href="#use2859" transform="translate(0 -1.5814)" height="16" width="16" y="0" x="0"/>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Dinero, money</dc:title>
+        <dc:date>2012-07-16T14:03:41</dc:date>
+        <dc:description>Pago en efectivo</dc:description>
+        <dc:source>http://openclipart.org/detail/171231/dinero-money-by-juliocesarfx-171231</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>juliocesarfx</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>Pago</rdf:li>
+            <rdf:li>clip art</rdf:li>
+            <rdf:li>clipart</rdf:li>
+            <rdf:li>dinero</rdf:li>
+            <rdf:li>efectivo</rdf:li>
+            <rdf:li>money</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
