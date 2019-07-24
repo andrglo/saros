@@ -37,6 +37,7 @@ module.exports = {
         logical: 'parens',
         prop: 'ignore'
       }
-    ]
+    ],
+    'no-loop-func': 0,
   }
 }

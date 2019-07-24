@@ -3,6 +3,11 @@ const fs = require('fs')
 const path = require('path')
 const favicons = require('favicons')
 const ejs = require('ejs')
+const glob = require('glob')
+const deburr = require('lodash/deburr')
+const snakeCase = require('lodash/snakeCase')
+
+const normalize = str => deburr((str || '').trim().toLowerCase())
 
 const defaultConfig = {
   path: '/', // Path for overriding default icons path. `string`
@@ -109,6 +114,104 @@ class AssetsPlugin {
             }
           }
           callback()
+        })
+      }
+    )
+
+    compiler.hooks.emit.tapAsync(
+      'TranslationPlugin',
+      (compilation, callback) => {
+        const translationsFilename = './src/assets/translations.json'
+        // eslint-disable-next-line import/no-dynamic-require
+        const oldTranslations = require(translationsFilename)
+        const newTranslations = {}
+        const regex = /t`[^`]+`/gm
+        const extractTranslations = async filename => {
+          const content = (await fs.promises.readFile(
+            filename
+          )).toString()
+          let m = regex.exec(content)
+          while (m) {
+            if (m.index === regex.lastIndex) {
+              regex.lastIndex += 1
+            }
+            m.forEach(match => {
+              let text = match
+                .split('\n')
+                .map(str => str.trim())
+                .join('')
+              const requirePlural = text.match(/\$\{\d+\}/)
+              text = text
+                .replace(/\$\{\d+\}/g, '*')
+                .replace(/`/g, '')
+                .slice(1)
+              const key = snakeCase(
+                normalize(text).replace(/\*/g, 'n')
+              )
+              if (!oldTranslations[key]) {
+                newTranslations[key] = {
+                  en: text,
+                  'pt-BR': text
+                }
+                if (requirePlural) {
+                  newTranslations[key].en = [text, text]
+                  newTranslations[key]['pt-BR'] = [text, text]
+                }
+              } else {
+                newTranslations[key] = oldTranslations[key]
+              }
+            })
+            m = regex.exec(content)
+          }
+        }
+        const saveNewTranslations = async () => {
+          const translations = {}
+          Object.keys(newTranslations)
+            .sort()
+            .forEach(key => {
+              translations[key] = newTranslations[key]
+            })
+          await fs.promises.writeFile(
+            translationsFilename,
+            JSON.stringify(translations, null, '  ')
+          )
+        }
+        glob(path.join(__dirname, 'src/**/*.js*'), (err, matches) => {
+          if (err) {
+            callback(err)
+            return
+          }
+          const tasks = []
+          for (const filename of matches) {
+            if (!filename.includes('test')) {
+              tasks.push(extractTranslations(filename))
+            }
+          }
+          Promise.all(tasks)
+            .then(saveNewTranslations)
+            .then(() => {
+              const runtimeTranslations = {}
+              Object.keys(newTranslations).forEach(text => {
+                const textTranslations = newTranslations[text]
+                Object.keys(textTranslations).forEach(language => {
+                  runtimeTranslations[language] =
+                    runtimeTranslations[language] || {}
+                  runtimeTranslations[language][text] =
+                    textTranslations[language]
+                })
+              })
+              Object.keys(runtimeTranslations).forEach(language => {
+                const content = JSON.stringify(
+                  runtimeTranslations[language]
+                )
+                compilation.assets[`locale/${language}.json`] = {
+                  source: () => content,
+                  size: () => content.length
+                }
+              })
+              callback()
+            })
+            .catch(callback)
         })
       }
     )

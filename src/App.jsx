@@ -9,6 +9,7 @@ import {setError} from './reducers/app'
 import {getUid, getUpdateAvailable} from './selectors/app'
 import {updateApp} from './controller'
 import Alert from './components/Alert'
+import t from './lib/translate'
 
 const log = debug('app')
 
@@ -43,9 +44,9 @@ class App extends Component {
         {uid ? <Dashboard /> : <Signin />}
         {updateAvailable && (
           <Alert
-            title="Update available!"
-            message="Update now?"
-            buttonCaption="Yes"
+            title={t`Update available!`}
+            message={t`Update now?`}
+            buttonCaption={t`Yes`}
             onClick={updateApp}
           />
         )}
