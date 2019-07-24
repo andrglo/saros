@@ -28,8 +28,10 @@
   --color-income: rgb(12, 99, 231);
   --color-expense: rgb(211, 9, 9);
 }
-/*! purgecss end ignore */
 
 @tailwind base;
+
+/*! purgecss end ignore */
+
 @tailwind components;
 @tailwind utilities;
