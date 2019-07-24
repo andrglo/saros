@@ -34,23 +34,25 @@ class App extends Component {
     log('render', this.props)
     const {uid, updateAvailable} = this.props
     return (
-      <Suspense
-        fallback={
-          <div className="container mx-auto h-screen flex justify-center items-center">
-            <div className="w-1/3 spinner" />
-          </div>
-        }
-      >
-        {uid ? <Dashboard /> : <Signin />}
-        {updateAvailable && (
-          <Alert
-            title={t`Update available!`}
-            message={t`Update now?`}
-            buttonCaption={t`Yes`}
-            onClick={updateApp}
-          />
-        )}
-      </Suspense>
+      <React.StrictMode>
+        <Suspense
+          fallback={
+            <div className="container mx-auto h-screen flex justify-center items-center">
+              <div className="w-1/3 spinner" />
+            </div>
+          }
+        >
+          {uid ? <Dashboard /> : <Signin />}
+          {updateAvailable && (
+            <Alert
+              title={t`Update available!`}
+              message={t`Update now?`}
+              buttonCaption={t`Yes`}
+              onClick={updateApp}
+            />
+          )}
+        </Suspense>
+      </React.StrictMode>
     )
   }
 }
