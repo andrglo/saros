@@ -4,7 +4,7 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/storage'
 
-import env from '../../.saros.env'
+import env from '../../saros.config'
 
 firebase.initializeApp(env.firebaseConfig)
 

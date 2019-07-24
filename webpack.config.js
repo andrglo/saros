@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 
 const AssetsPlugin = require('./assets-plugin')
+const {manifest} = require('./saros.config')
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -65,14 +66,7 @@ const config = {
         production ? 'brown_money_bag' : 'institution_icon'
       }.svg`,
       html: './src/index.html.ejs',
-      manifest: {
-        appName: 'Cash easy notes', // Your application's name. `string`
-        appShortName: 'CashNotes', // Your application's short_name. `string`. Optional. If not set, appName will be used
-        appDescription: 'Budgeting web app', // Your application's description. `string`
-        background: '#2d6987', // Background colour for flattened icons. `string`
-        theme_color: '#2d6987', // Theme color user for example in Android's task switcher. `string`
-        start_url: '/index.html' // Start URL when launching the application from a device. `string`
-      }
+      manifest
     })
   ]
 }
