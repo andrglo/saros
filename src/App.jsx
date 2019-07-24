@@ -6,7 +6,7 @@ import serializeError from 'serialize-error'
 
 import './index.css'
 import {setError} from './reducers/app'
-import {getUid, getUpdateAvailable} from './selectors/app'
+import {getUid, getUpdateAvailable, getTheme} from './selectors/app'
 import {updateApp} from './controller'
 import Alert from './components/Alert'
 import t from './lib/translate'
@@ -20,6 +20,27 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {}
+  }
+
+  componentDidMount() {
+    const {theme} = this.props
+    App.setTheme(theme)
+  }
+
+  componentDidUpdate(prevProps) {
+    const {theme} = this.props
+    if (theme !== prevProps.theme) {
+      App.setTheme(theme)
+    }
+  }
+
+  static setTheme(theme) {
+    const themeClass = 'theme-dark'
+    if (theme === 'dark') {
+      document.documentElement.classList.add(themeClass)
+    } else {
+      document.documentElement.classList.remove(themeClass)
+    }
   }
 
   componentDidCatch(err, info) {
@@ -60,12 +81,14 @@ class App extends Component {
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
   uid: PropTypes.string,
-  updateAvailable: PropTypes.bool
+  updateAvailable: PropTypes.bool,
+  theme: PropTypes.string
 }
 
 export default connect(state => {
   return {
     uid: getUid(state),
-    updateAvailable: getUpdateAvailable(state)
+    updateAvailable: getUpdateAvailable(state),
+    theme: getTheme(state)
   }
 })(App)

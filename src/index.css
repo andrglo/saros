@@ -1,5 +1,35 @@
+:root {
+  --color-bg-primary: #c0b283;
+  --color-bg-secondary: #dcd0c0;
+  --color-bg-default: #f4f4f4;
+  --color-bg-contrats: #373737;
+
+  --color-text-primary: #fff;
+  --color-text-secondary: #927e7e;
+  --color-text-default: #373737;
+  --color-text-contrast: #fff;
+
+  --color-income: rgb(12, 99, 231);
+  --color-expense: rgb(211, 9, 9);
+}
+
+/*! purgecss start ignore */
+.theme-dark {
+  --color-bg-primary: #0252cc;
+  --color-bg-secondary: #ffc402;
+  --color-bg-default: #fff;
+  --color-bg-contrast: #fff;
+
+  --color-text-primary: #fff;
+  --color-text-secondary: #755f17;
+  --color-text-default: #444;
+  --color-text-contrast: #444;
+
+  --color-income: rgb(12, 99, 231);
+  --color-expense: rgb(211, 9, 9);
+}
+/*! purgecss end ignore */
+
 @tailwind base;
-
 @tailwind components;
-
 @tailwind utilities;

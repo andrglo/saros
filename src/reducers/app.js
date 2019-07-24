@@ -2,6 +2,7 @@ import createReducer from '../lib/createReducer'
 import createAction from '../lib/createAction'
 
 export const setUid = createAction('SET_UID')
+export const setTheme = createAction('SET_THEME')
 export const setError = createAction('SET_ERROR')
 export const clearError = createAction('CLEAR_ERROR')
 export const setUpdateAvailable = createAction('SET_UPDATE_AVAILABLE')
@@ -17,6 +18,10 @@ const actionHandlers = {
   [setUid]: (state, action) => ({
     ...state,
     uid: action.uid
+  }),
+  [setTheme]: (state, action) => ({
+    ...state,
+    theme: action.theme
   }),
   [setError]: (state, action) => ({
     ...state,
