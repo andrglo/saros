@@ -62,7 +62,7 @@ const config = {
     }),
     new AssetsPlugin({
       source: `./src/assets/${
-        production ? 'dispersarpago' : 'institution_icon'
+        production ? 'brown_money_bag' : 'institution_icon'
       }.svg`,
       html: './src/index.html.ejs',
       manifest: {
