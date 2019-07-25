@@ -1,4 +1,22 @@
 {
+  "change_locale": {
+    "en": "Change locale",
+    "pt-BR": "Alterar idioma"
+  },
+  "change_theme": {
+    "en": "Change theme",
+    "pt-BR": "Alterar tema"
+  },
+  "hi_n_times": {
+    "en": [
+      " Hi * times",
+      " Hi * times"
+    ],
+    "pt-BR": [
+      " Oláá!!!!! * vez",
+      " Olá * vezes"
+    ]
+  },
   "update_available": {
     "en": "Update available!",
     "pt-BR": "Atualização disponível!"

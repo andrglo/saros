@@ -3,6 +3,7 @@ import createAction from '../lib/createAction'
 
 export const setUid = createAction('SET_UID')
 export const setTheme = createAction('SET_THEME')
+export const setLocale = createAction('SET_LOCALE')
 export const setError = createAction('SET_ERROR')
 export const clearError = createAction('CLEAR_ERROR')
 export const setUpdateAvailable = createAction('SET_UPDATE_AVAILABLE')
@@ -22,6 +23,10 @@ const actionHandlers = {
   [setTheme]: (state, action) => ({
     ...state,
     theme: action.theme
+  }),
+  [setLocale]: (state, action) => ({
+    ...state,
+    locale: action.locale
   }),
   [setError]: (state, action) => ({
     ...state,

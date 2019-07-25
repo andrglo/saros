@@ -27,7 +27,7 @@ import {
   setUpdateAvailable,
   clearUpdateAvailable
 } from './reducers/app'
-import {setTranlations} from './lib/translate'
+import {fetchLocale} from './lib/translate'
 
 axios.defaults.baseURL =
   'https://us-central1-saros-development.cloudfunctions.net'
@@ -78,25 +78,6 @@ const sleep = milliseconds =>
   new Promise(resolve => setTimeout(() => resolve(), milliseconds))
 
 const timestamps = new Map()
-
-export const setLocale = locale => {
-  if (locale.startsWith('pt')) {
-    locale = 'pt-BR'
-  } else {
-    locale = 'en'
-  }
-  return axios
-    .get(`/locale/${locale}.json`, {
-      baseURL: null
-    })
-    .then(result => {
-      log('setLocale', locale, result.data)
-      setTranlations(result.data)
-    })
-    .catch(err => {
-      console.error(err)
-    })
-}
 
 const savePendingItems = async items => {
   // log('savePendingItems', 'localDb', items)
@@ -354,7 +335,7 @@ export const createStore = async () => {
   if (app.timestamp) {
     timestamps.set(APP_REDUCER_NAME, app.timestamp)
   }
-  await setLocale(app.locale || navigator.language)
+  await fetchLocale(app.locale || navigator.language)
   initialState[APP_REDUCER_NAME] = app
   store = createReduxStore(
     rootReducer,

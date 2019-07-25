@@ -6,7 +6,12 @@ import serializeError from 'serialize-error'
 
 import './index.css'
 import {setError} from './reducers/app'
-import {getUid, getUpdateAvailable, getTheme} from './selectors/app'
+import {
+  getUid,
+  getUpdateAvailable,
+  getTheme,
+  getLocale
+} from './selectors/app'
 import {updateApp} from './controller'
 import Alert from './components/Alert'
 import t from './lib/translate'
@@ -17,11 +22,6 @@ const Dashboard = React.lazy(() => import('./Dashboard'))
 const Signin = React.lazy(() => import('./Signin'))
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-
   componentDidMount() {
     const {theme} = this.props
     App.setTheme(theme)
@@ -53,9 +53,9 @@ class App extends Component {
 
   render() {
     log('render', this.props)
-    const {uid, updateAvailable} = this.props
+    const {uid, updateAvailable, locale} = this.props
     return (
-      <React.StrictMode>
+      <React.StrictMode key={locale}>
         <Suspense
           fallback={
             <div className="container mx-auto h-screen flex justify-center items-center">
@@ -82,13 +82,15 @@ App.propTypes = {
   dispatch: PropTypes.func.isRequired,
   uid: PropTypes.string,
   updateAvailable: PropTypes.bool,
-  theme: PropTypes.string
+  theme: PropTypes.string,
+  locale: PropTypes.string
 }
 
 export default connect(state => {
   return {
     uid: getUid(state),
     updateAvailable: getUpdateAvailable(state),
-    theme: getTheme(state)
+    theme: getTheme(state),
+    locale: getLocale(state)
   }
 })(App)

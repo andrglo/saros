@@ -1,7 +1,36 @@
 import snakeCase from 'lodash/snakeCase'
+import axios from 'axios'
 import normalize from './normalize'
 
 let translations = {}
+let currentLocale
+
+export const fetchLocale = locale => {
+  if (process.env.NODE_ENV === 'production') {
+    if (currentLocale === locale) {
+      return Promise.resolve(false) // did not change
+    }
+  }
+  currentLocale = locale
+  if (locale.startsWith('pt')) {
+    locale = 'pt-BR'
+  } else {
+    locale = 'en'
+  }
+  return axios
+    .get(`/locale/${locale}.json`, {
+      baseURL: null
+    })
+    .then(result => {
+      console.log('New locale selected:', locale)
+      setTranlations(result.data)
+      return true // changed
+    })
+    .catch(err => {
+      currentLocale = null
+      console.error(err)
+    })
+}
 
 export const setTranlations = newTranslations => {
   translations = newTranslations
@@ -10,13 +39,13 @@ export const setTranlations = newTranslations => {
 const t = (strs, ...params) => {
   const requirePlural = typeof params[0] === 'number'
   const plural = requirePlural && Number(params[0]) > 1
-  let key = ``
+  let text = ``
   strs.forEach((str, i) => {
-    key = `${key}${str}${
+    text = `${text}${str}${
       typeof params[i] === 'number' ? 'n' : params[i] || ''
     }`
   })
-  key = snakeCase(normalize(key))
+  const key = snakeCase(normalize(text))
   let translation
   const textTranslations = translations[key]
   if (textTranslations) {
@@ -27,7 +56,7 @@ const t = (strs, ...params) => {
         ? textTranslations[0]
         : textTranslations
   } else {
-    translation = key
+    translation = text
   }
   if (requirePlural) {
     translation = translation.replace('*', params[0])
