@@ -11,9 +11,7 @@ const revision = (
 module.exports = function loader() {
   const callback = this.async()
   if (!callback) {
-    console.error(
-      'Loader for storage actions/reducers configuration is async'
-    )
+    console.error('Loader for version is async')
     process.exit(1)
   }
 

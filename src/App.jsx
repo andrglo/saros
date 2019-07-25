@@ -10,16 +10,16 @@ import {
   getUid,
   getUpdateAvailable,
   getTheme,
-  getLocale
+  getLocale,
+  getBrowserLocation
 } from './selectors/app'
 import {updateApp} from './controller'
 import Alert from './components/Alert'
 import t from './lib/translate'
 
-const log = debug('app')
+import getView from './loaders/routes!'
 
-const Dashboard = React.lazy(() => import('./Dashboard'))
-const Signin = React.lazy(() => import('./Signin'))
+const log = debug('app')
 
 class App extends Component {
   componentDidMount() {
@@ -53,7 +53,7 @@ class App extends Component {
 
   render() {
     log('render', this.props)
-    const {uid, updateAvailable, locale} = this.props
+    const {uid, updateAvailable, locale, browserLocation} = this.props
     return (
       <React.StrictMode key={locale}>
         <Suspense
@@ -63,7 +63,7 @@ class App extends Component {
             </div>
           }
         >
-          {uid ? <Dashboard /> : <Signin />}
+          {getView(uid, browserLocation)}
           {updateAvailable && (
             <Alert
               title={t`Update available!`}
@@ -83,7 +83,8 @@ App.propTypes = {
   uid: PropTypes.string,
   updateAvailable: PropTypes.bool,
   theme: PropTypes.string,
-  locale: PropTypes.string
+  locale: PropTypes.string,
+  browserLocation: PropTypes.object
 }
 
 export default connect(state => {
@@ -91,6 +92,7 @@ export default connect(state => {
     uid: getUid(state),
     updateAvailable: getUpdateAvailable(state),
     theme: getTheme(state),
-    locale: getLocale(state)
+    locale: getLocale(state),
+    browserLocation: getBrowserLocation(state)
   }
 })(App)

@@ -40,5 +40,7 @@ module.exports = {
     ],
     'no-loop-func': 0,
     'import/prefer-default-export': 0,
+    'import/no-named-as-default-member': 0,
+    'react/forbid-prop-types': 0,
   }
 }

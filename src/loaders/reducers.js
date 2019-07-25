@@ -4,7 +4,7 @@ const glob = require('glob')
 module.exports = function reducersLoader() {
   const callback = this.async()
   if (!callback) {
-    console.error('Loader for apps reducers is async')
+    console.error('Loader for reducers is async')
     process.exit(1)
   }
 

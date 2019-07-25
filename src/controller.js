@@ -25,9 +25,11 @@ import firebase, {
 } from './lib/firebase'
 import {
   setUpdateAvailable,
-  clearUpdateAvailable
+  clearUpdateAvailable,
+  setBrowserLocation
 } from './reducers/app'
 import {fetchLocale} from './lib/translate'
+import {pushBrowserLocation} from './actions/app'
 
 axios.defaults.baseURL =
   'https://us-central1-saros-development.cloudfunctions.net'
@@ -430,6 +432,7 @@ firebase.auth().onAuthStateChanged(user => {
           APP_REDUCER_NAME,
           store.getState().app
         )
+        store.dispatch(pushBrowserLocation('/'))
       }
     })
   } else if (currentUser) {
@@ -1069,6 +1072,22 @@ export const updateApp = () => {
   if (serviceWorker && serviceWorker.waiting) {
     serviceWorker.waiting.postMessage({type: 'SKIP_WAITING'})
   }
+}
+
+window.onpopstate = event => {
+  log(
+    `onpopstate: ${document.location}, state: ${JSON.stringify(
+      event.state
+    )}`
+  )
+  const {pathname, search: query} = document.location
+  store.dispatch(
+    setBrowserLocation({
+      pathname,
+      query,
+      state: event.state
+    })
+  )
 }
 
 console.info(

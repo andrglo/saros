@@ -1,21 +1,15 @@
 {
-  "change_locale": {
-    "en": "Change locale",
-    "pt-BR": "Alterar idioma"
+  "enter": {
+    "en": "Enter",
+    "pt-BR": "Enter"
   },
-  "change_theme": {
-    "en": "Change theme",
-    "pt-BR": "Alterar tema"
+  "out": {
+    "en": "Out",
+    "pt-BR": "Out"
   },
-  "hi_n_times": {
-    "en": [
-      " Hi * times",
-      " Hi * times"
-    ],
-    "pt-BR": [
-      " Oláá!!!!! * vez",
-      " Olá * vezes"
-    ]
+  "signin": {
+    "en": "Signin",
+    "pt-BR": "Signin"
   },
   "update_available": {
     "en": "Update available!",
