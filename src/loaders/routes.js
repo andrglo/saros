@@ -45,7 +45,6 @@ module.exports = function routesLoader() {
 
     export default (uid, browserLocation = {pathname: window.location.pathname}) => {
       const pathname = browserLocation.pathname
-      console.log('pathname in routes loader', pathname)
       if (!uid && pathname !== '/signin') {
         return React.createElement(Presentation)
       }

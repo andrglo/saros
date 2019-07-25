@@ -22,7 +22,6 @@ export const fetchLocale = locale => {
       baseURL: null
     })
     .then(result => {
-      console.log('New locale selected:', locale)
       setTranlations(result.data)
       return true // changed
     })
