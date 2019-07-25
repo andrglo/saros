@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 
-const AssetsPlugin = require('./assets-plugin')
+const AssetsPlugin = require('./assets-webpack-plugin')
 const {manifest} = require('./saros.config')
 
 const production = process.env.NODE_ENV === 'production'
