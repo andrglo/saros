@@ -51,6 +51,8 @@ const defaultConfig = {
   }
 }
 
+let cache
+
 class AssetsPlugin {
   constructor(options) {
     this.options = options
@@ -70,11 +72,7 @@ class AssetsPlugin {
             ...icons
           }
         }
-        favicons(this.options.source, config, (err, response) => {
-          if (err) {
-            callback(err)
-            return
-          }
+        const buildAssets = response => {
           for (const image of response.images) {
             const fileName =
               config.path === '/'
@@ -114,6 +112,18 @@ class AssetsPlugin {
             }
           }
           callback()
+        }
+        if (cache) {
+          buildAssets(cache)
+          return
+        }
+        favicons(this.options.source, config, (err, response) => {
+          if (err) {
+            callback(err)
+            return
+          }
+          buildAssets(response)
+          cache = response
         })
       }
     )
@@ -122,11 +132,17 @@ class AssetsPlugin {
       'TranslationPlugin',
       (compilation, callback) => {
         const translationsFilename = './src/assets/translations.json'
-        // eslint-disable-next-line import/no-dynamic-require
-        const oldTranslations = require(translationsFilename)
+        let oldTranslations
         const newTranslations = {}
         const regex = /t`[^`]+`/gm
         const extractTranslations = async filename => {
+          if (!oldTranslations) {
+            oldTranslations = JSON.parse(
+              (await fs.promises.readFile(
+                translationsFilename
+              )).toString()
+            )
+          }
           const content = (await fs.promises.readFile(
             filename
           )).toString()

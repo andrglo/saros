@@ -112,7 +112,7 @@ if (production) {
 } else {
   config.devtool = 'eval-source-map'
   config.devServer = {
-    contentBase: './public',
+    contentBase: './server',
     hot: true,
     stats: 'minimal',
     host: 'localhost',
