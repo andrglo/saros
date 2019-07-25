@@ -216,13 +216,15 @@ const initCurrentUser = idTokenResult => {
     uid,
     email,
     isAnonymous,
-    displayName
+    displayName,
+    photoURL
   } = firebase.auth().currentUser
   currentUser = {
     uid,
     email,
     isAnonymous,
-    displayName
+    displayName,
+    photoURL
   }
   axios.defaults.headers.common.key = token
   let dbs = []
