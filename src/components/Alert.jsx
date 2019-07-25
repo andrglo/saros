@@ -1,38 +1,92 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
 import PropTypes from 'prop-types'
+import {GoAlert, GoInfo, GoStop} from 'react-icons/go'
 
 const Alert = props => {
-  const {title, type, message, buttonCaption, onClick} = props
+  const {
+    title,
+    onClose,
+    message,
+    buttonCaption,
+    onClick,
+    position,
+    type
+  } = props
+  let panel = ''
+  let view = ''
+  switch (position) {
+    case 'banner':
+      panel = 'alert-banner w-full fixed top-0'
+      break
+    case 'footer':
+      panel = 'alert-footer w-full fixed bottom-0'
+      break
+    default:
+      panel =
+        'alert-toast fixed bottom-0 right-0 m-8 w-5/6 md:w-full max-w-sm'
+      view = 'border-t-4 rounded-b shadow'
+  }
+  let icon
+  switch (type) {
+    case 'warning':
+      view = `${view} bg-yellow-400 text-yellow-900 border-yellow-500`
+      icon = (
+        <GoAlert className="flex-initial h-6 w-6 text-yellow-800 mr-2 my-auto" />
+      )
+      break
+    case 'error':
+      view = `${view} bg-red-400 text-red-900 border-red-500`
+      icon = (
+        <GoStop className="flex-initial h-6 w-6 text-red-800 mr-2 my-auto" />
+      )
+      break
+    default:
+      view = `${view} bg-teal-100 text-teal-900 border-teal-500`
+      icon = (
+        <GoInfo className="flex-initial h-6 w-6 text-teal-800 mr-2 my-auto" />
+      )
+  }
   return (
-    <div
-      className="absolute z-50 bottom-0 m-3 bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
-      role="alert"
-    >
-      <div className="flex">
-        <div className="py-1">
-          {type === 'info' && (
-            <svg
-              className="fill-current h-6 w-6 text-teal-500 mr-4"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
+    <div className={panel}>
+      <input
+        type="checkbox"
+        className="hidden"
+        id="alert"
+        onClick={() => setTimeout(() => onClose(), 1000)}
+      />
+      <div className={view}>
+        <div className="flex items-start justify-start w-full p-2">
+          {icon}
+          <div className="flex-initial">
+            {title && <p className="font-bold">{title}</p>}
+            <p className="text-sm">{message}</p>
+          </div>
+          {onClick && (
+            <button
+              className="flex-initial bg-teal-600 hover:bg-teal-700 ml-3 text-teal-100 font-bold py-2 px-4 rounded-full"
+              type="button"
+              onClick={onClick}
             >
-              <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
-            </svg>
+              {buttonCaption}
+            </button>
           )}
-        </div>
-        <div>
-          {title && <p className="font-bold">{title}</p>}
-          <p className="text-sm">{message}</p>
-        </div>
-        {onClick && (
-          <button
-            className="bg-teal-600 hover:bg-teal-700 ml-2 text-teal-100 font-bold py-2 px-4 rounded-full"
-            type="button"
-            onClick={onClick}
+          <label
+            className="close cursor-pointer flex-1"
+            title="close"
+            htmlFor="alert"
           >
-            {buttonCaption}
-          </button>
-        )}
+            <svg
+              className="fill-current float-right"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+            >
+              <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
+            </svg>
+          </label>
+        </div>
       </div>
     </div>
   )
@@ -41,8 +95,10 @@ const Alert = props => {
 Alert.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string.isRequired,
-  type: PropTypes.string,
+  type: PropTypes.oneOf('warning', 'error', 'info'),
+  position: PropTypes.oneOf('banner', 'footer', 'toast'),
   onClick: PropTypes.func,
+  onClose: PropTypes.func.isRequired,
   buttonCaption: PropTypes.string
 }
 
