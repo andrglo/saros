@@ -6,6 +6,7 @@ import t from '../lib/translate'
 import firebase from '../lib/firebase'
 import {manifest} from '../../saros.config'
 import isEmailValid from '../lib/isEmailValid'
+import Link from '../components/Link'
 
 const log = debug('signin')
 
@@ -139,13 +140,13 @@ const Signin = props => {
               {`${t`By using`} ${
                 manifest.appShortName
               } ${t`you agree to our`} `}
-              <a className="hover:underline italic" href="/privacy">
+              <Link className="italic" href="/privacy">
                 {t`Privacy Policy`}
-              </a>
+              </Link>
               {` ${t`and`} `}
-              <a className="hover:underline italic" href="/agreement">
+              <Link className="italic" href="/agreement">
                 {t`Terms of Service`}
-              </a>
+              </Link>
             </p>
           </div>
         </div>
