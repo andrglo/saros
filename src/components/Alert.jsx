@@ -95,8 +95,8 @@ const Alert = props => {
 Alert.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string.isRequired,
-  type: PropTypes.oneOf('warning', 'error', 'info'),
-  position: PropTypes.oneOf('banner', 'footer', 'toast'),
+  type: PropTypes.oneOf(['warning', 'error', 'info']),
+  position: PropTypes.oneOf(['banner', 'footer', 'toast']),
   onClick: PropTypes.func,
   onClose: PropTypes.func.isRequired,
   buttonCaption: PropTypes.string
