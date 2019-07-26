@@ -53,6 +53,10 @@ const config = {
             }
           }
         ]
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-url-loader?limit=65536'
       }
     ]
   },
