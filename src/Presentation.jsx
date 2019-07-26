@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
@@ -14,10 +14,20 @@ const gradient = {
   background: 'linear-gradient(90deg, #38A169 0%, #C6F6D5 100%)'
 }
 
+const presentationClass = 'presentation'
+
 // Inspired by https://www.tailwindtoolbox.com/templates/landing-page
 const Presentation = props => {
   log('render', props)
   const {dispatch} = props
+
+  useEffect(() => {
+    document.documentElement.classList.add(presentationClass)
+    return () => {
+      document.documentElement.classList.remove(presentationClass)
+    }
+  }, [])
+
   return (
     <React.Fragment>
       <div className="pt-2" style={gradient}>
@@ -27,7 +37,7 @@ const Presentation = props => {
               {t`This is a work in progress!`}
             </p>
             <h1 className="my-4 text-5xl font-bold leading-tight">
-              {t`Saros`}
+              Saros
             </h1>
             <p className="leading-normal text-2xl mb-4">
               {t`Saros is a side project of mine which aims to provide a cloud based full budgeting web app`}

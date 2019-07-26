@@ -43,5 +43,6 @@ module.exports = {
     'import/no-named-as-default-member': 0,
     'react/forbid-prop-types': 0,
     'jsx-a11y/label-has-for': 0, // deprecated
+    'jsx-a11y/no-autofocus': 0, // did not understand why
   }
 }

@@ -1,15 +1,59 @@
 {
-  "enter": {
-    "en": "Enter",
-    "pt-BR": "Enter"
+  "and": {
+    "en": "and",
+    "pt-BR": "e"
+  },
+  "by_using": {
+    "en": "By using",
+    "pt-BR": "Ao usar"
+  },
+  "email_has_been_sent": {
+    "en": "The email with the sign in link has been sent, please verify your inbox",
+    "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
+  },
+  "learn_more": {
+    "en": "Learn more",
+    "pt-BR": "Saiba mais"
+  },
+  "lets_go_budgeting": {
+    "en": "let's go budgeting!",
+    "pt-BR": "vamos começar!"
   },
   "out": {
     "en": "Out",
     "pt-BR": "Out"
   },
-  "signin": {
-    "en": "Signin",
-    "pt-BR": "Signin"
+  "privacy_policy": {
+    "en": "Privacy Policy",
+    "pt-BR": "Política de privacidade"
+  },
+  "saros_is_a_side_project_of_mine_which_aims_to_provide_a_cloud_based_full_budgeting_web_app": {
+    "en": "Saros is a side project of mine which aims to provide a cloud based full budgeting web app",
+    "pt-BR": "Saros é um projeto pessoal cujo objetivo é desenvolver um aplicativo financeiro completo para a web"
+  },
+  "sign_in": {
+    "en": "Sign in",
+    "pt-BR": "Entrar"
+  },
+  "signin_anonymously": {
+    "en": "...or yet sign in anonymously to evaluate",
+    "pt-BR": "...ou ainda entrar anônimo para avaliar"
+  },
+  "signin_google": {
+    "en": "...or signin with google...",
+    "pt-BR": "..ou entrar usando o google..."
+  },
+  "signin_link": {
+    "en": "Send me a email with a link to sign in...",
+    "pt-BR": "Enviar email com o link para entrar..."
+  },
+  "terms_of_service": {
+    "en": "Terms of Service",
+    "pt-BR": "Termos de Serviço"
+  },
+  "this_is_a_work_in_progress": {
+    "en": "This is a work in progress...",
+    "pt-BR": "Em desenvolvimento..."
   },
   "update_available": {
     "en": "Update available!",
@@ -22,5 +66,9 @@
   "yes": {
     "en": "Yes",
     "pt-BR": "Sim"
+  },
+  "you_agree_to_our": {
+    "en": "you agree to our",
+    "pt-BR": "você concorda como nosso"
   }
 }

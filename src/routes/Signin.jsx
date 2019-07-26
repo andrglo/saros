@@ -1,24 +1,54 @@
-import React, {useState} from 'react'
-import PropTypes from 'prop-types'
-import {connect} from 'react-redux'
+import React, {useState, useEffect} from 'react'
 import debug from 'debug'
+import cn from 'classnames'
 
 import t from '../lib/translate'
 import firebase from '../lib/firebase'
-import {pushBrowserLocation} from '../actions/app'
+import {manifest} from '../../saros.config'
+import isEmailValid from '../lib/isEmailValid'
 
 const log = debug('signin')
 
-const Signin = connect()(props => {
+const signinClass = 'signin'
+const lastEmailUsedToLogin = 'lastEmailUsedToLogin'
+
+const Signin = props => {
   log('render', props)
-  const {dispatch} = props
+
+  useEffect(() => {
+    document.documentElement.classList.add(signinClass)
+    return () => {
+      document.documentElement.classList.remove(signinClass)
+    }
+  }, [])
+
+  const [email, setEmail] = useState(
+    localStorage.getItem(lastEmailUsedToLogin) || ''
+  )
   const [signingIn, setsigningIn] = useState()
-  // const [signinProvider, setSigninProvider] = useState()
+  const [sent, setSent] = useState()
   const [error, setError] = useState()
 
+  const signIn = () => {
+    setsigningIn(true)
+    setError(null)
+    firebase
+      .auth()
+      .sendSignInLinkToEmail(email, {
+        url: window.location.href,
+        handleCodeInApp: true
+      })
+      .then(() => {
+        localStorage.setItem(lastEmailUsedToLogin, email)
+        setSent(true)
+      })
+      .catch(err => {
+        setsigningIn(false)
+        setError(err.message)
+      })
+  }
   const signInUsingGoogle = () => {
     setsigningIn(true)
-    // setSigninProvider('google')
     setError(null)
     const provider = new firebase.auth.GoogleAuthProvider()
     firebase
@@ -26,29 +56,102 @@ const Signin = connect()(props => {
       .signInWithPopup(provider)
       .catch(err => {
         setsigningIn(false)
-        // setSigninProvider(null)
         setError(err.message)
       })
   }
 
+  const signInAnonymously = () => {
+    setsigningIn(true)
+    setError(null)
+    firebase
+      .auth()
+      .signInAnonymously()
+      .catch(err => {
+        setsigningIn(false)
+        setError(err.message)
+      })
+  }
+
+  const linkSignInDisabled = signingIn || !isEmailValid(email)
   return (
     <div>
-      {error && <div className="bg-red-500">{error}</div>}
-      SignIn
-      <button
-        className="bg-secondary hover:bg-teal-500 ml-2 text-primary font-bold py-2 px-4 rounded-full"
-        type="button"
-        disabled={signingIn}
-        onClick={signInUsingGoogle}
-      >
-        {t`Enter`}
-      </button>
+      <div className="relative flex items-center justify-center h-screen">
+        <div className="bg-teal-300 text-white font-bold rounded-lg border shadow-lg m-2 p-10 pt-5">
+          <p className="mb-3 mx-auto text-xl text-teal-800 text-center">
+            {`${manifest.appName},  ${t`lets go budgeting`}`}
+          </p>
+          {error && (
+            <p className="m-3 mx-auto max-w-xs text-red-600 text-center">
+              {error}
+            </p>
+          )}
+          {sent && (
+            <p className="m-3 mx-auto max-w-xs text-orange-500 text-center">
+              {t`email has been sent`}
+            </p>
+          )}
+          <button
+            className={cn(
+              'mx-auto block bg-teal-200 rounded-full mb-6 py-4 px-8 shadow-lg',
+              {
+                'cursor-default text-teal-400': linkSignInDisabled,
+                'hover:underline text-teal-800': !linkSignInDisabled
+              }
+            )}
+            type="button"
+            disabled={linkSignInDisabled}
+            onClick={signIn}
+          >
+            <input
+              className="bg-gray-100 mb-2 border-teal-900 border text-teal-800  rounded-sm h-8 w-full pl-2"
+              type="email"
+              autoFocus
+              placeholder="Email"
+              disabled={sent}
+              value={email}
+              onChange={event => setEmail(event.target.value)}
+            />
+            <div>{t`signin link`}</div>
+          </button>
+          <button
+            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-4 px-8 shadow-lg"
+            type="button"
+            disabled={signingIn}
+            onClick={signInUsingGoogle}
+          >
+            {t`signin google`}
+            <img
+              className="h-6 ml-4"
+              src={require('../assets/google.svg')}
+              alt="google logo"
+            />
+          </button>
+          <button
+            className="mx-auto hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-4 px-8 shadow-lg"
+            type="button"
+            disabled={signingIn}
+            onClick={signInAnonymously}
+          >
+            {t`signin anonymously`}
+          </button>
+          <div className="max-w-xs mx-auto">
+            <p className="mt-6 mx-auto text-xs text-teal-800 text-center">
+              {`${t`By using`} ${
+                manifest.appShortName
+              } ${t`you agree to our`} `}
+              <a className="hover:underline italic" href="/privacy">
+                {t`Privacy Policy`}
+              </a>
+              {` ${t`and`} `}
+              <a className="hover:underline italic" href="/agreement">
+                {t`Terms of Service`}
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
-})
-
-Signin.propTypes = {
-  setView: PropTypes.func
 }
 
 export default Signin

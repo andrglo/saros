@@ -1,5 +1,5 @@
 :root {
-  --color-bg-primary: #c0b283;
+  --color-bg-primary: #e2e8f0; /* bg-gray-300 */
   --color-bg-secondary: #dcd0c0;
   --color-bg-default: #f4f4f4;
   --color-bg-contrats: #373737;
@@ -35,6 +35,18 @@
 
 @tailwind components;
 @tailwind utilities;
+
+.signin {
+  @apply bg-teal-400
+}
+
+.presentation {
+  @apply bg-gray-300
+}
+
+.dashboard {
+  @apply bg-primary
+}
 
 /* Alerts from https://www.tailwindtoolbox.com/components/alerts */
 
