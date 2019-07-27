@@ -19,6 +19,10 @@
     "en": "let's go budgeting!",
     "pt-BR": "vamos começar!"
   },
+  "or": {
+    "en": "or",
+    "pt-BR": "ou"
+  },
   "out": {
     "en": "Out",
     "pt-BR": "Out"
@@ -36,16 +40,16 @@
     "pt-BR": "Entrar"
   },
   "signin_anonymously": {
-    "en": "...or yet sign in anonymously to evaluate",
-    "pt-BR": "...ou ainda entrar anônimo para avaliar"
+    "en": "Sign in anonymously to evaluate",
+    "pt-BR": "Entrar anônimo para avaliar"
   },
   "signin_google": {
-    "en": "...or signin with google...",
-    "pt-BR": "..ou entrar usando o google..."
+    "en": "Signin with google",
+    "pt-BR": "Entrar usando o google"
   },
   "signin_link": {
-    "en": "Send me a email with a link to sign in...",
-    "pt-BR": "Enviar email com o link para entrar..."
+    "en": "Send email with a link to sign in",
+    "pt-BR": "Enviar email com o link para entrar"
   },
   "terms_of_service": {
     "en": "Terms of Service",
