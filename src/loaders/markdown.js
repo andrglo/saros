@@ -13,27 +13,14 @@ module.exports = function loader() {
     return marked(contents)
   }
   convertoToHtml(this.resourcePath).then(html => {
-    html = html.replace(/<p>/g, '<p className="block my-1 mx-0" >')
-    html = html.replace(
-      /<blockquote>/g,
-      '<blockquote className="block my-2 mx-1" >'
-    )
-    html = html.replace(
-      /<h1>/g,
-      '<h1 className="block text-3xl mx-0 my-3" >'
-    )
-    html = html.replace(
-      /<h1 /g,
-      '<h1 className="block text-3xl mx-0 my-3" '
-    )
     const source = `
     import React from 'react'
 
     export default () => {
       return (
-        <React.Fragment>
+        <div className="markdown" >
           ${html}
-        </React.Fragment>
+        </div>
       )
     }
     `

@@ -37,15 +37,48 @@
 @tailwind utilities;
 
 .signin {
-  @apply bg-teal-400
+  @apply bg-teal-400;
 }
 
 .presentation {
-  @apply bg-gray-300
+  @apply bg-gray-300;
 }
 
 .dashboard {
-  @apply bg-primary
+  @apply bg-primary;
+}
+
+.markdown h1 {
+  display: block;
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+
+.markdown p {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.markdown pre {
+  display: block;
+  font-family: monospace;
+  white-space: pre;
+  margin: 1em 0;
+}
+
+.markdown blockquote {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
 /* Alerts from https://www.tailwindtoolbox.com/components/alerts */
