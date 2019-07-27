@@ -38,23 +38,27 @@ module.exports = function routesLoader() {
 
   const source = `
     import React from 'react'
+    import debug from 'debug'
+
+    const log = debug('router')
 
     const Dashboard = React.lazy(() => import('${__dirname}/../Dashboard.jsx'))
     const Presentation = React.lazy(() => import('${__dirname}/../Presentation'))
     ${imports.join('\n')}
 
-    export default (uid, browserLocation = {pathname: window.location.pathname}) => {
+    export default (uid, publicRoutes, browserLocation = {pathname: window.location.pathname}, signinRoute = '/signin') => {
       const pathname = browserLocation.pathname
-      if (!uid && !['/signin', '/agreement', '/privacy'].includes(pathname)) {
+      log(pathname, uid, publicRoutes, browserLocation)
+      if (!uid && !publicRoutes.includes(pathname)) {
         return React.createElement(Presentation)
       }
-      if (pathname === '/') {
+      if (uid && (pathname === '/' || pathname === signinRoute)) {
         return React.createElement(Dashboard)
       }
       switch (pathname) {
         ${routes.join('\n')}
         default:
-          return 'Route not found'
+          return 'Route not found!' // todo
       }
     }
   `

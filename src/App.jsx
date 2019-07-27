@@ -17,9 +17,11 @@ import {updateApp} from './controller'
 import Alert from './components/Alert'
 import t from './lib/translate'
 
-import getView from './loaders/routes!'
+import getView from './loaders/router!'
 
 const log = debug('app')
+
+const publicRoutes = ['/signin', '/agreement', '/privacy']
 
 class App extends Component {
   componentDidMount() {
@@ -63,7 +65,7 @@ class App extends Component {
             </div>
           }
         >
-          {getView(uid, browserLocation)}
+          {getView(uid, publicRoutes, browserLocation)}
           {updateAvailable && (
             <Alert
               title={t`Update available!`}
