@@ -121,7 +121,6 @@ if (production) {
   config.devtool = 'eval-source-map'
   config.devServer = {
     contentBase: './server',
-    hot: true,
     stats: 'minimal',
     host: 'localhost',
     port: 8000,
