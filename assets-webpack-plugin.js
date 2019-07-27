@@ -193,7 +193,7 @@ class AssetsPlugin {
           }
           await fs.promises.writeFile(
             translationsFilename,
-            JSON.stringify(translations, null, '  ')
+            JSON.stringify(translations, null, '  ') + '\n'
           )
         }
         glob(path.join(__dirname, 'src/**/*.js*'), (err, matches) => {
