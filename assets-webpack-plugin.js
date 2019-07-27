@@ -6,6 +6,7 @@ const ejs = require('ejs')
 const glob = require('glob')
 const deburr = require('lodash/deburr')
 const snakeCase = require('lodash/snakeCase')
+const isEqual = require('lodash/isEqual')
 
 const normalize = str => deburr((str || '').trim().toLowerCase())
 
@@ -187,6 +188,9 @@ class AssetsPlugin {
             .forEach(key => {
               translations[key] = newTranslations[key]
             })
+          if (isEqual(oldTranslations, translations)) {
+            return
+          }
           await fs.promises.writeFile(
             translationsFilename,
             JSON.stringify(translations, null, '  ')
