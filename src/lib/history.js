@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import qs from 'qs'
+import qs from 'query-string'
 
 const getPathname = location => {
   let pathname = location.pathname
