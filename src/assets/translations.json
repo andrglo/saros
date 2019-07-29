@@ -19,13 +19,21 @@
     "en": "let's go budgeting!",
     "pt-BR": "vamos começar!"
   },
+  "log_out": {
+    "en": "Log out",
+    "pt-BR": "Sair"
+  },
+  "my_account": {
+    "en": "My account",
+    "pt-BR": "Minha conta"
+  },
   "or": {
     "en": "or",
     "pt-BR": "ou"
   },
-  "out": {
-    "en": "Out",
-    "pt-BR": "Out"
+  "preferences": {
+    "en": "Preferences",
+    "pt-BR": "Preferências"
   },
   "privacy_policy": {
     "en": "Privacy Policy",

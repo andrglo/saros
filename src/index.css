@@ -1,13 +1,18 @@
 :root {
-  --color-bg-primary: #e2e8f0; /* bg-gray-300 */
-  --color-bg-secondary: #dcd0c0;
-  --color-bg-default: #f4f4f4;
-  --color-bg-contrats: #373737;
+  --color-bg-default: #E6FFFA; /* bg-teal-100 */
+  --color-bg-primary: #81E6D9; /* bg-teal-300 */
+  --color-bg-secondary: #38B2AC; /* bg-teal-500 */
+  --color-bg-contrast: #ECC94B; /* bg-yellow-500 */
 
-  --color-text-primary: #fff;
-  --color-text-secondary: #927e7e;
-  --color-text-default: #373737;
-  --color-text-contrast: #fff;
+  --color-text-default: #2F855A; /* bg-teal-700 */
+  --color-text-primary:  #22543D; /* bg-teal-900 */
+  --color-text-secondary: #44337A; /* bg-purple-900 */
+  --color-text-contrast: #744210; /* bg-yellow-900 */
+
+  --color-bg-menu: #F0FFF4; /* bg-gree-100 */
+  --color-bg-hover-menu: #C6F6D5; /* bg-gree-200 */
+  --color-bg-selected-menu: #68D391; /* bg-green-400 */
+  --color-text-menu: #276749; /* bg-green-800 */
 
   --color-income: rgb(12, 99, 231);
   --color-expense: rgb(211, 9, 9);
@@ -24,6 +29,11 @@
   --color-text-secondary: #755f17;
   --color-text-default: #444;
   --color-text-contrast: #444;
+
+  --color-bg-menu: #F0FFF4; /* bg-gree-100 */
+  --color-bg-hover-menu: #C6F6D5; /* bg-gree-200 */
+  --color-bg-selected-menu: #68D391; /* bg-green-400 */
+  --color-text-menu: #276749; /* bg-green-800 */
 
   --color-income: rgb(12, 99, 231);
   --color-expense: rgb(211, 9, 9);

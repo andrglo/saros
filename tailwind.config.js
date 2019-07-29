@@ -6,6 +6,7 @@ module.exports = {
         secondary: 'var(--color-text-secondary)',
         default: 'var(--color-text-default)',
         contrast: 'var(--color-text-contrast)',
+        menu: 'var(--color-text-menu)',
         income: 'var(--color-income)',
         expense: 'var(--color-expense)'
       },
@@ -13,7 +14,10 @@ module.exports = {
         primary: 'var(--color-bg-primary)',
         secondary: 'var(--color-bg-secondary)',
         default: 'var(--color-bg-default)',
-        contrast: 'var(--color-bg-contrast)'
+        contrast: 'var(--color-bg-contrast)',
+        menu: 'var(--color-bg-menu)',
+        menuHover: 'var(--color-bg-hover-menu)',
+        menuSelected: 'var(--color-bg-selected-menu)'
       },
       fontWeight: {
         budget: 100,

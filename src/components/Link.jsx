@@ -7,18 +7,20 @@ import {pushBrowserLocation} from '../actions/app'
 const Link = props => {
   const {dispatch, children, to, className} = props
   const navTo = () => {
-    dispatch(pushBrowserLocation(to))
+    if (typeof to === 'function') {
+      to()
+    } else {
+      dispatch(pushBrowserLocation(to))
+    }
   }
   return (
-    <span
+    <button
       className={cn('hover:underline cursor-pointer', className)}
+      type="button"
       onClick={navTo}
-      onKeyDown={navTo}
-      role="button"
-      tabIndex="0"
     >
       {children}
-    </span>
+    </button>
   )
 }
 
@@ -28,7 +30,8 @@ Link.propTypes = {
   className: PropTypes.string,
   to: PropTypes.oneOfType([
     PropTypes.string.isRequired,
-    PropTypes.object.isRequired
+    PropTypes.object.isRequired,
+    PropTypes.func.isRequired
   ]).isRequired
 }
 
