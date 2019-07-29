@@ -143,11 +143,11 @@ const Signin = props => {
               {`${t`By using`} ${
                 manifest.appShortName
               } ${t`you agree to our`} `}
-              <Link className="italic" href="/privacy">
+              <Link className="italic" to="/privacy">
                 {t`Privacy Policy`}
               </Link>
               {` ${t`and`} `}
-              <Link className="italic" href="/agreement">
+              <Link className="italic" to="/agreement">
                 {t`Terms of Service`}
               </Link>
             </p>

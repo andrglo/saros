@@ -5,9 +5,9 @@ import {connect} from 'react-redux'
 import {pushBrowserLocation} from '../actions/app'
 
 const Link = props => {
-  const {dispatch, children, href, className} = props
+  const {dispatch, children, to, className} = props
   const navTo = () => {
-    dispatch(pushBrowserLocation(href))
+    dispatch(pushBrowserLocation(to))
   }
   return (
     <span
@@ -26,7 +26,7 @@ Link.propTypes = {
   dispatch: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
-  href: PropTypes.oneOfType([
+  to: PropTypes.oneOfType([
     PropTypes.string.isRequired,
     PropTypes.object.isRequired
   ]).isRequired
