@@ -21,7 +21,11 @@ import getView from './loaders/router!'
 
 const log = debug('app')
 
-const publicRoutes = ['/signin', '/agreement', '/privacy']
+const Dashboard = React.lazy(() => import('./Dashboard.jsx'))
+const Presentation = React.lazy(() => import('./Presentation'))
+const Agreement = React.lazy(() => import('./Agreement.jsx'))
+const Privacy = React.lazy(() => import('./Privacy.jsx'))
+const Signin = React.lazy(() => import('./Signin.jsx'))
 
 class App extends Component {
   componentDidMount() {
@@ -55,7 +59,32 @@ class App extends Component {
 
   render() {
     log('render', this.props)
-    const {uid, updateAvailable, locale, browserLocation} = this.props
+    const {
+      uid,
+      updateAvailable,
+      locale,
+      browserLocation = {}
+    } = this.props
+    const pathname =
+      browserLocation.pathname || window.location.pathname
+    let view
+    switch (pathname) {
+      case '/agreement':
+        view = <Agreement />
+        break
+      case '/privacy':
+        view = <Privacy />
+        break
+      case '/signin':
+        view = <Signin />
+        break
+      default:
+        if (!uid) {
+          view = <Presentation />
+        } else {
+          view = <Dashboard>{getView(pathname)}</Dashboard>
+        }
+    }
     return (
       <React.StrictMode key={locale}>
         <Suspense
@@ -65,7 +94,7 @@ class App extends Component {
             </div>
           }
         >
-          {getView(uid, publicRoutes, browserLocation)}
+          {view}
           {updateAvailable && (
             <Alert
               title={t`Update available!`}

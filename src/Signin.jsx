@@ -2,11 +2,11 @@ import React, {useState, useEffect} from 'react'
 import debug from 'debug'
 import cn from 'classnames'
 
-import t from '../lib/translate'
-import firebase from '../lib/firebase'
-import {manifest} from '../../saros.config'
-import isEmailValid from '../lib/isEmailValid'
-import Link from '../components/Link'
+import t from './lib/translate'
+import firebase from './lib/firebase'
+import {manifest} from '../saros.config'
+import isEmailValid from './lib/isEmailValid'
+import Link from './components/Link'
 
 const log = debug('signin')
 
@@ -126,7 +126,7 @@ const Signin = props => {
             {t`signin google`}
             <img
               className="h-6 ml-4"
-              src={require('../assets/google.svg')}
+              src={require('./assets/google.svg')}
               alt="google logo"
             />
           </button>

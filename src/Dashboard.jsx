@@ -1,81 +1,115 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {FaUser, FaSignOutAlt, FaCog, FaBars} from 'react-icons/fa'
+import debug from 'debug'
+import {
+  FaUser,
+  FaSignOutAlt,
+  FaCog,
+  FaBars,
+  FaHome
+} from 'react-icons/fa'
 
 import {disconnect} from './controller'
 import t from './lib/translate'
-import {getUser} from './selectors/app'
+import {getUser, getBrowserLocation} from './selectors/app'
 import LinkMenu from './components/LinkMenu'
+import {pushBrowserLocation} from './actions/app'
+
+const log = debug('dashboard')
 
 const Dashboard = props => {
-  const {user} = props
+  log('render', props)
+  const {user, children, isHome, dispatch} = props
+
+  const [focusItemInUserMenu, setFocusItemInUserMenu] = useState(
+    false
+  )
   const [showUserMenu, setShowUserMenu] = useState(false)
-  const {dispatch} = props
   return (
     <React.Fragment>
       <div className="fixed flex justify-between w-full shadow-lg bg-primary text-primary h-12 sm:h-16 p-2 sm:p-4">
         <button
-          id="drawerButton"
           type="button"
           className="items-center ml-2 sm:invisible"
         >
           <FaBars />
         </button>
-        <div className="relative">
-          <button
-            type="button"
-            className="w-8 h-8 rounded-full focus:outline-none focus:shadow-outline"
-            onClick={() => {
-              setShowUserMenu(!showUserMenu)
-            }}
-          >
-            <img
-              className="w-8 h-8 rounded-full"
-              src={user.photoURL}
-              alt="Avatar of User"
-            />
-          </button>
-          {showUserMenu && (
-            <LinkMenu
-              className="absolute right-0 mt-0 sm:mt-1"
-              onClose={() => {
-                setShowUserMenu(false)
+        <div className="flex items-center">
+          {!isHome && (
+            <button
+              className="w-10 h-10 mr-4 hover:bg-menuHover rounded-full focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={() => {
+                dispatch(pushBrowserLocation('/'))
               }}
-              options={[
-                {
-                  icon: <FaUser />,
-                  label: t`My account`,
-                  link: '/account'
-                },
-                {
-                  icon: <FaCog />,
-                  label: t`Preferences`,
-                  link: '/preferences'
-                },
-                {
-                  divider: (
-                    <div
-                      key="div"
-                      className="m-1 border border-menu"
-                    />
-                  )
-                },
-                {
-                  icon: <FaSignOutAlt />,
-                  label: t`Log out`,
-                  link: disconnect
-                }
-              ]}
-            />
+            >
+              <FaHome className="w-6 h-6 m-auto" />
+            </button>
           )}
+          <div className="relative">
+            <div className="h-2" />
+            <button
+              type="button"
+              className="rounded-full focus:outline-none focus:shadow-outline"
+              onClick={() => {
+                setFocusItemInUserMenu(false)
+                setShowUserMenu(!showUserMenu)
+              }}
+              onKeyDown={event => {
+                event.preventDefault()
+                setFocusItemInUserMenu(true)
+                setShowUserMenu(!showUserMenu)
+              }}
+            >
+              <img
+                className="w-8 h-8 rounded-full"
+                src={user.photoURL}
+                alt="Avatar of User"
+              />
+            </button>
+            {showUserMenu && (
+              <LinkMenu
+                className="absolute right-0 mt-0 sm:mt-1"
+                onClose={() => {
+                  setShowUserMenu(false)
+                }}
+                focus={focusItemInUserMenu}
+                options={[
+                  {
+                    icon: <FaUser />,
+                    label: t`My account`,
+                    link: '/profile-edit'
+                  },
+                  {
+                    icon: <FaCog />,
+                    label: t`Preferences`,
+                    link: '/preferences'
+                  },
+                  {
+                    divider: (
+                      <div
+                        key="div"
+                        className="m-1 border border-menu"
+                      />
+                    )
+                  },
+                  {
+                    icon: <FaSignOutAlt />,
+                    label: t`Log out`,
+                    link: disconnect
+                  }
+                ]}
+              />
+            )}
+          </div>
         </div>
       </div>
-      <div className="fixed h-full mt-12 sm:mt-16 w-0 sm:w-20 sm:shadow-inner overflow-x-hidden">
-        Drawer
+      <div className="fixed h-full mt-12 sm:mt-16 w-0 sm:w-40 sm:shadow-inner overflow-x-hidden">
+        Todo: Quick links
       </div>
-      <div className="h-screen w-screen bg-default text-default pt-12 sm:pt-16 pl-0 sm:pl-20">
-        Workspace
+      <div className="h-screen w-screen bg-default text-default pt-12 sm:pt-16 pl-0 sm:pl-40">
+        {children || 'Dashboard view will go here'}
       </div>
     </React.Fragment>
   )
@@ -83,11 +117,17 @@ const Dashboard = props => {
 
 Dashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
+  children: PropTypes.node,
+  user: PropTypes.object.isRequired,
+  isHome: PropTypes.bool
 }
 
 export default connect(state => {
+  const browserLocation = getBrowserLocation(state)
   return {
-    user: getUser(state)
+    user: getUser(state),
+    isHome: Boolean(
+      !browserLocation || browserLocation.pathname === '/'
+    )
   }
 })(Dashboard)

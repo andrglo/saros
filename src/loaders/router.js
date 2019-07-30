@@ -28,9 +28,9 @@ module.exports = function routesLoader() {
     )
     const route =
       path.dirname(fullName.substring(root.length)) +
-      kebabCase(normalize(name))
+      normalize(kebabCase(name))
     routes.push(
-      `case ('${route}'): {
+      `case '${route}': {
         return React.createElement(${name})
       }`
     )
@@ -38,30 +38,18 @@ module.exports = function routesLoader() {
 
   const source = `
     import React from 'react'
-    import debug from 'debug'
-
-    const log = debug('router')
-
-    const Dashboard = React.lazy(() => import('${__dirname}/../Dashboard.jsx'))
-    const Presentation = React.lazy(() => import('${__dirname}/../Presentation'))
+    const PageNotFound = React.lazy(() => import('${__dirname}/../PageNotFound.jsx'))
     ${imports.join('\n')}
 
-    export default (uid, publicRoutes, browserLocation = {pathname: window.location.pathname}, signinRoute = '/signin') => {
-      const pathname = browserLocation.pathname
-      log(pathname, uid, publicRoutes, browserLocation)
-      if (!uid && !publicRoutes.includes(pathname)) {
-        return React.createElement(Presentation)
-      }
-      if (uid && (pathname === '/' || pathname === signinRoute)) {
-        return React.createElement(Dashboard)
-      }
+    export default pathname => {
       switch (pathname) {
+        case '/':
+          return null
         ${routes.join('\n')}
         default:
-          return 'Route not found!' // todo
+          return React.createElement(PageNotFound)
       }
     }
   `
-
   callback(null, source)
 }

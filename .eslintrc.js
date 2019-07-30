@@ -45,5 +45,7 @@ module.exports = {
     'jsx-a11y/label-has-for': 0, // deprecated
     'jsx-a11y/no-autofocus': 0, // did not understand why
     'prefer-template': 0,
+    'jsx-a11y/interactive-supports-focus': 0, // Many cases the support for focus should only be in the children
+    'no-plusplus': 0,
   }
 }
