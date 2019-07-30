@@ -1,0 +1,15 @@
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /dbs/{db}/{table}/{allPaths=**} {
+      allow read: if request.auth.token.dbs[db] != null;
+      allow write: if request.auth.token.dbs[db] != null
+                      && (
+                          request.resource == null ||
+                          (
+                             int(request.auth.token.dbs[db].expireOn) > request.time.toMillis()
+                             && request.resource.size < 10 * 1024 * 1024
+                           )
+                          );
+    }
+  }
+}

@@ -4,9 +4,13 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/storage'
 
-import env from '../../saros.config'
+import firebaseConfig from '../loaders/firebase!'
 
-firebase.initializeApp(env.firebaseConfig)
+firebase.initializeApp(firebaseConfig)
+
+if (process.env.NODE_ENV === 'development') {
+  console.log('Using firebase project', firebaseConfig.projectId)
+}
 
 export default firebase
 
