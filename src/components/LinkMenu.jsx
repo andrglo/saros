@@ -33,15 +33,18 @@ const Menu = props => {
         )}
       >
         {options.map(option => {
-          const {label, link} = option
+          const {label, link, icon, divider} = option
           return (
-            <Link
-              key={label}
-              to={link}
-              className="bg-menu text-menu hover:bg-menuHover p-2 w-full text-left block hover:no-underline"
-            >
-              {label}
-            </Link>
+            divider || (
+              <Link
+                key={label}
+                to={link}
+                className="bg-menu text-menu hover:bg-menuHover p-2 w-full text-left block hover:no-underline flex justify-start items-center mb-1 rounded-sm"
+              >
+                {icon}
+                <span className="pl-2">{label}</span>
+              </Link>
+            )
           )
         })}
       </nav>
@@ -54,11 +57,13 @@ Menu.propTypes = {
   onClose: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string.isRequired,
+      label: PropTypes.string,
       link: PropTypes.oneOfType([
         PropTypes.string.isRequired,
         PropTypes.func.isRequired
-      ]).isRequired
+      ]),
+      icon: PropTypes.element,
+      divider: PropTypes.element
     }).isRequired
   ).isRequired
 }

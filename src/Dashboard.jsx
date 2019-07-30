@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {IoMdMenu} from 'react-icons/io'
+import {FaUser, FaSignOutAlt, FaCog, FaBars} from 'react-icons/fa'
+
 import {disconnect} from './controller'
 import t from './lib/translate'
 import {getUser} from './selectors/app'
@@ -19,13 +20,12 @@ const Dashboard = props => {
           type="button"
           className="items-center ml-2 sm:invisible"
         >
-          <IoMdMenu />
+          <FaBars />
         </button>
-        <div className="relative h-8 mr-2">
+        <div className="relative">
           <button
-            id="userButton"
             type="button"
-            className="flex h-8 sm:items-center"
+            className="w-8 h-8 rounded-full focus:outline-none focus:shadow-outline"
             onClick={() => {
               setShowUserMenu(!showUserMenu)
             }}
@@ -35,20 +35,37 @@ const Dashboard = props => {
               src={user.photoURL}
               alt="Avatar of User"
             />
-            <span className="hidden md:inline-block ml-2">
-              {user.displayName}
-            </span>
           </button>
           {showUserMenu && (
             <LinkMenu
-              className="absolute right-0 mt-1"
+              className="absolute right-0 mt-0 sm:mt-1"
               onClose={() => {
                 setShowUserMenu(false)
               }}
               options={[
-                {label: t`My account`, link: '/account'},
-                {label: t`Preferences`, link: '/preferences'},
-                {label: t`Log out`, link: disconnect}
+                {
+                  icon: <FaUser />,
+                  label: t`My account`,
+                  link: '/account'
+                },
+                {
+                  icon: <FaCog />,
+                  label: t`Preferences`,
+                  link: '/preferences'
+                },
+                {
+                  divider: (
+                    <div
+                      key="div"
+                      className="m-1 border border-menu"
+                    />
+                  )
+                },
+                {
+                  icon: <FaSignOutAlt />,
+                  label: t`Log out`,
+                  link: disconnect
+                }
               ]}
             />
           )}

@@ -25,6 +25,12 @@ module.exports = {
         overdue: 900
       }
     },
+    borderColor: () => ({
+      default: 'var(--color-text-default)',
+      primary: 'var(--color-text-primary)',
+      secondary: 'var(--color-text-secondary)',
+      menu: 'var(--color-text-menu)'
+    }),
     spinner: theme => ({
       default: {
         color: theme('colors.blue.500', 'red'), // color you want to make the spinner
