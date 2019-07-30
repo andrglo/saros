@@ -1,7 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
 import PropTypes from 'prop-types'
-import {GoAlert, GoInfo, GoStop} from 'react-icons/go'
+import {
+  FaExclamationTriangle,
+  FaInfo,
+  FaMinusCircle
+} from 'react-icons/fa'
 
 const Alert = props => {
   const {
@@ -35,21 +39,21 @@ const Alert = props => {
       view = `${view} bg-yellow-400 text-yellow-900 border-yellow-500`
       btn = `${btn} bg-yellow-500 hover:bg-yellow-600 text-yellow-900 `
       icon = (
-        <GoAlert className="flex-initial h-6 w-6 text-yellow-800 mr-2 my-auto" />
+        <FaExclamationTriangle className="flex-initial h-6 w-6 text-yellow-800 mr-2 my-auto" />
       )
       break
     case 'error':
       view = `${view} bg-red-400 text-red-900 border-red-500`
       btn = `${btn} bg-red-500 hover:bg-red-600 text-red-900`
       icon = (
-        <GoStop className="flex-initial h-6 w-6 text-red-800 mr-2 my-auto" />
+        <FaMinusCircle className="flex-initial h-6 w-6 text-red-800 mr-2 my-auto" />
       )
       break
     default:
       view = `${view} bg-teal-100 text-teal-900 border-teal-500`
       btn = `${btn} bg-teal-200 hover:bg-teal-300 text-teal-900`
       icon = (
-        <GoInfo className="flex-initial h-6 w-6 text-teal-800 mr-2 my-auto" />
+        <FaInfo className="flex-initial h-6 w-6 text-teal-800 mr-2 my-auto" />
       )
   }
   return (
