@@ -57,9 +57,11 @@ const Dashboard = props => {
                 setShowUserMenu(!showUserMenu)
               }}
               onKeyDown={event => {
-                event.preventDefault()
-                setFocusItemInUserMenu(true)
-                setShowUserMenu(!showUserMenu)
+                if (!showUserMenu) {
+                  event.preventDefault()
+                  setFocusItemInUserMenu(true)
+                  setShowUserMenu(true)
+                }
               }}
             >
               <img
