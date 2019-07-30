@@ -8,6 +8,8 @@ const deburr = require('lodash/deburr')
 const snakeCase = require('lodash/snakeCase')
 const isEqual = require('lodash/isEqual')
 
+const config = require('./saros.config')
+
 const normalize = str => deburr((str || '').trim().toLowerCase())
 
 const defaultConfig = {
@@ -165,18 +167,18 @@ class AssetsPlugin {
               const key = snakeCase(
                 normalize(text).replace(/\*/g, 'n')
               )
-              if (!oldTranslations[key]) {
-                newTranslations[key] = {
-                  en: text,
-                  'pt-BR': text
-                }
+              newTranslations[key] = {}
+              config.locales.forEach(locale => {
+                const oldTranslation = oldTranslations[key] || {}
                 if (requirePlural) {
-                  newTranslations[key].en = [text, text]
-                  newTranslations[key]['pt-BR'] = [text, text]
+                  newTranslations[key][locale] = oldTranslation[
+                    locale
+                  ] || [text, text]
+                } else {
+                  newTranslations[key][locale] =
+                    oldTranslation[locale] || text
                 }
-              } else {
-                newTranslations[key] = oldTranslations[key]
-              }
+              })
             })
             m = regex.exec(content)
           }
