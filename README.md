@@ -11,7 +11,7 @@
 ## What it is not
 
 - A boilerplate to start new projects
-- A native app from mobile phone
+- A native app for mobile phone
 
 ## Why open source
 
