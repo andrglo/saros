@@ -42,5 +42,8 @@ if (!('serviceWorker' in navigator)) {
   } else {
     boot()
     require('./assets/translations.json') // to trigger rebuild
+    if (module.hot) {
+      module.hot.accept()
+    }
   }
 }

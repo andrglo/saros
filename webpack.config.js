@@ -124,6 +124,7 @@ if (production) {
     stats: 'minimal',
     host: 'localhost',
     port: 8000,
+    hot: true,
     overlay: {
       errors: true,
       warnings: true

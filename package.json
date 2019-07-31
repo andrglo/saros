@@ -41,6 +41,7 @@
     "marked": "^0.7.0",
     "postcss-loader": "^3.0.0",
     "prettier": "^1.18.2",
+    "react-hot-loader": "^4.12.10",
     "redux-logger": "^3.0.6",
     "style-loader": "^0.23.1",
     "svg-url-loader": "^3.0.0",
