@@ -2,19 +2,19 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
-import {
-  FaUser,
-  FaSignOutAlt,
-  FaCog,
-  FaBars,
-  FaHome
-} from 'react-icons/fa'
 
 import {disconnect} from './controller'
 import t from './lib/translate'
 import {getUser, getBrowserLocation} from './selectors/app'
 import LinkMenu from './components/LinkMenu'
 import {pushBrowserLocation} from './actions/app'
+import {
+  ProfileIcon,
+  SignoutIcon,
+  SettingsIcon,
+  BarsIcon,
+  HomeIcon
+} from './assets/icons'
 
 const log = debug('dashboard')
 
@@ -33,7 +33,7 @@ const Dashboard = props => {
           type="button"
           className="items-center ml-2 sm:invisible"
         >
-          <FaBars />
+          <BarsIcon />
         </button>
         <div className="flex items-center">
           {!isHome && (
@@ -44,7 +44,7 @@ const Dashboard = props => {
                 dispatch(pushBrowserLocation('/'))
               }}
             >
-              <FaHome className="w-6 h-6 m-auto" />
+              <HomeIcon className="w-6 h-6 m-auto" />
             </button>
           )}
           <div className="relative">
@@ -79,12 +79,12 @@ const Dashboard = props => {
                 focus={focusItemInUserMenu}
                 options={[
                   {
-                    icon: <FaUser />,
+                    icon: <ProfileIcon />,
                     label: t`My account`,
                     link: '/profile-edit'
                   },
                   {
-                    icon: <FaCog />,
+                    icon: <SettingsIcon />,
                     label: t`Preferences`,
                     link: '/preferences'
                   },
@@ -97,7 +97,7 @@ const Dashboard = props => {
                     )
                   },
                   {
-                    icon: <FaSignOutAlt />,
+                    icon: <SignoutIcon />,
                     label: t`Log out`,
                     link: disconnect
                   }

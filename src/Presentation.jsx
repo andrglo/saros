@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
 
-import {MdLaunch} from 'react-icons/md'
-
+import {LaunchIcon} from './assets/icons'
 import t from './lib/translate'
 import {pushBrowserLocation} from './actions/app'
 
@@ -47,7 +46,7 @@ const Presentation = props => {
               href="https://github.com/andrglo/saros"
             >
               {t`Learn more`}
-              <MdLaunch className="m-2" />
+              <LaunchIcon className="m-2" />
             </a>
             <button
               className="mx-auto flex lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg"
