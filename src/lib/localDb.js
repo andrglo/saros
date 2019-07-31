@@ -3,8 +3,8 @@ import debug from 'debug'
 const log = debug('localDb')
 
 const LOCAL_DATABASE_NAME = 'saros'
-const DATABASE_VERSION = 2
-const STORE_NAMES = ['entities', 'state', 'pendent']
+const DATABASE_VERSION = 3
+const STORE_NAMES = ['docs', 'state', 'pendent']
 
 const db = {}
 

@@ -39,7 +39,7 @@ const log = debug('controller')
 log('State configuration started')
 
 const STATE_STORE_NAME = 'state'
-const ENTITY_STORE_NAME = 'entities'
+const DOC_STORE_NAME = 'docs'
 const PENDENT_STORE_NAME = 'pendent'
 const INTERVAL_TO_SAVE_IN_CLOUD = 20000
 const INTERVAL_TO_SAVE_IN_LOCAL_DB = 500
@@ -53,7 +53,7 @@ const MAX_DOCS_READS_IN_SEEK = 36
 
 let store
 let localDb
-const subscribedEntities = new Map()
+const subscribedCollections = new Map()
 const subscriptions = new Set()
 
 const reducers = new Map()
@@ -245,7 +245,7 @@ const initCurrentUser = idTokenResult => {
 
 let childReducers = {
   now: (state, action) => (action.type === 'IDLE' ? Date.now() : 0),
-  entities: (state = {}) => state
+  docs: (state = {}) => state
 }
 Object.keys(reducersConfig).forEach(path => {
   const config = reducersConfig[path]
@@ -319,15 +319,15 @@ const composeEnhancers =
 
 export const createStore = async () => {
   localDb = await openLocalDb()
-  const keys = await localDb.getKeys(ENTITY_STORE_NAME)
+  const keys = await localDb.getKeys(DOC_STORE_NAME)
   const dbs = []
   const initialState = {}
   for (const key of keys) {
     const match = key.match(/^dbs\/(\w+)$/)
     if (match) {
       // eslint-disable-next-line no-await-in-loop
-      const license = await localDb.get(ENTITY_STORE_NAME, key)
-      set(initialState, `${ENTITY_STORE_NAME}.${key}`, license)
+      const license = await localDb.get(DOC_STORE_NAME, key)
+      set(initialState, `${DOC_STORE_NAME}.${key}`, license)
       dbs.push(match[1])
     }
   }
@@ -391,7 +391,7 @@ const connect = async justSignedIn => {
     if (type === 'state') {
       sendPendingItems(list) // do not wait, will block when offline
     } else {
-      saveEntityBatch(list) // do not wait, will block when offline
+      saveDocBatch(list) // do not wait, will block when offline
     }
     localDb.delete(PENDENT_STORE_NAME, date)
   }
@@ -402,9 +402,9 @@ const connect = async justSignedIn => {
   }
   await Promise.all(stateSubscribes)
   for (const db of dbs) {
-    subscribeEntity(`dbs/${db}`)
+    subscribeCollection(`dbs/${db}`)
   }
-  subscribeEntity(`users/${currentUser.uid}`)
+  subscribeCollection(`users/${currentUser.uid}`)
 }
 
 export const disconnect = async () => {
@@ -416,7 +416,7 @@ export const disconnect = async () => {
   await Promise.all(unsubscribes)
   currentUser = null
   subscriptions.clear()
-  subscribedEntities.clear()
+  subscribedCollections.clear()
   await localDb.clearDb()
   await firebase.auth().signOut()
   timestamps.clear()
@@ -447,7 +447,7 @@ firebase.auth().onAuthStateChanged(user => {
       unsubscribe()
     }
     subscriptions.clear()
-    subscribedEntities.clear()
+    subscribedCollections.clear()
   }
 })
 
@@ -603,11 +603,11 @@ export const saveStateChanges = async (before, after, path, key) => {
   saveInCloud()
 }
 
-const updateEntityState = (path, entity) => {
+const updateDocState = (path, doc) => {
   store.dispatch({
     type: REHYDRATE_STATE_KEY,
-    key: `${ENTITY_STORE_NAME}.${path}`,
-    data: entity,
+    key: `${DOC_STORE_NAME}.${path}`,
+    data: doc,
     replace: true
   })
 }
@@ -624,17 +624,11 @@ export const convertRecordTimestamps = record => {
 const makeLocalDbKey = (path, month) =>
   `${path}${month ? `:${month}` : ''}`
 
-const fetchEntity = async ({
-  path,
-  entity,
-  query,
-  month,
-  transform
-}) => {
+const fetchDoc = async ({path, doc, query, month, transform}) => {
   const snapshot = await query.get()
-  console.warn('fetchEntity', path, month, snapshot.size)
+  console.warn('fetchDoc', path, month, snapshot.size)
   let lastUpdatedAt = 0
-  const data = entity.data
+  const data = doc.data
   snapshot.forEach(doc => {
     const record = {...doc.data()}
     convertRecordTimestamps(record)
@@ -650,42 +644,38 @@ const fetchEntity = async ({
     }
   })
   if (lastUpdatedAt > 0) {
-    entity.lastUpdatedAt = lastUpdatedAt
+    doc.lastUpdatedAt = lastUpdatedAt
   }
-  await localDb.save(
-    ENTITY_STORE_NAME,
-    makeLocalDbKey(path, month),
-    entity
-  )
+  await localDb.save(DOC_STORE_NAME, makeLocalDbKey(path, month), doc)
 }
 
-const getEntityFromLocalDb = async (path, months) => {
-  let entity
+const getDocFromLocalDb = async (path, months) => {
+  let doc
   let missingMonths
   if (months) {
     const found = []
     for (const month of months) {
       // eslint-disable-next-line no-await-in-loop
-      const monthEntity = await localDb.get(
-        ENTITY_STORE_NAME,
+      const monthDoc = await localDb.get(
+        DOC_STORE_NAME,
         makeLocalDbKey(path, month)
       )
-      if (monthEntity) {
-        entity = entity || {data: {}}
+      if (monthDoc) {
+        doc = doc || {data: {}}
         found.push(month)
-        for (const id of Object.keys(monthEntity.data)) {
-          entity.data[id] = monthEntity.data[id]
+        for (const id of Object.keys(monthDoc.data)) {
+          doc.data[id] = monthDoc.data[id]
         }
-        if (monthEntity.lastUpdatedAt > (entity.lastUpdatedAt || 0)) {
-          entity.lastUpdatedAt = monthEntity.lastUpdatedAt
+        if (monthDoc.lastUpdatedAt > (doc.lastUpdatedAt || 0)) {
+          doc.lastUpdatedAt = monthDoc.lastUpdatedAt
         }
       }
     }
     missingMonths = difference(months, found)
   } else {
-    entity = await localDb.get(ENTITY_STORE_NAME, path)
+    doc = await localDb.get(DOC_STORE_NAME, path)
   }
-  return [entity, missingMonths]
+  return [doc, missingMonths]
 }
 
 const getNotCachedMonths = (months, subscription = {}) => {
@@ -701,8 +691,8 @@ const getNotCachedMonths = (months, subscription = {}) => {
   return null
 }
 
-export const subscribeEntity = async (path, options) => {
-  const subscription = subscribedEntities.get(path)
+export const subscribeCollection = async (path, options) => {
+  const subscription = subscribedCollections.get(path)
   const isSubscribed = Boolean(subscription)
   const hasMonthlyCache = options && options.monthSpan
   const notCachedMonths =
@@ -710,7 +700,7 @@ export const subscribeEntity = async (path, options) => {
     getNotCachedMonths(options.monthSpan, subscription)
   if (!isSubscribed || notCachedMonths) {
     // not subscribed or has months to be cached
-    subscribedEntities.set(
+    subscribedCollections.set(
       path,
       hasMonthlyCache
         ? {
@@ -730,71 +720,74 @@ export const subscribeEntity = async (path, options) => {
     const collection = !isSingleDocument
       ? path
       : parts.slice(0, parts.length - 1).join('/')
-    let [entity, missingMonths] = await getEntityFromLocalDb(
+    let [doc, missingMonths] = await getDocFromLocalDb(
       path,
       notCachedMonths
     )
 
     let stateUpdated
     while (!currentUser) {
-      log('subscribeEntity waiting connection', path)
+      log('subscribeCollection waiting connection', path)
       // eslint-disable-next-line no-await-in-loop
       await sleep(AWAIT_CONNECTION_INTERVAL)
-      if (!subscribedEntities.has(path)) {
+      if (!subscribedCollections.has(path)) {
         // disconnected
         return
       }
       // first wait to avoid flicking
       if (
         !currentUser &&
-        entity &&
-        entity.lastUpdatedAt > 0 &&
+        doc &&
+        doc.lastUpdatedAt > 0 &&
         !stateUpdated
       ) {
-        updateEntityState(path, entity)
-        log('subscribeEntity state updated when disconnected', path)
+        updateDocState(path, doc)
+        log(
+          'subscribeCollection state updated when disconnected',
+          path
+        )
         stateUpdated = true
       }
     }
-    log('subscribeEntity connected', path)
+    log('subscribeCollection connected', path)
 
     if (missingMonths && missingMonths.length > 0) {
-      entity = entity || {data: {}}
+      doc = doc || {data: {}}
       for (const month of missingMonths) {
-        const monthEntity = {data: {}}
+        const monthDoc = {data: {}}
         // eslint-disable-next-line no-await-in-loop
-        await fetchEntity({
+        await fetchDoc({
           path,
           month,
-          entity: monthEntity,
+          doc: monthDoc,
           query: firestoreDb
             .collection(collection)
             .where('monthSpan', 'array-contains', month),
           transform
         })
-        for (const id of Object.keys(monthEntity.data)) {
-          entity.data[id] = monthEntity.data[id]
+        for (const id of Object.keys(monthDoc.data)) {
+          doc.data[id] = monthDoc.data[id]
         }
-        if (monthEntity.lastUpdatedAt > (entity.lastUpdatedAt || 0)) {
-          entity.lastUpdatedAt = monthEntity.lastUpdatedAt
+        if (monthDoc.lastUpdatedAt > (doc.lastUpdatedAt || 0)) {
+          doc.lastUpdatedAt = monthDoc.lastUpdatedAt
         }
       }
-      if (entity.lastUpdatedAt > 0) {
-        updateEntityState(path, entity)
+      if (doc.lastUpdatedAt > 0) {
+        updateDocState(path, doc)
       }
-    } else if (!entity && !isSingleDocument) {
-      entity = {data: {}}
-      await fetchEntity({
+    } else if (!doc && !isSingleDocument) {
+      doc = {data: {}}
+      await fetchDoc({
         path,
-        entity,
+        doc,
         query: firestoreDb.collection(collection),
         transform
       })
-      if (entity.lastUpdatedAt > 0) {
-        updateEntityState(path, entity)
+      if (doc.lastUpdatedAt > 0) {
+        updateDocState(path, doc)
       }
-    } else if (entity && entity.lastUpdatedAt > 0 && !stateUpdated) {
-      updateEntityState(path, entity)
+    } else if (doc && doc.lastUpdatedAt > 0 && !stateUpdated) {
+      updateDocState(path, doc)
     }
 
     if (isSubscribed) {
@@ -804,7 +797,7 @@ export const subscribeEntity = async (path, options) => {
 
     if (isSingleDocument) {
       log(
-        'subscribeEntity firestore will listen to document changes',
+        'subscribeCollection firestore will listen to document changes',
         path
       )
       const doc = firestoreDb
@@ -815,25 +808,24 @@ export const subscribeEntity = async (path, options) => {
           snapshot => {
             const data = {...snapshot.data()}
             convertRecordTimestamps(data)
-            const currentEntity =
-              store.getState().entities[path] || {}
+            const currentDoc = store.getState().docs[path] || {}
             log('firestore snapshot for document received', path)
             if (
-              currentEntity.lastUpdatedAt !== undefined &&
+              currentDoc.lastUpdatedAt !== undefined &&
               (data.updatedAt === undefined ||
-                currentEntity.lastUpdatedAt === data.updatedAt)
+                currentDoc.lastUpdatedAt === data.updatedAt)
             ) {
               return
             }
             const updatedAt = data.updatedAt
             delete data.updatedAt
-            const entity = {
-              ...currentEntity,
+            const doc = {
+              ...currentDoc,
               data,
               lastUpdatedAt: updatedAt
             }
-            localDb.save(ENTITY_STORE_NAME, path, entity)
-            updateEntityState(path, entity)
+            localDb.save(DOC_STORE_NAME, path, doc)
+            updateDocState(path, doc)
           },
           err => {
             console.error(`In onSnapshot document ${path}`, err)
@@ -842,8 +834,8 @@ export const subscribeEntity = async (path, options) => {
       )
     } else {
       log(
-        'subscribeEntity will listen firestore where lastUpdatedAt >',
-        entity.lastUpdatedAt,
+        'subscribeCollection will listen firestore where lastUpdatedAt >',
+        doc.lastUpdatedAt,
         collection
       )
       const query = firestoreDb
@@ -851,7 +843,7 @@ export const subscribeEntity = async (path, options) => {
         .where(
           'updatedAt',
           '>',
-          new Date(Number(entity.lastUpdatedAt) || 0)
+          new Date(Number(doc.lastUpdatedAt) || 0)
         )
       subscriptions.add(
         query.onSnapshot(
@@ -865,16 +857,16 @@ export const subscribeEntity = async (path, options) => {
               path,
               snapshot.size
             )
-            entity = {
-              ...(store.getState().entities[path] || {}),
-              data: {...(entity.data || {})},
-              lastUpdatedAt: Number(entity.lastUpdatedAt) || 0
+            doc = {
+              ...(store.getState().docs[path] || {}),
+              data: {...(doc.data || {})},
+              lastUpdatedAt: Number(doc.lastUpdatedAt) || 0
             }
             const monthSpanReceived = {}
             snapshot.docChanges().forEach(change => {
               const doc = change.doc
               log(
-                'subscription entity change firestore',
+                'subscription doc change firestore',
                 path,
                 change.type,
                 doc,
@@ -884,13 +876,13 @@ export const subscribeEntity = async (path, options) => {
               const record = {...doc.data()}
               convertRecordTimestamps(record)
               const monthSpan = doc.monthSpan
-              if (record.updatedAt > entity.lastUpdatedAt) {
-                entity.lastUpdatedAt = record.updatedAt
+              if (record.updatedAt > doc.lastUpdatedAt) {
+                doc.lastUpdatedAt = record.updatedAt
               }
               const added = monthSpan && {}
               const deleted = monthSpan && []
               if (record.deletedAt) {
-                delete entity.data[doc.id]
+                delete doc.data[doc.id]
                 if (deleted) {
                   deleted.push(doc.id)
                 }
@@ -898,14 +890,14 @@ export const subscribeEntity = async (path, options) => {
                 delete record.keywords
                 delete record.monthSpan
                 if (transform) {
-                  transform(added || entity.data, doc.id, record)
+                  transform(added || doc.data, doc.id, record)
                   if (added) {
                     Object.keys(added).forEach(key => {
-                      entity.data[key] = added[key]
+                      doc.data[key] = added[key]
                     })
                   }
                 } else {
-                  entity.data[doc.id] = record
+                  doc.data[doc.id] = record
                   if (added) {
                     added[doc.id] = record
                   }
@@ -925,29 +917,25 @@ export const subscribeEntity = async (path, options) => {
                 {added, deleted}
               ) => {
                 const localDbKey = makeLocalDbKey(path, month)
-                const entity = (await localDb.get(
-                  ENTITY_STORE_NAME,
+                const doc = (await localDb.get(
+                  DOC_STORE_NAME,
                   localDbKey
                 )) || {data: {}}
                 Object.keys(added).forEach(id => {
-                  entity.data[id] = added[id]
+                  doc.data[id] = added[id]
                 })
                 deleted.forEach(id => {
-                  delete entity.data[id]
+                  delete doc.data[id]
                 })
-                await localDb.save(
-                  ENTITY_STORE_NAME,
-                  localDbKey,
-                  entity
-                )
+                await localDb.save(DOC_STORE_NAME, localDbKey, doc)
               }
               for (const month of Object.keys(monthSpanReceived)) {
                 updateLocalDb(month, monthSpanReceived[month])
               }
             } else {
-              localDb.save(ENTITY_STORE_NAME, path, entity)
+              localDb.save(DOC_STORE_NAME, path, doc)
             }
-            updateEntityState(path, entity)
+            updateDocState(path, doc)
           },
           err => {
             console.error(`In onSnapshot collection ${path}`, err)
@@ -961,8 +949,8 @@ export const subscribeEntity = async (path, options) => {
 const makeFullDocumentPath = path =>
   path.includes('/') ? path : `dbs/${store.getState().app.db}/${path}`
 
-export const saveEntityBatch = async list => {
-  log('saveEntityBatch', 'firestore', list)
+export const saveDocBatch = async list => {
+  log('saveDocBatch', 'firestore', list)
   const firestoreBatch = firestoreDb.batch()
   for (const item of list) {
     let {path, id, doc, toBeDeleted} = item
@@ -1000,15 +988,15 @@ export const saveEntityBatch = async list => {
   }
 }
 
-export const saveEntityDocument = async (path, id, doc, options) => {
-  await saveEntityBatch([{path, id, doc, options}])
+export const saveDocDocument = async (path, id, doc, options) => {
+  await saveDocBatch([{path, id, doc, options}])
 }
 
-export const deleteEntityDocument = async (path, id, options) => {
-  await saveEntityBatch([{path, id, toBeDeleted: true, options}])
+export const deleteDocDocument = async (path, id, options) => {
+  await saveDocBatch([{path, id, toBeDeleted: true, options}])
 }
 
-export const seekEntity = async (path, keyword, options = {}) => {
+export const seekDoc = async (path, keyword, options = {}) => {
   const limit =
     options.limit < MAX_DOCS_READS_IN_SEEK
       ? options.limit
@@ -1022,18 +1010,18 @@ export const seekEntity = async (path, keyword, options = {}) => {
     query = query.startAfter(options.startAfter)
   }
   const snapshot = await query.get()
-  log('seekEntity', path, snapshot.size)
+  log('seekDoc', path, snapshot.size)
   const startAfter =
     snapshot.docs.length <= limit
       ? snapshot.docs[snapshot.docs.length - 1]
       : null
   const recordset = []
   if (snapshot.size) {
-    const entity = {
-      ...(store.getState().entities[path] || {data: {}})
+    const doc = {
+      ...(store.getState().docs[path] || {data: {}})
     }
-    const data = entity.data
-    const subscription = subscribedEntities.get(path)
+    const data = doc.data
+    const subscription = subscribedCollections.get(path)
     const transform =
       subscription &&
       subscription.options &&
@@ -1050,7 +1038,7 @@ export const seekEntity = async (path, keyword, options = {}) => {
       }
       recordset.push({id: doc.id, ...record})
     })
-    updateEntityState(path, entity)
+    updateDocState(path, doc)
   }
   return [recordset, startAfter]
 }
