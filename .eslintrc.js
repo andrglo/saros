@@ -8,9 +8,18 @@ module.exports = {
     es6: true,
     node: true
   },
-  extends: ['airbnb', 'prettier'],
+  extends: [
+    'airbnb',
+    'prettier',
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings'
+  ],
   plugins: ['prettier', 'react-hooks'],
   rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
     'prettier/prettier': ['error'],
     'import/no-extraneous-dependencies': 0,
     'react/require-default-props': 0,
@@ -47,5 +56,7 @@ module.exports = {
     'prefer-template': 0,
     'jsx-a11y/interactive-supports-focus': 0, // Many cases the support for focus should only be in the children
     'no-plusplus': 0,
+    'default-case': 0,
+    'no-continue': 0,
   }
 }
