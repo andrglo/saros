@@ -11,6 +11,10 @@
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
   },
+  "last_name": {
+    "en": "Last name",
+    "pt-BR": "Sobrenome"
+  },
   "learn_more": {
     "en": "Learn more",
     "pt-BR": "Saiba mais"
@@ -23,9 +27,17 @@
     "en": "Log out",
     "pt-BR": "Sair"
   },
+  "middle_name": {
+    "en": "Middle name",
+    "pt-BR": "Nome do meio"
+  },
   "my_account": {
     "en": "My account",
     "pt-BR": "Minha conta"
+  },
+  "name": {
+    "en": "Name",
+    "pt-BR": "Nome"
   },
   "or": {
     "en": "or",
@@ -75,9 +87,17 @@
     "en": "Update available!",
     "pt-BR": "Atualização disponível!"
   },
+  "update_conflict_now_is": {
+    "en": "Update conflict, now is",
+    "pt-BR": "Conflito ao atualizar, agora é"
+  },
   "update_now": {
     "en": "Update now?",
     "pt-BR": "Atualizar agora?"
+  },
+  "user_account": {
+    "en": "User account",
+    "pt-BR": "Minha conta"
   },
   "yes": {
     "en": "Yes",
