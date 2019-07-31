@@ -9,6 +9,9 @@ const getPathname = location => {
   return pathname
 }
 
+export const getQuery = location =>
+  location.query || qs.parse(location.search)
+
 const push = location =>
   history.pushState(
     location.state,

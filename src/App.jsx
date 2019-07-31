@@ -18,6 +18,7 @@ import Alert from './components/Alert'
 import t from './lib/translate'
 
 import getView from './loaders/router!'
+import {getQuery} from './lib/history'
 
 const log = debug('app')
 
@@ -57,34 +58,39 @@ class App extends Component {
     )
   }
 
-  render() {
-    log('render', this.props)
-    const {
-      uid,
-      updateAvailable,
-      locale,
-      browserLocation = {}
-    } = this.props
+  renderView() {
+    const {uid, browserLocation = {}} = this.props
     const pathname =
       browserLocation.pathname || window.location.pathname
-    let view
     switch (pathname) {
       case '/agreement':
-        view = <Agreement />
-        break
+        return <Agreement />
       case '/privacy':
-        view = <Privacy />
-        break
+        return <Privacy />
       case '/signin':
-        view = <Signin />
-        break
-      default:
-        if (!uid) {
-          view = <Presentation />
-        } else {
-          view = <Dashboard>{getView(pathname)}</Dashboard>
-        }
+        return <Signin />
     }
+    if (!uid) {
+      return <Presentation />
+    }
+    if (process.env.NODE_ENV === 'development') {
+      const query = getQuery(browserLocation)
+      if (query.frame === '1') {
+        return (
+          <div className="w-screen h-screen p-1">
+            <div className="shadow-outline w-full h-full bg-default text-default">
+              {getView(pathname)}
+            </div>
+          </div>
+        )
+      }
+    }
+    return <Dashboard>{getView(pathname)}</Dashboard>
+  }
+
+  render() {
+    log('render', this.props)
+    const {updateAvailable, locale} = this.props
     return (
       <React.StrictMode key={locale}>
         <Suspense
@@ -94,7 +100,7 @@ class App extends Component {
             </div>
           }
         >
-          {view}
+          {this.renderView()}
           {updateAvailable && (
             <Alert
               title={t`Update available!`}
