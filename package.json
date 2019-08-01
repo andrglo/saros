@@ -45,7 +45,7 @@
     "redux-logger": "^3.0.6",
     "style-loader": "^0.23.1",
     "svg-url-loader": "^3.0.0",
-    "tailwindcss": "^1.0.5",
+    "tailwindcss": "^1.0.6",
     "tailwindcss-spinner": "^1.0.0",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6",
