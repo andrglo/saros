@@ -1,8 +1,6 @@
-const {execSync} = require('child_process')
+const {exec} = require('child_process')
 
-const match = execSync('firebase setup:web')
-  .toString()
-  .match(/firebase\.initializeApp\(([^)]+)\)/m)
+let firebaseConfig
 
 module.exports = function loader() {
   const callback = this.async()
@@ -10,8 +8,24 @@ module.exports = function loader() {
     console.error('Loader for firebase is async')
     process.exit(1)
   }
-
-  const source = `export default ${match[1]}`
-
-  callback(null, source)
+  const sendSource = () => {
+    callback(null, `export default ${firebaseConfig || '{}'}`)
+  }
+  if (!firebaseConfig) {
+    exec('firebase setup:web', (err, stdout) => {
+      if (err) {
+        callback(err)
+        return
+      }
+      const match = stdout
+        .toString()
+        .match(/firebase\.initializeApp\(([^)]+)\)/m)
+      if (match) {
+        firebaseConfig = match[1]
+      }
+      sendSource()
+    })
+  } else {
+    sendSource()
+  }
 }
