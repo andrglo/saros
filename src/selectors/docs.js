@@ -1,10 +1,9 @@
-import get from 'lodash/get'
 import {subscribeCollection} from '../controller'
 
 export const getCollection = (state, options) => {
   const {collection, ...rest} = options
   subscribeCollection(collection, rest)
-  return get(state.doc, `${collection}.data`)
+  return (state.docs[collection] || {}).data
 }
 
 export const getDoc = (state, options) => {

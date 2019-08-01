@@ -9,16 +9,17 @@ import t from '../lib/translate'
 
 export const setForm = createAction('SET_FORM')
 export const setFormValues = createAction('SET_FORM_VALUES')
+export const setFormValueTyped = createAction('SET_FORM_VALUE_TYPED')
 export const mergeDocInFormValues = createAction(
   'MERGE_DOC_IN_FORM_VALUES'
 )
+export const setFormFieldError = createAction('SET_FORM_FIELD_ERROR')
 
 const initialState = {}
 
 const setValues = (source, target = {}) => {
-  target = clone(target)
   for (const path of Object.keys(source)) {
-    set(path, source[path], target)
+    target = set(path, source[path], target)
   }
   return Object.freeze(target)
 }
@@ -32,7 +33,6 @@ const createForm = action => {
     title,
     descriptionFields: descriptionFields.split(','),
     pathname,
-    pristine: true,
     dirty: false
   }
 }
@@ -167,18 +167,43 @@ const actionHandlers = {
     form.values = setValues(action.values, form.values)
     return replaceForm(state, action, form)
   },
+  [setFormValueTyped]: (state, action) => {
+    const form = extractForm(state, action)
+    const {id, value} = action
+    form.values = set(id, value, form.values)
+    form.dirty = true
+    form.changedByUser = (form.changedByUser || []).includes(id)
+      ? form.changedByUser
+      : [...(form.changedByUser || []), action.id]
+    return replaceForm(state, action, form)
+  },
   [mergeDocInFormValues]: (state, action) =>
     replaceForm(
       state,
       action,
       mergeValues(extractForm(state, action), action.doc)
-    )
+    ),
+  [setFormFieldError]: (state, action) => {
+    const form = extractForm(state, action)
+    const error = Array.isArray(action.error)
+      ? action.error.join('; ')
+      : action.error
+    if (error) {
+      form.fieldErrors = {
+        ...(form.fieldErrors || {}),
+        [action.id]: error
+      }
+    } else {
+      delete (form.fieldErrors || {})[action.id]
+    }
+    return replaceForm(state, action, form)
+  }
 }
 
 export default createReducer(initialState, actionHandlers, {
   persist: {
     path: 'forms',
-    list: true,
+    splitByProperty: true,
     omit: [],
     locallyOnly: []
   }

@@ -20,12 +20,29 @@ const ProfileEdit = props => {
       formName={formName}
       title={t`User account`}
       descriptionFields="firstName"
-      collection="users"
-      id={uid}
+      collection={`users/${uid}`}
     >
-      <FormInput id="firstName" label={t`Name`} />
-      <FormInput id="middleName" label={t`Middle name`} />
-      <FormInput id="lastName" label={t`Last name`} />
+      <div className="flex">
+        <FormInput className="mx-1" id="firstName" label={t`Name`} />
+        <FormInput
+          className="mx-1"
+          id="middleName"
+          label={t`Middle name`}
+          placeholder="Tecle algo"
+          validate={value => {
+            if (value.length > 5) {
+              throw new Error(
+                'Maximum length is 5 jksdhfkljasl laksdhjflkhsa lkhjfalkahsf lkashflkshadf lkjhfa;skldh lkhfslkh FINAL'
+              )
+            }
+          }}
+        />
+        <FormInput
+          className="mx-1"
+          id="lastName"
+          label={t`Last name`}
+        />
+      </div>
     </Form>
   )
 }

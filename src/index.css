@@ -1,18 +1,18 @@
 :root {
-  --color-bg-default: #E6FFFA; /* bg-teal-100 */
-  --color-bg-primary: #81E6D9; /* bg-teal-300 */
-  --color-bg-secondary: #38B2AC; /* bg-teal-500 */
-  --color-bg-contrast: #ECC94B; /* bg-yellow-500 */
+  --color-bg-default: #F7FAFC; /* gray-100 */
+  --color-bg-primary: #C6F6D5; /* teal-300 */
+  --color-bg-secondary: #38b2ac; /* teal-500 */
+  --color-bg-contrast: #ecc94b; /* yellow-500 */
 
-  --color-text-default: #2F855A; /* bg-teal-700 */
-  --color-text-primary:  #22543D; /* bg-teal-900 */
-  --color-text-secondary: #44337A; /* bg-purple-900 */
-  --color-text-contrast: #744210; /* bg-yellow-900 */
+  --color-text-default: #000000; /* black */
+  --color-text-primary: #22543d; /* teal-900 */
+  --color-text-secondary: #44337a; /* purple-900 */
+  --color-text-contrast: #744210; /* yellow-900 */
 
-  --color-bg-menu: #F0FFF4; /* bg-gree-100 */
-  --color-bg-hover-menu: #C6F6D5; /* bg-gree-200 */
-  --color-bg-selected-menu: #68D391; /* bg-green-400 */
-  --color-text-menu: #276749; /* bg-green-800 */
+  --color-bg-menu: #f0fff4; /* gree-100 */
+  --color-bg-hover-menu: #c6f6d5; /* green-200 */
+  --color-bg-selected-menu: #68d391; /* green-400 */
+  --color-text-menu: #276749; /* green-800 */
 
   --color-income: rgb(12, 99, 231);
   --color-expense: rgb(211, 9, 9);
@@ -30,10 +30,10 @@
   --color-text-default: #444;
   --color-text-contrast: #444;
 
-  --color-bg-menu: #F0FFF4; /* bg-gree-100 */
-  --color-bg-hover-menu: #C6F6D5; /* bg-gree-200 */
-  --color-bg-selected-menu: #68D391; /* bg-green-400 */
-  --color-text-menu: #276749; /* bg-green-800 */
+  --color-bg-menu: #f0fff4; /* green-100 */
+  --color-bg-hover-menu: #c6f6d5; /* green-200 */
+  --color-bg-selected-menu: #68d391; /* green-400 */
+  --color-text-menu: #276749; /* green-800 */
 
   --color-income: rgb(12, 99, 231);
   --color-expense: rgb(211, 9, 9);
@@ -91,6 +91,10 @@
   margin-right: 40px;
 }
 
+.input::placeholder {
+  @apply italic;
+  opacity: 0.3;
+}
 /* Alerts from https://www.tailwindtoolbox.com/components/alerts */
 
 /*Banner open/load animation*/

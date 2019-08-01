@@ -11,11 +11,13 @@ import {
 import {getDoc} from '../selectors/docs'
 import {setForm, mergeDocInFormValues} from '../reducers/forms'
 
+// eslint-disable-next-line no-unused-vars
 const log = debug('form')
 
 export const FormContext = React.createContext()
 
 const Form = props => {
+  log('render', props)
   const {
     children,
     formName,
@@ -30,15 +32,14 @@ const Form = props => {
   } = props
 
   useLayoutEffect(() => {
-    log('useLayoutEffect started', formHasValues, doc)
     let values = doc
     if (onGetInitialValues) {
       values = onGetInitialValues(values)
     }
-    log('useLayoutEffect values', values)
     if (!formHasValues) {
       dispatch(
-        setForm(formName, {
+        setForm({
+          formName,
           values,
           pathname: `${window.location.pathname}${window.location.search}`
         })
@@ -49,7 +50,7 @@ const Form = props => {
       ((values.updatedAt === 0 && initialValues.updatedAt !== 0) || // updatedAt is zero when the doc was saved in the local firebase cache but yet offline
         values.updatedAt > (initialValues.updatedAt || 0))
     ) {
-      dispatch(mergeDocInFormValues(formName, {doc: values}))
+      dispatch(mergeDocInFormValues({formName, doc: values}))
     }
   }, [
     dispatch,
@@ -83,8 +84,9 @@ Form.propTypes = {
 
 export default connect((state, props) => {
   const {formName, id, collection} = props
-  const form = getForm(state, formName)
+  const form = getForm(state, {formName})
   let doc
+
   if (collection) {
     doc =
       typeof collection === 'function'
