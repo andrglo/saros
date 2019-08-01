@@ -60,7 +60,7 @@ class App extends Component {
 
   renderView() {
     const {uid, browserLocation = {}} = this.props
-    const pathname =
+    let pathname =
       browserLocation.pathname || window.location.pathname
     switch (pathname) {
       case '/agreement':
@@ -68,14 +68,17 @@ class App extends Component {
       case '/privacy':
         return <Privacy />
       case '/signin':
-        return <Signin />
+        if (!uid) {
+          return <Signin />
+        }
+        pathname = '/'
     }
     if (!uid) {
       return <Presentation />
     }
     if (process.env.NODE_ENV === 'development') {
       const query = getQuery(browserLocation)
-      if (query.frame === '1') {
+      if ('frame' in query) {
         return (
           <div className="w-screen h-screen p-1">
             <div className="shadow-outline w-full h-full bg-default text-default">
@@ -125,11 +128,21 @@ App.propTypes = {
 }
 
 export default connect(state => {
+  const browserLocation = getBrowserLocation(state)
+  if (process.env.NODE_ENV === 'development') {
+    if (browserLocation.pathname !== window.location.pathname) {
+      console.error(
+        'browserLocation pathname mismatch',
+        browserLocation,
+        window.location
+      )
+    }
+  }
   return {
     uid: getUid(state),
     updateAvailable: getUpdateAvailable(state),
     theme: getTheme(state),
     locale: getLocale(state),
-    browserLocation: getBrowserLocation(state)
+    browserLocation
   }
 })(App)
