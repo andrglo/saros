@@ -1,5 +1,8 @@
 const fs = require('fs')
+const util = require('util')
 const marked = require('marked')
+
+const readFile = util.promisify(fs.readFile)
 
 module.exports = function loader() {
   const callback = this.async()
@@ -9,7 +12,7 @@ module.exports = function loader() {
   }
 
   const convertoToHtml = async filename => {
-    const contents = (await fs.promises.readFile(filename)).toString()
+    const contents = (await readFile(filename)).toString()
     return marked(contents)
   }
   convertoToHtml(this.resourcePath).then(html => {

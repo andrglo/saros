@@ -1,6 +1,6 @@
-/* eslint-disable class-methods-use-this */
 const fs = require('fs')
 const path = require('path')
+const util = require('util')
 const favicons = require('favicons')
 const ejs = require('ejs')
 const glob = require('glob')
@@ -9,6 +9,9 @@ const snakeCase = require('lodash/snakeCase')
 const isEqual = require('lodash/isEqual')
 
 const config = require('./saros.config')
+
+const readFile = util.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
 
 const normalize = str => deburr((str || '').trim().toLowerCase())
 
@@ -141,14 +144,10 @@ class AssetsPlugin {
         const extractTranslations = async filename => {
           if (!oldTranslations) {
             oldTranslations = JSON.parse(
-              (await fs.promises.readFile(
-                translationsFilename
-              )).toString()
+              (await readFile(translationsFilename)).toString()
             )
           }
-          const content = (await fs.promises.readFile(
-            filename
-          )).toString()
+          const content = (await readFile(filename)).toString()
           let m = regex.exec(content)
           while (m) {
             if (m.index === regex.lastIndex) {
@@ -193,7 +192,7 @@ class AssetsPlugin {
           if (isEqual(oldTranslations, translations)) {
             return
           }
-          await fs.promises.writeFile(
+          await writeFile(
             translationsFilename,
             JSON.stringify(translations, null, '  ') + '\n'
           )
