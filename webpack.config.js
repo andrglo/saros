@@ -118,6 +118,7 @@ if (production) {
     })
   )
 } else {
+  config.entry = ['react-hot-loader/patch', './src/index.js']
   config.devtool = 'eval-source-map'
   config.devServer = {
     contentBase: './server',
