@@ -1,4 +1,5 @@
 import React, {Component, Suspense} from 'react'
+import {hot} from 'react-hot-loader/root'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
@@ -145,4 +146,4 @@ export default connect(state => {
     locale: getLocale(state),
     browserLocation
   }
-})(App)
+})(hot(App))
