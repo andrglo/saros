@@ -251,33 +251,36 @@ Object.keys(reducersConfig).forEach(path => {
   const config = reducersConfig[path]
   const options = config.options || {}
   const toBePersisted = Boolean(options.persist)
+  const splitByProperty =
+    toBePersisted && options.persist.splitByProperty === true
   if (toBePersisted) {
     reducers.set(path, options.persist)
   }
-  if (typeof config.handlers === 'function') {
-    childReducers[path] = (state, action) =>
-      config.handlers(state, action, (state, nextState, key) =>
-        saveStateChanges(state, nextState, path, key)
-      )
-  } else if (typeof config.handlers === 'object') {
-    const handlers = config.handlers
-    childReducers[path] = (state = config.initialState, action) => {
-      const handler = handlers[action.type]
-      if (!handler) {
-        return state
-      }
-      const nextState = handler(state, action)
-      if (toBePersisted) {
+  const handlers = config.handlers
+  childReducers[path] = (state = config.initialState, action) => {
+    const handler = handlers[action.type]
+    if (!handler) {
+      return state
+    }
+    const nextState = handler(state, action)
+    if (toBePersisted) {
+      if (splitByProperty) {
+        const keysBefore = Object.keys(state)
+        const keysAfter = Object.keys(nextState)
+        for (const key of new Set([...keysBefore, ...keysAfter])) {
+          const before = state[key]
+          if (before) {
+            // when no before assumes that is auto generated
+            // and do not need to be saved
+            const after = nextState[key]
+            saveStateChanges(before, after || null, path, key)
+          }
+        }
+      } else {
         saveStateChanges(state, nextState, path)
       }
-      return nextState
     }
-  } else {
-    throw new Error(
-      'Invalid reducer configuration',
-      path,
-      reducersConfig
-    )
+    return nextState
   }
 })
 
@@ -432,7 +435,7 @@ firebase.auth().onAuthStateChanged(user => {
         localDb.save(
           STATE_STORE_NAME,
           APP_REDUCER_NAME,
-          store.getState().app
+          omit(store.getState().app, reducers.get('app').omit)
         )
         store.dispatch(pushBrowserLocation('/'))
       }
@@ -457,8 +460,8 @@ const subscribeState = async (username, path) => {
     console.error('Reducer options not found', path)
     return
   }
-  const {list, locallyOnly} = options
-  if (list) {
+  const {splitByProperty, locallyOnly} = options
+  if (splitByProperty === true) {
     const keys = await localDb.getKeys(STATE_STORE_NAME)
     const prefix = `${path}.`
     for (const key of keys) {
@@ -481,7 +484,7 @@ const subscribeState = async (username, path) => {
     username,
     path
   )
-  if (list) {
+  if (splitByProperty === true) {
     const update = (data, toBeDeleted) => {
       if (!data) {
         return
@@ -549,15 +552,16 @@ const subscribeState = async (username, path) => {
   }
 }
 
-export const saveStateChanges = async (before, after, path, key) => {
+const saveStateChanges = async (before, after, path, key = '') => {
+  if (before === after) {
+    return
+  }
   const options = reducers.get(path)
   if (!options) {
     console.error('Reducer options not found', path, key)
     return
   }
-  if (before === after) {
-    return
-  }
+  // log('saveStateChanges started', {before, after, path, key, options})
   path = key ? `${path}.${key}` : path
   if (after) {
     if (options.omit) {
