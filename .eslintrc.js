@@ -58,5 +58,6 @@ module.exports = {
     'no-plusplus': 0,
     'default-case': 0,
     'no-continue': 0,
+    'require-atomic-updates': 0,
   }
 }
