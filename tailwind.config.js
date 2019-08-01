@@ -25,7 +25,8 @@ module.exports = {
         overdue: 900
       }
     },
-    borderColor: () => ({
+    borderColor: theme => ({
+      ...theme('colors'),
       default: 'var(--color-text-default)',
       primary: 'var(--color-text-primary)',
       secondary: 'var(--color-text-secondary)',
