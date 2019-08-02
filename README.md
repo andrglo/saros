@@ -1,6 +1,6 @@
 # saros
 
-> Saros aims to be a full budgeting web app for personal use
+> Saros aims to be a full budgeting web app for personal use. Take a look at [saros budgeting](https://saros-pro.web.app)
 
 ## What it is
 

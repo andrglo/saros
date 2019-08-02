@@ -1,5 +1,10 @@
-public/*
-node_modules/*
+public
+node_modules
 *.log
 .history
+.firebase
 .firebaserc
+firebase.*.json
+deploy.*.sh
+
+
