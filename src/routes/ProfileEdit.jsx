@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
@@ -31,9 +31,7 @@ const ProfileEdit = props => {
           placeholder="Tecle algo"
           validate={value => {
             if (value.length > 5) {
-              throw new Error(
-                'Maximum length is 5 jksdhfkljasl laksdhjflkhsa lkhjfalkahsf lkashflkshadf lkjhfa;skldh lkhfslkh FINAL'
-              )
+              throw new Error('Maximum length is 5')
             }
           }}
         />
