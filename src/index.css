@@ -20,14 +20,14 @@
 
 /*! purgecss start ignore */
 .theme-dark {
-  --color-bg-primary: #0252cc;
-  --color-bg-secondary: #ffc402;
-  --color-bg-default: #fff;
+  --color-bg-default: #2A4365; /* teal-900 */
+  --color-bg-primary: #2D3748; /* gray-800 */
+  --color-bg-secondary: #4A5568; /* gray-700 */
   --color-bg-contrast: #fff;
 
+  --color-text-default: #F0FFF4;
   --color-text-primary: #fff;
   --color-text-secondary: #755f17;
-  --color-text-default: #444;
   --color-text-contrast: #444;
 
   --color-bg-menu: #f0fff4; /* green-100 */

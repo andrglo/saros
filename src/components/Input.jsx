@@ -57,7 +57,7 @@ const Input = props => {
   return (
     <div className={className}>
       <label
-        className="leading-tight text-sm tracking-tight text-gray-700"
+        className="leading-tight text-sm tracking-tight"
         htmlFor={id}
       >
         {label}
@@ -70,7 +70,7 @@ const Input = props => {
               'text-red-600': Boolean(error),
               'text-default': !error
             },
-            'input block w-full text-base rounded-sm bg-gray-300 hover:bg-gray-400',
+            'input block w-full text-base rounded-sm bg-primary hover:bg-secondary',
             'appearance-none py-1 px-1 leading-tight',
             'focus:outline-none focus:shadow-outline'
           )}
@@ -96,6 +96,7 @@ const checkProps = (props, propName, componentName) => {
       `When 'formName' is specified then 'id' or 'onChange' should be specified in '${componentName}'`
     )
   }
+  return null
 }
 
 Input.propTypes = {

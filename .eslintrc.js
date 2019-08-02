@@ -59,5 +59,6 @@ module.exports = {
     'default-case': 0,
     'no-continue': 0,
     'require-atomic-updates': 0,
+    'react/destructuring-assignment': 0,
   }
 }

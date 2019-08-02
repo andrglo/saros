@@ -21,6 +21,7 @@ const Preferences = props => {
         label={t`Theme`}
         options="Light,Dark"
         value={theme}
+        placeholder="For now type dark"
         onChange={theme => {
           dispatch(setTheme({theme}))
         }}
