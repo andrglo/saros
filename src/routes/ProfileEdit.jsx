@@ -5,7 +5,7 @@ import debug from 'debug'
 
 import t from '../lib/translate'
 import Form from '../components/Form'
-import FormInput from '../components/FormInput'
+import Input from '../components/Input'
 import {getUid} from '../selectors/app'
 
 const log = debug('profile')
@@ -23,8 +23,8 @@ const ProfileEdit = props => {
       collection={`users/${uid}`}
     >
       <div className="flex">
-        <FormInput className="mx-1" id="firstName" label={t`Name`} />
-        <FormInput
+        <Input className="mx-1" id="firstName" label={t`Name`} />
+        <Input
           className="mx-1"
           id="middleName"
           label={t`Middle name`}
@@ -35,11 +35,7 @@ const ProfileEdit = props => {
             }
           }}
         />
-        <FormInput
-          className="mx-1"
-          id="lastName"
-          label={t`Last name`}
-        />
+        <Input className="mx-1" id="lastName" label={t`Last name`} />
       </div>
     </Form>
   )

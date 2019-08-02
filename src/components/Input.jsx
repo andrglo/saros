@@ -13,12 +13,13 @@ import {
 } from '../selectors/forms'
 import {setFormValueTyped, setFormFieldError} from '../reducers/forms'
 
-const log = debug('form:input')
+const log = debug('input')
 
 const Input = props => {
-  // log('render', props)
+  log('render', props)
   const {
     formName,
+    onChange,
     className,
     value,
     dispatch,
@@ -29,7 +30,11 @@ const Input = props => {
     ...rest
   } = props
 
-  const updateValueInForm = (id, value) => {
+  const updateValue = (value, id, event) => {
+    if (onChange) {
+      onChange(value, id, event)
+      return
+    }
     try {
       dispatch(setFormValueTyped({formName, id, value}))
       if (validate) {
@@ -41,10 +46,10 @@ const Input = props => {
     }
   }
 
-  const onChange = event => {
+  const onInputChange = event => {
     const {id, value} = event.target
-    log('onChange', id, value)
-    updateValueInForm(id, value)
+    log('onInputChange', id, value)
+    updateValue(value, id, event)
   }
 
   const error = fieldErrors[id]
@@ -70,7 +75,7 @@ const Input = props => {
             'focus:outline-none focus:shadow-outline'
           )}
           value={value || ''}
-          onChange={onChange}
+          onChange={onInputChange}
         />
       </label>
       {error && (
@@ -80,10 +85,24 @@ const Input = props => {
   )
 }
 
+const checkProps = (props, propName, componentName) => {
+  if (!props.formName && !props.onChange) {
+    return new Error(
+      `One of props 'formName' or 'onChange' should be specified in '${componentName}'`
+    )
+  }
+  if (props.formName && !props.id && !props.onChange) {
+    return new Error(
+      `When 'formName' is specified then 'id' or 'onChange' should be specified in '${componentName}'`
+    )
+  }
+}
+
 Input.propTypes = {
   className: PropTypes.string,
-  id: PropTypes.string.isRequired,
-  formName: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  formName: PropTypes.string,
+  onChange: PropTypes.func,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -96,7 +115,9 @@ Input.propTypes = {
   validate: PropTypes.func,
   label: PropTypes.string,
   fieldErrors: PropTypes.object,
-  dispatch: PropTypes.func.isRequired
+  type: PropTypes.oneOf(['']),
+  dispatch: PropTypes.func.isRequired,
+  _: checkProps
 }
 
 const ConnectedInput = connect((state, props) => {
@@ -118,10 +139,5 @@ const FormInput = props => (
     {context => <ConnectedInput formName={context} {...props} />}
   </FormContext.Consumer>
 )
-
-FormInput.propTypes = {
-  id: PropTypes.string.isRequired,
-  type: PropTypes.oneOf([''])
-}
 
 export default FormInput

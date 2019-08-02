@@ -79,6 +79,10 @@
     "en": "Terms of Service",
     "pt-BR": "Termos de Serviço"
   },
+  "theme": {
+    "en": "Theme",
+    "pt-BR": "Tema"
+  },
   "this_is_a_work_in_progress": {
     "en": "This is a work in progress...",
     "pt-BR": "Em desenvolvimento..."
