@@ -13,7 +13,8 @@ import {
   SignoutIcon,
   SettingsIcon,
   BarsIcon,
-  HomeIcon
+  HomeIcon,
+  FaceIcon
 } from './assets/icons'
 
 const log = debug('dashboard')
@@ -64,11 +65,15 @@ const Dashboard = props => {
                 }
               }}
             >
-              <img
-                className="w-8 h-8 rounded-full"
-                src={user.photoURL}
-                alt="Avatar of User"
-              />
+              {user.photoURL ? (
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={user.photoURL}
+                  alt="Avatar of User"
+                />
+              ) : (
+                <FaceIcon className="w-6 h-6" />
+              )}
             </button>
             {showUserMenu && (
               <LinkMenu
