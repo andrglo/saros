@@ -14,6 +14,8 @@ if (process.env.NODE_ENV === 'development') {
 
 export default firebase
 
+export const functionsURL = `https://${firebaseConfig.locationId}1-${firebaseConfig.projectId}.cloudfunctions.net`
+
 export const firestoreDb = firebase.firestore()
 export const realTimeDb = firebase.database()
 export const toDate = date => {

@@ -21,7 +21,8 @@ import openLocalDb from './lib/localDb'
 import firebase, {
   realTimeDb,
   firestoreDb,
-  toDate
+  toDate,
+  functionsURL
 } from './lib/firebase'
 import {
   setUpdateAvailable,
@@ -31,8 +32,7 @@ import {
 import {fetchLocale} from './lib/translate'
 import {pushBrowserLocation} from './actions/app'
 
-axios.defaults.baseURL =
-  'https://us-central1-saros-development.cloudfunctions.net'
+axios.defaults.baseURL = functionsURL
 
 const log = debug('controller')
 
