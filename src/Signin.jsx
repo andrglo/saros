@@ -76,8 +76,8 @@ const Signin = props => {
   const linkSignInDisabled = signingIn || !isEmailValid(email)
   return (
     <div>
-      <div className="relative flex items-center justify-center h-screen">
-        <div className="bg-teal-300 text-white font-bold rounded-lg border shadow-lg m-2 p-10 pt-5">
+      <div className="relative m-2 sm:items-center sm:flex h-screen">
+        <div className="bg-teal-300 m-auto text-white font-bold rounded-lg border shadow-lg p-10 pt-5">
           <p className="mb-3 mx-auto text-xl text-teal-800 text-center">
             {`${manifest.appName},  ${t`lets go budgeting`}`}
           </p>
@@ -102,7 +102,7 @@ const Signin = props => {
           />
           <button
             className={cn(
-              'mx-auto flex bg-teal-200 rounded-full mb-6 py-4 px-8 shadow-lg',
+              'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg',
               {
                 'cursor-default text-teal-400': linkSignInDisabled,
                 'hover:underline text-teal-800': !linkSignInDisabled
@@ -114,11 +114,11 @@ const Signin = props => {
           >
             {t`signin link`}
           </button>
-          <p className="m-4 mx-auto text-lg text-teal-800 text-center">
+          <p className="m-2 mx-auto text-lg text-teal-800 text-center">
             {t`or`}
           </p>
           <button
-            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-4 px-8 shadow-lg"
+            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg"
             type="button"
             disabled={signingIn}
             onClick={signInUsingGoogle}
@@ -131,7 +131,7 @@ const Signin = props => {
             />
           </button>
           <button
-            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-4 px-8 shadow-lg"
+            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg"
             type="button"
             disabled={signingIn}
             onClick={signInAnonymously}
