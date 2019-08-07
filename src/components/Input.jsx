@@ -67,10 +67,11 @@ const Input = props => {
           required
           className={cn(
             {
-              'text-red-600': Boolean(error),
-              'text-default': !error
+              'text-error': Boolean(error),
+              'text-input': !error
             },
-            'input block w-full text-base rounded-sm bg-primary hover:bg-secondary',
+            'bg-input hover:bg-highlight-input border hover:border-highlight',
+            'placeholder-input block w-full text-base rounded-sm',
             'appearance-none py-1 px-1 leading-tight',
             'focus:outline-none focus:shadow-outline'
           )}

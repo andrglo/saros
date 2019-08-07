@@ -68,7 +68,7 @@ const Menu = props => {
                     setFocus(0)
                   }
                 }}
-                className="bg-menu text-menu hover:bg-menuHover p-2 w-full text-left block hover:no-underline flex justify-start items-center mb-1 rounded-sm"
+                className="bg-menu text-menu hover:bg-menu-highlight p-2 w-full text-left block hover:no-underline flex justify-start items-center mb-1 rounded-sm"
               >
                 {icon}
                 <span className="pl-2">{label}</span>
