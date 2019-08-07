@@ -124,7 +124,7 @@ if (production) {
     contentBase: './server',
     stats: 'minimal',
     host: 'localhost',
-    port: 8000,
+    port: 9000,
     hot: true,
     overlay: {
       errors: true,
