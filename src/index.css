@@ -13,6 +13,10 @@
   @apply bg-gray-300;
 }
 
+.dashboard {
+  transition: background-color 1s ease;
+}
+
 .markdown h1 {
   display: block;
   font-size: 2em;

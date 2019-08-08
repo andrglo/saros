@@ -29,7 +29,7 @@ const Dashboard = props => {
   const [showUserMenu, setShowUserMenu] = useState(false)
   return (
     <React.Fragment>
-      <div className="fixed flex justify-between w-full shadow-lg bg-toolbar text-toolbar h-12 sm:h-16 p-2 sm:p-4">
+      <div className="dashboard fixed flex justify-between w-full shadow-lg bg-toolbar text-toolbar h-12 sm:h-16 p-2 sm:p-4">
         <button
           type="button"
           className="items-center ml-2 sm:invisible"
@@ -112,10 +112,10 @@ const Dashboard = props => {
           </div>
         </div>
       </div>
-      <div className="text-drawer bg-drawer fixed h-full mt-12 sm:mt-16 w-0 sm:w-40 sm:shadow-inner overflow-x-hidden">
+      <div className="dashboard text-drawer bg-drawer fixed h-full mt-12 sm:mt-16 w-0 sm:w-40 sm:shadow-inner overflow-x-hidden">
         Todo: Quick links
       </div>
-      <div className="h-screen w-screen bg-default text-default pt-12 sm:pt-16 pl-0 sm:pl-40">
+      <div className="dashboard h-screen w-screen bg-default text-default pt-12 sm:pt-16 pl-0 sm:pl-40">
         {children || 'Dashboard view will go here'}
       </div>
     </React.Fragment>
