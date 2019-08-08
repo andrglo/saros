@@ -60,5 +60,6 @@ module.exports = {
     'no-continue': 0,
     'require-atomic-updates': 0,
     'react/destructuring-assignment': 0,
+    'consistent-return': 0,
   }
 }

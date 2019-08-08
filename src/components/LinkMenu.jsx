@@ -1,27 +1,28 @@
-import React, {useRef, useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 import Link from './Link'
+import useEventListener from '../hooks/useEventListener'
 
 const getItemId = i => `link_${i}`
 
 const Menu = props => {
   const {className, options, onClose, focus} = props
-  const overlayRef = useRef(null)
-  useEffect(() => {
-    const type = 'click'
-    overlayRef.current.addEventListener(type, onClose)
-    const onKeyDown = document.onkeydown
-    document.onkeydown = event => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-    return () => {
-      overlayRef.current.removeEventListener(type, onClose)
-      document.onkeydown = onKeyDown
+
+  const [overlay, setOverlay] = useState(null)
+  useEventListener('click', onClose, overlay)
+  const overlayRef = useCallback(element => {
+    if (element !== null) {
+      setOverlay(element)
     }
   }, [])
+
+  useEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      onClose()
+    }
+  })
+
   const [focused, setFocus] = useState(focus ? 0 : -1)
   useEffect(() => {
     const item = document.getElementById(getItemId(focused))
