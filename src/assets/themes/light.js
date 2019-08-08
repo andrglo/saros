@@ -1,32 +1,35 @@
-import colors from '../colors'
+const colors = require('../colors')
 
-export default {
-  'color-text-default': colors.black,
-  'color-bg-default': colors.teal[100],
+module.exports = {
+  name: 'Light',
+  colors: {
+    'text-default': colors.black,
+    'bg-default': colors.gray[100],
 
-  'color-text-input': colors.teal[900],
-  'color-bg-input': colors.teal[100],
-  'color-bg-input-highlight': colors.teal[200],
+    'text-input': colors.gray[900],
+    'bg-input': colors.gray[100],
+    'bg-input-highlight': colors.gray[200],
 
-  'color-text-error': colors.red[900],
-  'color-bg-error': colors.red[100],
+    'text-error': colors.red[900],
+    'bg-error': colors.red[100],
 
-  'color-text-placeholder': colors.gray[600],
+    'text-placeholder': colors.gray[600],
 
-  'color-text-toolbar': colors.teal[900],
-  'color-bg-toolbar': colors.teal[100],
+    'text-toolbar': colors.gray[900],
+    'bg-toolbar': colors.gray[100],
 
-  'color-text-drawer': colors.teal[900],
-  'color-bg-drawer': colors.teal[200],
+    'text-drawer': colors.gray[900],
+    'bg-drawer': colors.gray[200],
 
-  'color-border-default': colors.teal[300],
-  'color-border-highlight': colors.teal[700],
+    'border-default': colors.gray[300],
+    'border-highlight': colors.gray[700],
 
-  'color-text-menu': colors.teal[900],
-  'color-bg-menu': colors.teal[200],
-  'color-bg-menu-highlight': colors.teal[400],
-  'color-bg-menu-selected': colors.blue[400],
+    'text-menu': colors.gray[900],
+    'bg-menu': colors.gray[200],
+    'bg-menu-highlight': colors.gray[400],
+    'bg-menu-selected': colors.blue[400],
 
-  'color-income': colors.blue[600],
-  'color-expense': colors.red[600]
+    income: colors.blue[600],
+    expense: colors.red[600]
+  }
 }

@@ -47,10 +47,10 @@ class App extends Component {
 
   static setTheme(theme) {
     import(`./assets/themes/${theme || 'light'}`)
-      .then(({default: colors}) => {
+      .then(({colors}) => {
         for (const key of Object.keys(colors)) {
           document.documentElement.style.setProperty(
-            `--${key}`,
+            `--color-${key}`,
             colors[key]
           )
         }
