@@ -1,27 +1,19 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useRef, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 import Link from './Link'
-import useEventListener from '../hooks/useEventListener'
+import useOnClickOutside from '../hooks/useOnClickOutside'
+import useKeyPress from '../hooks/useKeyPress'
 
 const getItemId = i => `link_${i}`
 
 const Menu = props => {
   const {className, options, onClose, focus} = props
 
-  const [overlay, setOverlay] = useState(null)
-  useEventListener('click', onClose, overlay)
-  const overlayRef = useCallback(element => {
-    if (element !== null) {
-      setOverlay(element)
-    }
-  }, [])
+  const menuRef = useRef()
+  useOnClickOutside(menuRef, onClose)
 
-  useEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      onClose()
-    }
-  })
+  useKeyPress('Escape', onClose)
 
   const [focused, setFocus] = useState(focus ? 0 : -1)
   useEffect(() => {
@@ -34,10 +26,7 @@ const Menu = props => {
   return (
     <React.Fragment>
       <div
-        className="fixed h-screen w-screen inset-0"
-        ref={overlayRef}
-      />
-      <div
+        ref={menuRef}
         className={cn(
           'bg-menu text-menu rounded shadow-md z-30',
           className
