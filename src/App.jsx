@@ -6,7 +6,6 @@ import debug from 'debug'
 import serializeError from 'serialize-error'
 
 import './index.css'
-import colors from './assets/colors'
 import {setError} from './reducers/app'
 import {
   getUid,
@@ -30,37 +29,6 @@ const Agreement = React.lazy(() => import('./Agreement.jsx'))
 const Privacy = React.lazy(() => import('./Privacy.jsx'))
 const Signin = React.lazy(() => import('./Signin.jsx'))
 
-const themeColors = [
-  ['color-text-default', colors.black, colors.teal[100]],
-  ['color-bg-default', colors.teal[100], colors.teal[900]],
-
-  ['color-text-input', colors.teal[900], colors.gray[200]],
-  ['color-bg-input', colors.teal[100], colors.teal[900]],
-  ['color-bg-input-highlight', colors.teal[200], colors.teal[700]],
-
-  ['color-text-error', colors.red[900], colors.red[100]],
-  ['color-bg-error', colors.red[100], colors.red[900]],
-
-  ['color-text-placeholder', colors.gray[600], colors.gray[700]],
-
-  ['color-text-toolbar', colors.teal[900], colors.teal[200]],
-  ['color-bg-toolbar', colors.teal[100], colors.teal[900]],
-
-  ['color-text-drawer', colors.teal[900], colors.teal[200]],
-  ['color-bg-drawer', colors.teal[200], colors.teal[800]],
-
-  ['color-border-default', colors.teal[300], colors.teal[700]],
-  ['color-border-highlight', colors.teal[700], colors.teal[500]],
-
-  ['color-text-menu', colors.teal[900], colors.teal[200]],
-  ['color-bg-menu', colors.teal[200], colors.teal[800]],
-  ['color-bg-menu-highlight', colors.teal[400], colors.teal[700]],
-  ['color-bg-menu-selected', colors.blue[400], colors.blue[600]],
-
-  ['color-income', colors.blue[600], colors.blue[400]],
-  ['color-expense', colors.red[600], colors.red[400]]
-]
-
 class App extends Component {
   componentDidMount() {
     const {theme} = this.props
@@ -69,19 +37,27 @@ class App extends Component {
 
   componentDidUpdate(prevProps) {
     const {theme} = this.props
-    if (theme !== prevProps.theme) {
+    if (
+      theme !== prevProps.theme ||
+      process.env.NODE_ENV === 'development'
+    ) {
       App.setTheme(theme)
     }
   }
 
   static setTheme(theme) {
-    const isDark = theme === 'dark'
-    for (const [name, lightColor, darkColor] of themeColors) {
-      document.documentElement.style.setProperty(
-        `--${name}`,
-        isDark ? darkColor : lightColor
-      )
-    }
+    import(`./assets/themes/${theme || 'light'}`)
+      .then(({default: colors}) => {
+        for (const key of Object.keys(colors)) {
+          document.documentElement.style.setProperty(
+            `--${key}`,
+            colors[key]
+          )
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   componentDidCatch(err, info) {
