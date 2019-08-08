@@ -29,10 +29,26 @@ const Agreement = React.lazy(() => import('./Agreement.jsx'))
 const Privacy = React.lazy(() => import('./Privacy.jsx'))
 const Signin = React.lazy(() => import('./Signin.jsx'))
 
+const LIGHT = 'light'
+const DARK = 'dark'
+
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.setColorScheme = this.setColorScheme.bind(this)
+    this.state = {
+      colorScheme: LIGHT
+    }
+  }
+
   componentDidMount() {
     const {theme} = this.props
-    App.setTheme(theme)
+    this.darkSchemeQuery = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    )
+    this.darkSchemeQuery.addListener(this.setColorScheme)
+    this.setColorScheme()
+    App.setTheme(theme, this.state.colorScheme)
   }
 
   componentDidUpdate(prevProps) {
@@ -41,12 +57,12 @@ class App extends Component {
       theme !== prevProps.theme ||
       process.env.NODE_ENV === 'development'
     ) {
-      App.setTheme(theme)
+      App.setTheme(theme, this.state.colorScheme)
     }
   }
 
-  static setTheme(theme) {
-    import(`./assets/themes/${theme || 'light'}`)
+  static setTheme(theme, colorScheme) {
+    import(`./assets/themes/${theme || colorScheme}`)
       .then(({colors}) => {
         for (const key of Object.keys(colors)) {
           document.documentElement.style.setProperty(
@@ -58,6 +74,16 @@ class App extends Component {
       .catch(err => {
         console.error(err)
       })
+  }
+
+  componentWillUnmount() {
+    this.darkSchemeQuery.removeListener(this.setColorScheme)
+  }
+
+  setColorScheme() {
+    this.setState({
+      colorScheme: this.darkSchemeQuery.matches ? DARK : LIGHT
+    })
   }
 
   componentDidCatch(err, info) {
