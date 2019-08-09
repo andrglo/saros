@@ -5,6 +5,8 @@ import {connect} from 'react-redux'
 import get from 'lodash/get'
 import debug from 'debug'
 
+import Select from './Select'
+
 import {FormContext} from './Form'
 import {
   getForm,
@@ -12,8 +14,22 @@ import {
   getFieldErrors
 } from '../selectors/forms'
 import {setFormValueTyped, setFormFieldError} from '../reducers/forms'
+import extractClassesByComponent from '../lib/extractClassesByComponent'
 
 const log = debug('input')
+
+const SimpleInput = props => {
+  return (
+    <input
+      {...props}
+      className={extractClassesByComponent(props.className).container}
+    />
+  )
+}
+
+SimpleInput.propTypes = {
+  className: PropTypes.string
+}
 
 const Input = props => {
   log('render', props)
@@ -27,6 +43,7 @@ const Input = props => {
     id,
     label,
     fieldErrors = {},
+    options,
     ...rest
   } = props
 
@@ -46,6 +63,11 @@ const Input = props => {
     }
   }
 
+  const onSelectChange = value => {
+    log('onSelectChange', id, value)
+    updateValue(value, id)
+  }
+
   const onInputChange = event => {
     const {id, value} = event.target
     log('onInputChange', id, value)
@@ -54,6 +76,19 @@ const Input = props => {
 
   const error = fieldErrors[id]
 
+  const inputProps = {}
+  let Component
+  if (options) {
+    Component = Select
+    inputProps.options = options
+    inputProps.onChange = onSelectChange
+  } else {
+    Component = SimpleInput
+    inputProps.onChange = onInputChange
+  }
+
+  const isSelect = Component === Select
+
   return (
     <div className={className}>
       <label
@@ -61,22 +96,28 @@ const Input = props => {
         htmlFor={id}
       >
         {label}
-        <input
+        <Component
           {...rest}
           id={id}
           required
           className={cn(
             {
               'text-error': Boolean(error),
-              'text-input': !error
+              'text-input': !error,
+              'input { placeholder-input }': isSelect,
+              'content-single {}': isSelect,
+              'content-multi {}': isSelect,
+              'clear {  }': isSelect
             },
             'bg-input hover:bg-highlight-input border hover:border-highlight',
             'placeholder-input block w-full text-base rounded-sm',
             'appearance-none py-1 px-1 leading-tight',
-            'focus:outline-none focus:shadow-outline'
+            'focus:outline-none focus:shadow-outline',
+            'dropdown { bg-input border rounded-sm }',
+            'item { p-1 hover:bg-highlight-input bg-menu text-input }'
           )}
           value={value || ''}
-          onChange={onInputChange}
+          {...inputProps}
         />
       </label>
       {error && (
@@ -117,6 +158,7 @@ Input.propTypes = {
   validate: PropTypes.func,
   label: PropTypes.string,
   fieldErrors: PropTypes.object,
+  options: PropTypes.array,
   type: PropTypes.oneOf(['']),
   dispatch: PropTypes.func.isRequired,
   _: checkProps

@@ -61,5 +61,7 @@ module.exports = {
     'require-atomic-updates': 0,
     'react/destructuring-assignment': 0,
     'consistent-return': 0,
+    'no-cond-assign': 0,
+    'react/sort-comp': 0,
   }
 }
