@@ -8,7 +8,7 @@ module.exports = {
 
     'text-input': colors.gray[200],
     'bg-input': colors.gray[900],
-    'bg-input-highlight': colors.gray[700],
+    'bg-input-highlight': colors.gray[600],
 
     'text-error': colors.red[100],
     'bg-error': colors.red[900],

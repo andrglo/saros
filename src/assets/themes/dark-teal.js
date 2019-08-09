@@ -8,12 +8,12 @@ module.exports = {
 
     'text-input': colors.teal[200],
     'bg-input': colors.teal[900],
-    'bg-input-highlight': colors.teal[700],
+    'bg-input-highlight': colors.teal[600],
 
     'text-error': colors.red[100],
     'bg-error': colors.red[900],
 
-    'text-placeholder': colors.gray[700],
+    'text-placeholder': colors.teal[700],
 
     'text-toolbar': colors.teal[200],
     'bg-toolbar': colors.teal[900],
