@@ -36,7 +36,6 @@ const dropdownPosition = (props, methods) => {
 
 const Dropdown = ({classes, props, state, methods}) => {
   const {dropdownGap, dropdownHeight, portal} = props
-  console.log('state', state)
   const {selectBounds} = state
   const style = {
     position: 'absolute',

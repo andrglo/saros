@@ -200,7 +200,9 @@ class Select extends Component {
       this.doNotOpenOnFocus = true
     }
 
-    this.props.clearOnSelect && this.setState({search: ''})
+    if (this.props.clearOnSelect) {
+      this.setState({search: ''})
+    }
 
     return true
   }

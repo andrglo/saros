@@ -7,7 +7,6 @@ const DropdownHandle = ({
   isDropdownOpen,
   methods
 }) => {
-  console.log('DropdownHandle', isDropdownOpen)
   const style = {
     textAlign: 'center',
     cursor: 'pointer',

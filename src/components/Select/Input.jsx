@@ -16,24 +16,6 @@ class Input extends Component {
     this.input = React.createRef()
   }
 
-  // componentDidUpdate(prevProps) {
-  //   if (
-  //     this.props.state.dropdown ||
-  //     (prevProps.state.dropdown !== this.props.state.dropdown &&
-  //       this.props.state.dropdown) ||
-  //     this.props.props.autoFocus
-  //   ) {
-  //     this.input.current.focus()
-  //   }
-
-  //   if (
-  //     prevProps.state.dropdown !== this.props.state.dropdown &&
-  //     !this.props.state.dropdown
-  //   ) {
-  //     this.input.current.blur()
-  //   }
-  // }
-
   onBlur() {
     if (!this.props.state.dropdown) {
       return this.input.current.blur()
@@ -81,21 +63,13 @@ class Input extends Component {
       <input
         ref={this.input}
         style={style}
-        // tabIndex="-1"
         className={className}
         value={state.search}
-        // onFocus={() => {
-        //   log('onFocus')
-        //   methods.dropDown('open')
-        // }}
-        // onKeyPress={this.handleKeyPress}
         onChange={methods.setSearch}
-        // onBlur={this.onBlur}
         onBlur={() => {
-          log('onBlur')
           methods.dropDown('close')
         }}
-        placeholder={props.value === '' ? '' : props.addPlaceholder}
+        placeholder={props.value === '' ? props.placeholder : ''}
       />
     )
   }

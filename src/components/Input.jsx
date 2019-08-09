@@ -32,7 +32,7 @@ SimpleInput.propTypes = {
 }
 
 const Input = props => {
-  log('render', props)
+  // log('render', props)
   const {
     formName,
     onChange,
