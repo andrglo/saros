@@ -1,13 +1,15 @@
-// from https://usehooks.com/useOnClickOutside/
+// inspired by https://usehooks.com/useOnClickOutside/
 import {useEffect} from 'react'
 
-const useOnClickOutside = (ref, handler) => {
+const useOnClickOutside = (domNode, handler) => {
   useEffect(() => {
+    const domNodes = Array.isArray(domNode) ? domNode : [domNode]
     const listener = event => {
-      if (!ref.current || ref.current.contains(event.target)) {
-        return
+      for (const domNode of domNodes) {
+        if (!domNode || domNode.contains(event.target)) {
+          return
+        }
       }
-
       handler(event)
     }
 
@@ -18,7 +20,7 @@ const useOnClickOutside = (ref, handler) => {
       document.removeEventListener('mousedown', listener)
       document.removeEventListener('touchstart', listener)
     }
-  }, [ref, handler])
+  }, [domNode, handler])
 }
 
 export default useOnClickOutside
