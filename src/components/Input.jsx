@@ -114,7 +114,7 @@ const Input = props => {
             'appearance-none py-1 px-1 leading-tight',
             'focus:outline-none focus:shadow-outline',
             'dropdown { bg-input border rounded-sm }',
-            'item { p-1 hover:bg-highlight-input bg-menu text-input }'
+            'option { p-1 hover:bg-highlight-input bg-menu text-input }'
           )}
           value={value || ''}
           {...inputProps}
