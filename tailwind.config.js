@@ -34,6 +34,10 @@ module.exports = {
         budget: 100,
         due: 700,
         overdue: 900
+      },
+      maxHeight: {
+        '(screen-12)': 'calc(100vh - 3rem)',
+        '(screen-16)': 'calc(100vh - 4rem)'
       }
     },
     spinner: theme => ({
