@@ -15,6 +15,7 @@ import extractClassesByComponent from '../lib/extractClassesByComponent'
 import getScrollParent from '../lib/getScrollParent'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useEventListener from '../hooks/useEventListener'
+import {ChevronDown} from '../assets/icons'
 
 const log = debug('select')
 
@@ -23,7 +24,7 @@ const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
 
 const Dropdown = props => {
-  log('Dropdown', props)
+  // log('Dropdown', props)
   const {
     classes,
     bounds,
@@ -59,16 +60,13 @@ const Dropdown = props => {
   }
   return (
     <div style={style} className={classes.dropdown}>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
-      <div className={classes.option}>Option</div>
+      {options.map(option => {
+        return (
+          <div key={option.value} className={classes.option}>
+            {option.label}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -80,8 +78,47 @@ Dropdown.propTypes = {
   options: PropTypes.array
 }
 
+const SearchInput = props => {
+  const {
+    classes,
+    searchText,
+    setSearchText,
+    placeholder,
+    isEmpty,
+    ...rest
+  } = props
+  const style = {
+    backgroundColor: 'inherit'
+  }
+  return (
+    <input
+      {...rest}
+      style={style}
+      className={cn(classes.input, 'focus:outline-none')}
+      value={searchText}
+      onChange={setSearchText}
+      placeholder={isEmpty ? placeholder : ''}
+    />
+  )
+}
+
+SearchInput.propTypes = {
+  classes: PropTypes.object.isRequired,
+  searchText: PropTypes.string.isRequired,
+  setSearchText: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  isEmpty: PropTypes.bool.isRequired
+}
+
 const Select = props => {
-  const {className, maxDropdownHeight, ...rest} = props
+  const {
+    className,
+    maxDropdownHeight,
+    options,
+    placeholder = '',
+    value = '',
+    ...rest
+  } = props
 
   const containerRef = useRef(null)
   const dropdownRootRef = useRef(null)
@@ -104,6 +141,7 @@ const Select = props => {
   )
 
   const openDropdown = () => {
+    log('openDropdown')
     if (isDropdownOpen) {
       return
     }
@@ -113,6 +151,7 @@ const Select = props => {
   }
 
   const closeDropdown = useCallback(() => {
+    log('closeDropdown')
     if (!isDropdownOpen) {
       return
     }
@@ -134,22 +173,49 @@ const Select = props => {
 
   // log('render', props, {isDropdownOpen, bounds, dropdownRootRef})
   return (
-    <div {...rest} ref={containerRef} className={classes.container}>
+    <div
+      {...rest}
+      className={cn(
+        classes.container,
+        {
+          'shadow-outline': isDropdownOpen
+        },
+        'flex justify-between'
+      )}
+      ref={containerRef}
+    >
+      <SearchInput
+        onFocus={openDropdown}
+        onBlur={closeDropdown}
+        classes={classes}
+        searchText={searchText}
+        setSearchText={setSearchText}
+        isEmpty={value === ''}
+        placeholder={placeholder}
+      />
       <button
+        className={cn('focus:outline-none', classes['expand-button'])}
         type="button"
+        tabIndex="-1"
+        style={{
+          transform: `rotate(${isDropdownOpen ? 180 : 0}deg)`,
+          transition: 'transform .3s ease'
+        }}
         onClick={() => {
           if (isDropdownOpen) {
+            // todo fix when clicked and is focused
             closeDropdown()
           } else {
             openDropdown()
           }
         }}
       >
-        Open/close dropdown
+        <ChevronDown />
       </button>
       {isDropdownOpen &&
         createPortal(
           <Dropdown
+            options={options}
             classes={classes}
             bounds={bounds}
             maxDropdownHeight={maxDropdownHeight}
@@ -163,7 +229,26 @@ const Select = props => {
 Select.propTypes = {
   // ref: todo Support ref
   className: PropTypes.string.isRequired,
-  maxDropdownHeight: PropTypes.number
+  maxDropdownHeight: PropTypes.number,
+  options: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number
+        ]),
+        label: PropTypes.string.isRequired
+      })
+    )
+  ]),
+  value: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired,
+    PropTypes.arrayOf(PropTypes.string.isRequired),
+    PropTypes.arrayOf(PropTypes.number.isRequired)
+  ]),
+  placeholder: PropTypes.string
 }
 
 export default Select

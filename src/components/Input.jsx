@@ -114,6 +114,7 @@ const Input = props => {
             'appearance-none py-1 px-1 leading-tight',
             'focus:outline-none focus:shadow-outline',
             'dropdown { bg-input border rounded-sm }',
+            'expand-button { pr-1 sm:pr-0 }',
             'option { p-1 hover:bg-highlight-input bg-menu text-input }'
           )}
           value={value || ''}
@@ -158,7 +159,15 @@ Input.propTypes = {
   validate: PropTypes.func,
   label: PropTypes.string,
   fieldErrors: PropTypes.object,
-  options: PropTypes.array,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.oneOfType([
+        PropTypes.string.isRequired,
+        PropTypes.number.isRequired
+      ])
+    }).isRequired
+  ),
   type: PropTypes.oneOf(['']),
   dispatch: PropTypes.func.isRequired,
   _: checkProps

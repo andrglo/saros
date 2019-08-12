@@ -7,7 +7,8 @@ export {
   FaExclamationTriangle as WarningIcon,
   FaInfo as InfoIcon,
   FaMinusCircle as ErrorIcon,
-  FaRegUserCircle as FaceIcon
+  FaRegUserCircle as FaceIcon,
+  FaChevronDown as ChevronDown
 } from 'react-icons/fa'
 
 export {MdLaunch as LaunchIcon} from 'react-icons/md'
