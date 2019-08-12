@@ -29,7 +29,7 @@ const Dashboard = props => {
   const [showUserMenu, setShowUserMenu] = useState(false)
   return (
     <div className="dashboard bg-default text-default h-screen">
-      <div className="fixed flex justify-between w-full shadow-lg bg-toolbar text-toolbar h-12 sm:h-16 p-2 sm:p-4">
+      <div className="fixed flex justify-between w-full shadow-lg bg-toolbar text-toolbar h-12 sm:h-16 p-2 sm:p-4 z-30">
         <button
           type="button"
           className="items-center ml-2 sm:invisible"
