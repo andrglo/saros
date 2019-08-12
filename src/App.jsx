@@ -116,8 +116,8 @@ class App extends Component {
       const query = getQuery(browserLocation)
       if ('frame' in query) {
         return (
-          <div className="w-screen h-screen p-1">
-            <div className="shadow-outline w-full h-full bg-default text-default">
+          <div className="w-screen h-screen">
+            <div className="w-full h-full bg-default text-default">
               {getView(pathname)}
             </div>
           </div>
