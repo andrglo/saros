@@ -8,17 +8,16 @@ import React, {
 } from 'react'
 import {createPortal} from 'react-dom'
 import PropTypes from 'prop-types'
-import debounce from 'lodash/debounce'
 import cn from 'classnames'
 import debug from 'debug'
 
 import extractClassesByComponent from '../lib/extractClassesByComponent'
+import getScrollParent from '../lib/getScrollParent'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useEventListener from '../hooks/useEventListener'
 
 const log = debug('select')
 
-const UPDATE_BOUNDS_DELAY = 200
 const MAX_DROPDOWN_HEIGHT = 400
 const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
@@ -28,6 +27,7 @@ const Dropdown = props => {
   const {
     classes,
     bounds,
+    options = [],
     maxDropdownHeight = MAX_DROPDOWN_HEIGHT
   } = props
   if (!bounds) {
@@ -44,17 +44,18 @@ const Dropdown = props => {
     overflow: 'auto',
     zIndex: 9999
   }
-  if (
-    window.innerHeight <
-    bounds.bottom + maxDropdownHeight + DROPDOWN_MARGIN_Y * 2
-  ) {
+  style.maxHeight =
+    window.innerHeight -
+    bounds.bottom -
+    window.pageYOffset -
+    DROPDOWN_MARGIN_Y * 2
+  if (style.maxHeight < MIN_OPTION_HEIGHT) {
+    const height =
+      options.length * MIN_OPTION_HEIGHT + MIN_OPTION_HEIGHT
+    style.top = bounds.top - height - DROPDOWN_MARGIN_Y * 2
+    style.height = height
     style.maxHeight =
-      window.innerHeight - bounds.bottom - DROPDOWN_MARGIN_Y * 2
-    if (style.maxHeight < MIN_OPTION_HEIGHT) {
-      delete style.top
-      style.bottom = bounds.top - DROPDOWN_MARGIN_Y
-      // toBeContinued...
-    }
+      bounds.top - window.pageYOffset - DROPDOWN_MARGIN_Y * 2
   }
   return (
     <div style={style} className={classes.dropdown}>
@@ -75,28 +76,32 @@ const Dropdown = props => {
 Dropdown.propTypes = {
   classes: PropTypes.object.isRequired,
   bounds: PropTypes.object,
-  maxDropdownHeight: PropTypes.number
+  maxDropdownHeight: PropTypes.number,
+  options: PropTypes.array
 }
 
 const Select = props => {
-  // log('render', props)
   const {className, maxDropdownHeight, ...rest} = props
 
   const containerRef = useRef(null)
   const dropdownRootRef = useRef(null)
 
-  const [bounds, setBounds] = useState()
-  const updateBounds = useCallback(
-    debounce(() => {
-      setBounds(containerRef.current.getBoundingClientRect())
-    }, UPDATE_BOUNDS_DELAY),
-    []
-  )
-  useEffect(updateBounds, [])
-  useEventListener('resize', updateBounds)
-
   const [searchText, setSearchText] = useState('')
   const [isDropdownOpen, setDropdownOpen] = useState(false)
+
+  const [bounds, setBounds] = useState()
+  const updateBounds = useCallback(() => {
+    if (isDropdownOpen) {
+      setBounds(containerRef.current.getBoundingClientRect())
+    }
+  }, [isDropdownOpen])
+  useEffect(updateBounds, [isDropdownOpen])
+  useEventListener('resize', updateBounds)
+  useEventListener(
+    'scroll',
+    updateBounds,
+    getScrollParent(containerRef.current)
+  )
 
   const openDropdown = () => {
     if (isDropdownOpen) {
@@ -127,6 +132,7 @@ const Select = props => {
     [className]
   )
 
+  // log('render', props, {isDropdownOpen, bounds, dropdownRootRef})
   return (
     <div {...rest} ref={containerRef} className={classes.container}>
       <button
