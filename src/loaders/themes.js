@@ -1,6 +1,8 @@
 const path = require('path')
 const glob = require('glob')
 
+const SYSTEM = 'system'
+
 module.exports = function themesLoader() {
   const callback = this.async()
   if (!callback) {
@@ -12,7 +14,7 @@ module.exports = function themesLoader() {
     path.join(__dirname, '../assets/themes/*.js')
   )
 
-  const themes = [{label: 'System', value: ''}]
+  const themes = [{label: 'System', value: SYSTEM}]
   for (const fullName of themesFiles) {
     // eslint-disable-next-line import/no-dynamic-require
     const theme = require(fullName)

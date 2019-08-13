@@ -31,6 +31,7 @@ const Signin = React.lazy(() => import('./Signin.jsx'))
 
 const LIGHT = 'light'
 const DARK = 'dark'
+const SYSTEM = 'system'
 
 class App extends Component {
   constructor(props) {
@@ -62,7 +63,8 @@ class App extends Component {
   }
 
   static setTheme(theme, colorScheme) {
-    import(`./assets/themes/${theme || colorScheme}`)
+    const file = !theme || theme === SYSTEM ? colorScheme : theme
+    import(`./assets/themes/${file}`)
       .then(({colors}) => {
         for (const key of Object.keys(colors)) {
           document.documentElement.style.setProperty(
