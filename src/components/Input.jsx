@@ -109,13 +109,13 @@ const Input = props => {
               'content-multi {}': isSelect,
               'clear {  }': isSelect
             },
-            'bg-input hover:bg-highlight-input border hover:border-highlight',
+            'bg-input hover:bg-focused-input border hover:border-focused',
             'placeholder-input block w-full text-base rounded-sm',
             'appearance-none py-1 px-1 leading-tight',
             'focus:outline-none focus:shadow-outline',
             'dropdown { bg-input border rounded-sm }',
             'expand-button { pr-1 sm:pr-0 }',
-            'option { p-1 hover:bg-highlight-input bg-menu text-input }'
+            'option {}'
           )}
           value={value || ''}
           {...inputProps}

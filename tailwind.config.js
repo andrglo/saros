@@ -15,11 +15,11 @@ module.exports = {
         default: 'var(--color-bg-default)',
         error: 'var(--color-bg-error)',
         input: 'var(--color-bg-input)',
-        'highlight-input': 'var(--color-bg-input-highlight)',
+        'focused-input': 'var(--color-bg-input-focused)',
         toolbar: 'var(--color-bg-toolbar)',
         drawer: 'var(--color-bg-drawer)',
         menu: 'var(--color-bg-menu)',
-        'menu-highlight': 'var(--color-bg-menu-highlight)',
+        'menu-focused': 'var(--color-bg-menu-focused)',
         'menu-selected': 'var(--color-bg-menu-selected)'
       },
       placeholderColor: () => ({
@@ -27,7 +27,7 @@ module.exports = {
       }),
       borderColor: () => ({
         default: 'var(--color-border-default)',
-        highlight: 'var(--color-border-highlight)',
+        focused: 'var(--color-border-focused)',
         menu: 'var(--color-text-menu)'
       }),
       fontWeight: {

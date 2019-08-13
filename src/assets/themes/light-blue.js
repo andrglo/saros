@@ -8,7 +8,7 @@ module.exports = {
 
     'text-input': colors.blue[900],
     'bg-input': colors.blue[100],
-    'bg-input-highlight': colors.blue[300],
+    'bg-input-focused': colors.blue[300],
 
     'text-error': colors.red[900],
     'bg-error': colors.red[100],
@@ -22,11 +22,11 @@ module.exports = {
     'bg-drawer': colors.blue[200],
 
     'border-default': colors.blue[300],
-    'border-highlight': colors.blue[700],
+    'border-focused': colors.blue[700],
 
     'text-menu': colors.blue[900],
     'bg-menu': colors.blue[200],
-    'bg-menu-highlight': colors.blue[400],
+    'bg-menu-focused': colors.blue[400],
     'bg-menu-selected': colors.blue[400],
 
     income: colors.blue[600],

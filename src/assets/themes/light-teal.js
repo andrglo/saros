@@ -8,7 +8,7 @@ module.exports = {
 
     'text-input': colors.teal[900],
     'bg-input': colors.teal[100],
-    'bg-input-highlight': colors.teal[300],
+    'bg-input-focused': colors.teal[300],
 
     'text-error': colors.red[900],
     'bg-error': colors.red[100],
@@ -22,11 +22,11 @@ module.exports = {
     'bg-drawer': colors.teal[200],
 
     'border-default': colors.teal[300],
-    'border-highlight': colors.teal[700],
+    'border-focused': colors.teal[700],
 
     'text-menu': colors.teal[900],
     'bg-menu': colors.teal[200],
-    'bg-menu-highlight': colors.teal[400],
+    'bg-menu-focused': colors.teal[400],
     'bg-menu-selected': colors.blue[400],
 
     income: colors.blue[600],
