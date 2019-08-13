@@ -31,6 +31,7 @@ const Preferences = props => {
         label={t`Theme`}
         options={themes}
         value={theme}
+        showfirstOptionAsDefault
         placeholder="Select one"
         onChange={theme => {
           dispatch(setTheme({theme}))

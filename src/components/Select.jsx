@@ -23,17 +23,44 @@ const MAX_DROPDOWN_HEIGHT = 400
 const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
 
+const Tab = 'Tab'
+const ArrowDown = 'ArrowDown'
+const ArrowUp = 'ArrowUp'
+
+const isValueEmpty = value => value === undefined || value === ''
+
 const Dropdown = props => {
   // log('Dropdown', props)
   const {
     classes,
     bounds,
+    selectedOption = {},
     options = [],
-    maxDropdownHeight = MAX_DROPDOWN_HEIGHT
+    onChange,
+    maxDropdownHeight = MAX_DROPDOWN_HEIGHT,
+    focusedIndex
   } = props
+  const [height, setHeight] = useState(MAX_DROPDOWN_HEIGHT)
+  const focusedRef = useRef(null)
+  const dropdownRef = useRef(null)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (focusedRef.current) {
+      focusedRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'start'
+      })
+    }
+    if (dropdownRef.current) {
+      setHeight(dropdownRef.current.getBoundingClientRect().height)
+    }
+  })
+
   if (!bounds) {
     return null
   }
+
   const style = {
     position: 'fixed',
     width: bounds.width,
@@ -41,30 +68,64 @@ const Dropdown = props => {
     left: bounds.left,
     marginTop: DROPDOWN_MARGIN_Y,
     marginBottom: DROPDOWN_MARGIN_Y,
+    display: 'flex',
+    flexDirection: 'column',
     maxHeight: maxDropdownHeight,
     overflow: 'auto',
     zIndex: 9999
   }
+
   style.maxHeight =
     window.innerHeight -
     bounds.bottom -
     window.pageYOffset -
     DROPDOWN_MARGIN_Y * 2
   if (style.maxHeight < MIN_OPTION_HEIGHT) {
-    const height =
-      options.length * MIN_OPTION_HEIGHT + MIN_OPTION_HEIGHT
     style.top = bounds.top - height - DROPDOWN_MARGIN_Y * 2
     style.height = height
     style.maxHeight =
       bounds.top - window.pageYOffset - DROPDOWN_MARGIN_Y * 2
   }
   return (
-    <div style={style} className={classes.dropdown}>
-      {options.map(option => {
+    <div
+      style={style}
+      className={classes.dropdown}
+      ref={dropdownRef}
+      tabIndex="-1"
+      aria-expanded="true"
+      role="list"
+    >
+      {options.map((option, index) => {
+        const isSelected = option.value === selectedOption.value
+        const isFocused = index === focusedIndex
         return (
-          <div key={option.value} className={classes.option}>
+          <span
+            key={option.value}
+            id={option.value}
+            ref={isFocused ? focusedRef : undefined}
+            style={{
+              cursor: 'pointer'
+            }}
+            role="option"
+            tabIndex="-1"
+            aria-selected={isSelected}
+            aria-disabled={false}
+            className={cn(
+              'p-1 hover:bg-focused-input bg-menu text-input outline-none',
+              {
+                [`bg-menu-selected  ${classes['option-selected']}`]:
+                  isSelected && !isFocused,
+                [`bg-menu-focused ${
+                  classes['option-focused']
+                }`]: isFocused
+              },
+              classes.option
+            )}
+            onClick={onChange}
+            onKeyPress={onChange}
+          >
             {option.label}
-          </div>
+          </span>
         )
       })}
     </div>
@@ -75,39 +136,10 @@ Dropdown.propTypes = {
   classes: PropTypes.object.isRequired,
   bounds: PropTypes.object,
   maxDropdownHeight: PropTypes.number,
-  options: PropTypes.array
-}
-
-const SearchInput = props => {
-  const {
-    classes,
-    searchText,
-    setSearchText,
-    placeholder,
-    isEmpty,
-    ...rest
-  } = props
-  const style = {
-    backgroundColor: 'inherit'
-  }
-  return (
-    <input
-      {...rest}
-      style={style}
-      className={cn(classes.input, 'focus:outline-none')}
-      value={searchText}
-      onChange={setSearchText}
-      placeholder={isEmpty ? placeholder : ''}
-    />
-  )
-}
-
-SearchInput.propTypes = {
-  classes: PropTypes.object.isRequired,
-  searchText: PropTypes.string.isRequired,
-  setSearchText: PropTypes.func.isRequired,
-  placeholder: PropTypes.string,
-  isEmpty: PropTypes.bool.isRequired
+  options: PropTypes.array,
+  onChange: PropTypes.func.isRequired,
+  selectedOption: PropTypes.object,
+  focusedIndex: PropTypes.number.isRequired
 }
 
 const Select = props => {
@@ -115,14 +147,24 @@ const Select = props => {
     className,
     maxDropdownHeight,
     options,
+    multi,
+    showfirstOptionAsDefault,
     placeholder = '',
     value = '',
     ...rest
   } = props
 
+  let selectedIndex = -1
+  if (!multi) {
+    selectedIndex = options.findIndex(
+      option => option.value === value
+    )
+  }
+
   const containerRef = useRef(null)
   const dropdownRootRef = useRef(null)
 
+  const [focusedIndex, setFocusedIndex] = useState(0)
   const [searchText, setSearchText] = useState('')
   const [isDropdownOpen, setDropdownOpen] = useState(false)
 
@@ -147,6 +189,7 @@ const Select = props => {
     dropdownRootRef.current = document.createElement('div')
     document.body.appendChild(dropdownRootRef.current)
     setDropdownOpen(true)
+    setFocusedIndex(selectedIndex === -1 ? 0 : selectedIndex)
   }
 
   const closeDropdown = useCallback(() => {
@@ -158,26 +201,66 @@ const Select = props => {
     setDropdownOpen(false)
   }, [isDropdownOpen])
 
-  const handleInputKeyDown = useCallback(
+  const handleKeyDown = useCallback(
     event => {
-      log('handleInputKeyDown', event.key)
-      if (event.key === 'Tab') {
-        closeDropdown()
+      log('handleKeyDown', event.key)
+      switch (event.key) {
+        case Tab:
+          closeDropdown()
+          break
+        case ArrowDown: {
+          let nextFocused = focusedIndex + 1
+          const maxIndex = options.length - 1
+          if (nextFocused > maxIndex) {
+            nextFocused = maxIndex
+          }
+          setFocusedIndex(nextFocused)
+          break
+        }
+        case ArrowUp: {
+          let nextFocused = focusedIndex - 1
+          if (nextFocused < 0) {
+            nextFocused = 0
+          }
+          setFocusedIndex(nextFocused)
+          break
+        }
       }
     },
-    [closeDropdown]
+    [closeDropdown, focusedIndex, options.length]
   )
 
-  const domNodes = useMemo(
-    () => [containerRef.current, dropdownRootRef.current],
-    [containerRef.current, dropdownRootRef.current]
+  const selectRefs = useMemo(
+    () => [containerRef, dropdownRootRef],
+    []
   )
-  useOnClickOutside(domNodes, closeDropdown)
+  useOnClickOutside(selectRefs, closeDropdown)
 
   const classes = useMemo(
     () => extractClassesByComponent(className),
     [className]
   )
+  let selectedOption
+  let display
+  if (multi) {
+    // todo
+  } else {
+    selectedOption = options[selectedIndex]
+    if (
+      !selectedOption &&
+      showfirstOptionAsDefault &&
+      isValueEmpty(value)
+    ) {
+      selectedOption = options[0]
+    }
+    if (selectedOption) {
+      display = (
+        <span className={classes.display}>
+          {selectedOption.label}
+        </span>
+      )
+    }
+  }
 
   // log('render', props, {isDropdownOpen, bounds, dropdownRootRef})
   return (
@@ -188,19 +271,30 @@ const Select = props => {
         {
           'shadow-outline': isDropdownOpen
         },
-        'flex justify-between'
+        'flex'
       )}
       ref={containerRef}
+      onKeyDown={handleKeyDown}
+      role="combobox"
+      aria-expanded="true"
+      aria-controls=""
     >
-      <SearchInput
-        onFocus={openDropdown}
-        onKeyDown={handleInputKeyDown}
-        classes={classes}
-        searchText={searchText}
-        setSearchText={setSearchText}
-        isEmpty={value === ''}
-        placeholder={placeholder}
-      />
+      <div className={cn(classes.value, 'flex flex-1 flex-wrap')}>
+        {display}
+        <input
+          style={{
+            backgroundColor: 'inherit',
+            width: `${searchText.length + 1}ch`
+          }}
+          className={cn(classes.input, 'focus:outline-none')}
+          onFocus={openDropdown}
+          value={searchText}
+          onChange={event => {
+            setSearchText(event.target.value)
+          }}
+          placeholder={display ? '' : placeholder}
+        />
+      </div>
       <button
         className={cn('focus:outline-none', classes['expand-button'])}
         type="button"
@@ -223,9 +317,15 @@ const Select = props => {
         createPortal(
           <Dropdown
             options={options}
+            selectedOption={selectedOption}
             classes={classes}
             bounds={bounds}
             maxDropdownHeight={maxDropdownHeight}
+            focusedIndex={focusedIndex}
+            onChange={event => {
+              console.log('key', event.key)
+              console.log(event.target, event.target.id)
+            }}
           />,
           dropdownRootRef.current
         )}
@@ -255,6 +355,8 @@ Select.propTypes = {
     PropTypes.arrayOf(PropTypes.string.isRequired),
     PropTypes.arrayOf(PropTypes.number.isRequired)
   ]),
+  multi: PropTypes.bool,
+  showfirstOptionAsDefault: PropTypes.bool,
   placeholder: PropTypes.string
 }
 
