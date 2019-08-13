@@ -141,7 +141,6 @@ const Select = props => {
   )
 
   const openDropdown = () => {
-    log('openDropdown')
     if (isDropdownOpen) {
       return
     }
@@ -151,7 +150,6 @@ const Select = props => {
   }
 
   const closeDropdown = useCallback(() => {
-    log('closeDropdown')
     if (!isDropdownOpen) {
       return
     }
@@ -159,6 +157,16 @@ const Select = props => {
     dropdownRootRef.current = null
     setDropdownOpen(false)
   }, [isDropdownOpen])
+
+  const handleInputKeyDown = useCallback(
+    event => {
+      log('handleInputKeyDown', event.key)
+      if (event.key === 'Tab') {
+        closeDropdown()
+      }
+    },
+    [closeDropdown]
+  )
 
   const domNodes = useMemo(
     () => [containerRef.current, dropdownRootRef.current],
@@ -186,7 +194,7 @@ const Select = props => {
     >
       <SearchInput
         onFocus={openDropdown}
-        onBlur={closeDropdown}
+        onKeyDown={handleInputKeyDown}
         classes={classes}
         searchText={searchText}
         setSearchText={setSearchText}
@@ -203,7 +211,6 @@ const Select = props => {
         }}
         onClick={() => {
           if (isDropdownOpen) {
-            // todo fix when clicked and is focused
             closeDropdown()
           } else {
             openDropdown()
