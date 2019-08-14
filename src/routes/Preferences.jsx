@@ -18,10 +18,10 @@ const Preferences = props => {
   const {dispatch, theme, locale} = props
 
   return (
-    <div className="mx-auto max-w-md">
+    <div className="mx-auto max-w-sm">
       <div className="flex">
         <Input
-          className="mx-1 w-32"
+          className="mx-1 w-1/2"
           label={t`Theme`}
           options={useMemo(
             () =>
@@ -39,7 +39,7 @@ const Preferences = props => {
           }}
         />
         <Input
-          className="mx-1 w-32"
+          className="mx-1 w-1/2"
           label={t`Language`}
           options={locales}
           value={locale}
