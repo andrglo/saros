@@ -7,5 +7,8 @@ module.exports = {
     theme_color: '#2d6987', // Theme color user for example in Android's task switcher. `string`
     start_url: '/index.html' // Start URL when launching the application from a device. `string`
   },
-  locales: ['en', 'pt-BR']
+  locales: [
+    {label: 'English', value: 'en'},
+    {label: 'Português', value: 'pt-BR'}
+  ]
 }

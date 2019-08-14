@@ -39,6 +39,7 @@ const t = (strs, ...params) => {
   const requirePlural = typeof params[0] === 'number'
   const plural = requirePlural && Number(params[0]) > 1
   let text = ``
+  strs = Array.isArray(strs) ? strs : [strs]
   strs.forEach((str, i) => {
     text = `${text}${str}${
       typeof params[i] === 'number' ? 'n' : params[i] || ''

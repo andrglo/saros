@@ -167,7 +167,7 @@ class AssetsPlugin {
                 normalize(text).replace(/\*/g, 'n')
               )
               newTranslations[key] = {}
-              config.locales.forEach(locale => {
+              config.locales.forEach(({value: locale}) => {
                 const oldTranslation = oldTranslations[key] || {}
                 if (requirePlural) {
                   newTranslations[key][locale] = oldTranslation[

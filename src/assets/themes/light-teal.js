@@ -1,7 +1,7 @@
 const colors = require('../colors')
 
 module.exports = {
-  name: 'Light teal',
+  name: 'theme light teal', // t`theme light teal`
   colors: {
     'text-default': colors.black,
     'bg-default': colors.teal[100],

@@ -56,6 +56,6 @@ export default createReducer(initialState, actionHandlers, {
   persist: {
     path: 'app',
     omit: ['error', 'updateAvailable', 'browserLocation'],
-    locallyOnly: true
+    locallyOnly: ['uid', 'theme']
   }
 })
