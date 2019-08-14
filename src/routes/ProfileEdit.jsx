@@ -16,7 +16,7 @@ const ProfileEdit = props => {
 
   return (
     <Form
-      className=""
+      className="mx-auto max-w-md"
       formName={formName}
       title={t`User account`}
       descriptionFields="firstName"
