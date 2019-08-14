@@ -24,6 +24,7 @@ const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
 
 const Tab = 'Tab'
+const Enter = 'Enter'
 const ArrowDown = 'ArrowDown'
 const ArrowUp = 'ArrowUp'
 
@@ -149,6 +150,7 @@ const Select = props => {
     options,
     multi,
     showfirstOptionAsDefault,
+    onChange,
     placeholder = '',
     value = '',
     ...rest
@@ -201,33 +203,63 @@ const Select = props => {
     setDropdownOpen(false)
   }, [isDropdownOpen])
 
-  const handleKeyDown = useCallback(
+  const handleEvent = useCallback(
     event => {
-      log('handleKeyDown', event.key)
-      switch (event.key) {
-        case Tab:
-          closeDropdown()
-          break
-        case ArrowDown: {
-          let nextFocused = focusedIndex + 1
-          const maxIndex = options.length - 1
-          if (nextFocused > maxIndex) {
-            nextFocused = maxIndex
-          }
-          setFocusedIndex(nextFocused)
-          break
+      log(
+        'handleEvent',
+        event.type,
+        event.target.id,
+        event.key,
+        focusedIndex
+      )
+      if (event.type === 'click') {
+        const option =
+          options.find(
+            option => String(option.value) === event.target.id
+          ) || {}
+        let value
+        if (multi) {
+          // todo
+        } else {
+          value = option.value || null
         }
-        case ArrowUp: {
-          let nextFocused = focusedIndex - 1
-          if (nextFocused < 0) {
-            nextFocused = 0
+        onChange(value)
+      } else {
+        switch (event.key) {
+          case Enter: {
+            let value
+            if (multi) {
+              // todo
+            } else {
+              value = options[focusedIndex].value
+            }
+            onChange(value)
+            break
           }
-          setFocusedIndex(nextFocused)
-          break
+          case Tab:
+            closeDropdown()
+            break
+          case ArrowDown: {
+            let nextFocused = focusedIndex + 1
+            const maxIndex = options.length - 1
+            if (nextFocused > maxIndex) {
+              nextFocused = maxIndex
+            }
+            setFocusedIndex(nextFocused)
+            break
+          }
+          case ArrowUp: {
+            let nextFocused = focusedIndex - 1
+            if (nextFocused < 0) {
+              nextFocused = 0
+            }
+            setFocusedIndex(nextFocused)
+            break
+          }
         }
       }
     },
-    [closeDropdown, focusedIndex, options.length]
+    [closeDropdown, focusedIndex, multi, onChange, options]
   )
 
   const selectRefs = useMemo(
@@ -274,7 +306,7 @@ const Select = props => {
         'flex'
       )}
       ref={containerRef}
-      onKeyDown={handleKeyDown}
+      onKeyDown={handleEvent}
       role="combobox"
       aria-expanded="true"
       aria-controls=""
@@ -322,10 +354,7 @@ const Select = props => {
             bounds={bounds}
             maxDropdownHeight={maxDropdownHeight}
             focusedIndex={focusedIndex}
-            onChange={event => {
-              console.log('key', event.key)
-              console.log(event.target, event.target.id)
-            }}
+            onChange={handleEvent}
           />,
           dropdownRootRef.current
         )}
@@ -356,6 +385,7 @@ Select.propTypes = {
     PropTypes.arrayOf(PropTypes.number.isRequired)
   ]),
   multi: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
   showfirstOptionAsDefault: PropTypes.bool,
   placeholder: PropTypes.string
 }
