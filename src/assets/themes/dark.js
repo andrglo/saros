@@ -27,7 +27,7 @@ module.exports = {
     'text-menu': colors.gray[200],
     'bg-menu': colors.gray[800],
     'bg-menu-focused': colors.gray[700],
-    'bg-menu-selected': colors.black,
+    'bg-menu-selected': colors.gray[900],
 
     income: colors.blue[400],
     expense: colors.red[400]
