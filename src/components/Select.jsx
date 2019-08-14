@@ -228,6 +228,8 @@ const Select = props => {
         } else {
           value = option.value || null
         }
+        setSearchText('')
+        closeDropdown()
         onChange(value)
       } else {
         switch (event.key) {
