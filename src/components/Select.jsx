@@ -13,10 +13,12 @@ import debug from 'debug'
 
 import extractClassesByComponent from '../lib/extractClassesByComponent'
 import getScrollParent from '../lib/getScrollParent'
+import normalize from '../lib/normalize'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useEventListener from '../hooks/useEventListener'
 import {ChevronDown} from '../assets/icons'
 
+// eslint-disable-next-line no-unused-vars
 const log = debug('select')
 
 const MAX_DROPDOWN_HEIGHT = 400
@@ -24,6 +26,7 @@ const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
 
 const Tab = 'Tab'
+const Escape = 'Escape'
 const Enter = 'Enter'
 const ArrowDown = 'ArrowDown'
 const ArrowUp = 'ArrowUp'
@@ -184,7 +187,7 @@ const Select = props => {
     getScrollParent(containerRef.current)
   )
 
-  const openDropdown = () => {
+  const openDropdown = useCallback(() => {
     if (isDropdownOpen) {
       return
     }
@@ -192,7 +195,7 @@ const Select = props => {
     document.body.appendChild(dropdownRootRef.current)
     setDropdownOpen(true)
     setFocusedIndex(selectedIndex === -1 ? 0 : selectedIndex)
-  }
+  }, [isDropdownOpen, selectedIndex])
 
   const closeDropdown = useCallback(() => {
     if (!isDropdownOpen) {
@@ -201,6 +204,7 @@ const Select = props => {
     document.body.removeChild(dropdownRootRef.current)
     dropdownRootRef.current = null
     setDropdownOpen(false)
+    setSearchText('')
   }, [isDropdownOpen])
 
   const handleEvent = useCallback(
@@ -233,9 +237,12 @@ const Select = props => {
             } else {
               value = options[focusedIndex].value
             }
+            setSearchText('')
+            closeDropdown()
             onChange(value)
             break
           }
+          case Escape:
           case Tab:
             closeDropdown()
             break
@@ -245,6 +252,7 @@ const Select = props => {
             if (nextFocused > maxIndex) {
               nextFocused = maxIndex
             }
+            openDropdown()
             setFocusedIndex(nextFocused)
             break
           }
@@ -259,7 +267,14 @@ const Select = props => {
         }
       }
     },
-    [closeDropdown, focusedIndex, multi, onChange, options]
+    [
+      closeDropdown,
+      focusedIndex,
+      multi,
+      onChange,
+      openDropdown,
+      options
+    ]
   )
 
   const selectRefs = useMemo(
@@ -276,7 +291,7 @@ const Select = props => {
   let display
   if (multi) {
     // todo
-  } else {
+  } else if (!searchText) {
     selectedOption = options[selectedIndex]
     if (
       !selectedOption &&
@@ -294,7 +309,12 @@ const Select = props => {
     }
   }
 
-  // log('render', props, {isDropdownOpen, bounds, dropdownRootRef})
+  // log('render', props, {
+  //   isDropdownOpen,
+  //   bounds,
+  //   dropdownRootRef,
+  //   focusedIndex
+  // })
   return (
     <div
       {...rest}
@@ -322,7 +342,17 @@ const Select = props => {
           onFocus={openDropdown}
           value={searchText}
           onChange={event => {
-            setSearchText(event.target.value)
+            const searchText = event.target.value
+            setSearchText(searchText)
+            const slug = normalize(searchText)
+            const focusedIndex = options.findIndex(option =>
+              normalize(option.label).includes(slug)
+            )
+            openDropdown()
+            // log('searchText', {searchText, slug, focusedIndex})
+            if (focusedIndex > -1) {
+              setFocusedIndex(focusedIndex)
+            }
           }}
           placeholder={display ? '' : placeholder}
         />
