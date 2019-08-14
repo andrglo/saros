@@ -51,10 +51,10 @@ const Dropdown = props => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (focusedRef.current) {
+      // log('useEffect', focusedIndex, focusedRef.current.innerText)
       focusedRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'start'
+        // behavior: 'smooth', // not working in chrome when typing
+        block: 'nearest'
       })
     }
     if (dropdownRef.current) {
