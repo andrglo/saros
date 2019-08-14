@@ -14,6 +14,7 @@ import debug from 'debug'
 import extractClassesByComponent from '../lib/extractClassesByComponent'
 import getScrollParent from '../lib/getScrollParent'
 import normalize from '../lib/normalize'
+import sanitize from '../lib/sanitize'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useEventListener from '../hooks/useEventListener'
 import {ChevronDown} from '../assets/icons'
@@ -342,7 +343,7 @@ const Select = props => {
           onFocus={openDropdown}
           value={searchText}
           onChange={event => {
-            const searchText = event.target.value
+            const searchText = sanitize(event.target.value)
             setSearchText(searchText)
             const slug = normalize(searchText)
             const focusedIndex = options.findIndex(option =>
