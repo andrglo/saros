@@ -292,6 +292,7 @@ const Select = props => {
         onChange(value)
       } else {
         switch (event.key) {
+          case Tab:
           case Enter: {
             let value
             if (multi) {
@@ -302,10 +303,12 @@ const Select = props => {
             setSearchText('')
             closeDropdown()
             onChange(value)
+            if (event.key === Enter) {
+              event.preventDefault()
+            }
             break
           }
           case Escape:
-          case Tab:
             closeDropdown()
             break
           case ArrowDown: {
