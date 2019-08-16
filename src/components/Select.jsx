@@ -26,7 +26,6 @@ const log = debug('select')
 const MAX_DROPDOWN_HEIGHT = 400
 const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
-const MAX_OPTIONS_LENGTH = 999
 
 const Tab = 'Tab'
 const Escape = 'Escape'
@@ -171,6 +170,7 @@ const Select = props => {
     onChange,
     placeholder = '',
     value = '',
+    maxOptionsToShow = -1,
     ...rest
   } = props
 
@@ -191,35 +191,41 @@ const Select = props => {
       const betterMatches = []
       const matches = []
       setOptionsNotShowed(false)
-      const checkLength = length => {
-        if (length === MAX_OPTIONS_LENGTH) {
-          setOptionsNotShowed(true)
-          return true
-        }
-        return false
-      }
+      const maxLengthWasHit =
+        maxOptionsToShow > -1
+          ? length => {
+              if (length === maxOptionsToShow) {
+                setOptionsNotShowed(true)
+                return true
+              }
+              return false
+            }
+          : () => false
       let length = 0
       for (const option of options) {
         const label = normalize(option.label)
         if (label.startsWith(slug)) {
           betterMatches.push(option)
-          if (checkLength(++length)) {
+          if (maxLengthWasHit(++length)) {
             break
           }
         } else if (label.includes(slug)) {
           matches.push(option)
-          if (checkLength(++length)) {
+          if (maxLengthWasHit(++length)) {
             break
           }
         }
       }
       result = [...betterMatches, ...matches]
-    } else if (options.length > MAX_OPTIONS_LENGTH) {
+    } else if (
+      maxOptionsToShow > -1 &&
+      options.length > maxOptionsToShow
+    ) {
       setOptionsNotShowed(true)
-      result = options.slice(0, MAX_OPTIONS_LENGTH)
+      result = options.slice(0, maxOptionsToShow)
     }
     return result
-  }, [options, searchText])
+  }, [maxOptionsToShow, options, searchText])
 
   let selectedIndex = -1
   if (!multi) {
@@ -467,6 +473,7 @@ Select.propTypes = {
   multi: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   showfirstOptionAsDefault: PropTypes.bool,
+  maxOptionsToShow: PropTypes.number,
   placeholder: PropTypes.string
 }
 
