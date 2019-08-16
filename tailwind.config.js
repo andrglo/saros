@@ -4,6 +4,7 @@ module.exports = {
       textColor: {
         default: 'var(--color-text-default)',
         error: 'var(--color-text-error)',
+        warning: 'var(--color-text-warning)',
         input: 'var(--color-text-input)',
         toolbar: 'var(--color-text-toolbar)',
         drawer: 'var(--color-text-drawer)',
@@ -14,6 +15,7 @@ module.exports = {
       backgroundColor: {
         default: 'var(--color-bg-default)',
         error: 'var(--color-bg-error)',
+        warning: 'var(--color-bg-warning)',
         input: 'var(--color-bg-input)',
         'focused-input': 'var(--color-bg-input-focused)',
         toolbar: 'var(--color-bg-toolbar)',

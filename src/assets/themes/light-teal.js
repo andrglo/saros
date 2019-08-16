@@ -13,6 +13,9 @@ module.exports = {
     'text-error': colors.red[900],
     'bg-error': colors.red[100],
 
+    'text-warning': colors.orange[900],
+    'bg-warning': colors.orange[400],
+
     'text-placeholder': colors.gray[600],
 
     'text-toolbar': colors.teal[900],
