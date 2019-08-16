@@ -11,14 +11,14 @@ export const fetchLocale = locale => {
       return Promise.resolve(false) // did not change
     }
   }
-  currentLocale = locale
-  if (locale.startsWith('pt')) {
-    locale = 'pt-BR'
+  currentLocale = locale || ''
+  if (currentLocale.startsWith('pt')) {
+    currentLocale = 'pt-BR'
   } else {
-    locale = 'en'
+    currentLocale = 'en'
   }
   return axios
-    .get(`/locale/${locale}.json`, {
+    .get(`/locale/${currentLocale}.json`, {
       baseURL: null
     })
     .then(result => {
