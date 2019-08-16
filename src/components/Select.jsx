@@ -18,6 +18,7 @@ import sanitize from '../lib/sanitize'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useEventListener from '../hooks/useEventListener'
 import {ChevronDown} from '../assets/icons'
+import t from '../lib/translate'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('select')
@@ -25,6 +26,7 @@ const log = debug('select')
 const MAX_DROPDOWN_HEIGHT = 400
 const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
+const MAX_OPTIONS_LENGTH = 999
 
 const Tab = 'Tab'
 const Escape = 'Escape'
@@ -43,6 +45,7 @@ const Dropdown = props => {
     options = [],
     onChange,
     maxDropdownHeight = MAX_DROPDOWN_HEIGHT,
+    hasOptionsNotShowed,
     focusedIndex
   } = props
   const [height, setHeight] = useState(MAX_DROPDOWN_HEIGHT)
@@ -53,7 +56,7 @@ const Dropdown = props => {
     if (focusedRef.current) {
       // log('useEffect', focusedIndex, focusedRef.current.innerText)
       focusedRef.current.scrollIntoView({
-        // behavior: 'smooth', // not working in chrome when typing
+        behavior: focusedIndex === 0 ? 'auto' : 'smooth',
         block: 'nearest'
       })
     }
@@ -91,6 +94,7 @@ const Dropdown = props => {
     style.maxHeight =
       bounds.top - window.pageYOffset - DROPDOWN_MARGIN_Y * 2
   }
+  const lastIndex = options.length - 1
   return (
     <div
       style={style}
@@ -104,33 +108,42 @@ const Dropdown = props => {
         const isSelected = option.value === selectedOption.value
         const isFocused = index === focusedIndex
         return (
-          <span
+          <div
             key={option.value}
-            id={option.value}
+            className="bg-menu text-input outline-none"
             ref={isFocused ? focusedRef : undefined}
-            style={{
-              cursor: 'pointer'
-            }}
-            role="option"
-            tabIndex="-1"
-            aria-selected={isSelected}
-            aria-disabled={false}
-            className={cn(
-              'p-1 hover:bg-focused-input bg-menu text-input outline-none',
-              {
-                [`bg-menu-selected  ${classes['option-selected']}`]:
-                  isSelected && !isFocused,
-                [`bg-menu-focused ${
-                  classes['option-focused']
-                }`]: isFocused
-              },
-              classes.option
-            )}
-            onClick={onChange}
-            onKeyPress={onChange}
           >
-            {option.label}
-          </span>
+            <div
+              id={option.value}
+              style={{
+                cursor: 'pointer'
+              }}
+              className={cn(
+                'p-1 hover:bg-focused-input',
+                {
+                  [`bg-menu-selected  ${classes['option-selected']}`]:
+                    isSelected && !isFocused,
+                  [`bg-menu-focused ${
+                    classes['option-focused']
+                  }`]: isFocused
+                },
+                classes.option
+              )}
+              onClick={onChange}
+              onKeyPress={onChange}
+              role="option"
+              tabIndex="-1"
+              aria-selected={isSelected}
+              aria-disabled={false}
+            >
+              {option.label}
+            </div>
+            {hasOptionsNotShowed && index === lastIndex && (
+              <div className="text-xs italic tracking-tighter text-center text-warning">
+                {t`There are options not showed, please, type more text`}
+              </div>
+            )}
+          </div>
         )
       })}
     </div>
@@ -144,11 +157,12 @@ Dropdown.propTypes = {
   options: PropTypes.array,
   onChange: PropTypes.func.isRequired,
   selectedOption: PropTypes.object,
+  hasOptionsNotShowed: PropTypes.bool.isRequired,
   focusedIndex: PropTypes.number.isRequired
 }
 
 const Select = props => {
-  const {
+  let {
     className,
     maxDropdownHeight,
     options,
@@ -160,13 +174,6 @@ const Select = props => {
     ...rest
   } = props
 
-  let selectedIndex = -1
-  if (!multi) {
-    selectedIndex = options.findIndex(
-      option => option.value === value
-    )
-  }
-
   const containerRef = useRef(null)
   const dropdownRootRef = useRef(null)
 
@@ -175,6 +182,52 @@ const Select = props => {
   const [isDropdownOpen, setDropdownOpen] = useState(false)
 
   const [bounds, setBounds] = useState()
+  const [hasOptionsNotShowed, setOptionsNotShowed] = useState(false)
+
+  options = useMemo(() => {
+    let result = options
+    if (searchText) {
+      const slug = normalize(searchText)
+      const betterMatches = []
+      const matches = []
+      setOptionsNotShowed(false)
+      const checkLength = length => {
+        if (length === MAX_OPTIONS_LENGTH) {
+          setOptionsNotShowed(true)
+          return true
+        }
+        return false
+      }
+      let length = 0
+      for (const option of options) {
+        const label = normalize(option.label)
+        if (label.startsWith(slug)) {
+          betterMatches.push(option)
+          if (checkLength(++length)) {
+            break
+          }
+        } else if (label.includes(slug)) {
+          matches.push(option)
+          if (checkLength(++length)) {
+            break
+          }
+        }
+      }
+      result = [...betterMatches, ...matches]
+    } else if (options.length > MAX_OPTIONS_LENGTH) {
+      setOptionsNotShowed(true)
+      result = options.slice(0, MAX_OPTIONS_LENGTH)
+    }
+    return result
+  }, [options, searchText])
+
+  let selectedIndex = -1
+  if (!multi) {
+    selectedIndex = options.findIndex(
+      option => option.value === value
+    )
+  }
+
   const updateBounds = useCallback(() => {
     if (isDropdownOpen) {
       setBounds(containerRef.current.getBoundingClientRect())
@@ -210,13 +263,13 @@ const Select = props => {
 
   const handleEvent = useCallback(
     event => {
-      log(
-        'handleEvent',
-        event.type,
-        event.target.id,
-        event.key,
-        focusedIndex
-      )
+      // log(
+      //   'handleEvent',
+      //   event.type,
+      //   event.target.id,
+      //   event.key,
+      //   focusedIndex
+      // )
       if (event.type === 'click') {
         const option =
           options.find(
@@ -346,16 +399,9 @@ const Select = props => {
           value={searchText}
           onChange={event => {
             const searchText = sanitize(event.target.value)
-            setSearchText(searchText)
-            const slug = normalize(searchText)
-            const focusedIndex = options.findIndex(option =>
-              normalize(option.label).includes(slug)
-            )
             openDropdown()
-            // log('searchText', {searchText, slug, focusedIndex})
-            if (focusedIndex > -1) {
-              setFocusedIndex(focusedIndex)
-            }
+            setSearchText(searchText)
+            setFocusedIndex(0)
           }}
           placeholder={display ? '' : placeholder}
         />
@@ -388,6 +434,7 @@ const Select = props => {
             maxDropdownHeight={maxDropdownHeight}
             focusedIndex={focusedIndex}
             onChange={handleEvent}
+            hasOptionsNotShowed={hasOptionsNotShowed}
           />,
           dropdownRootRef.current
         )}

@@ -115,6 +115,10 @@
     "en": "System",
     "pt-BR": "Sistema"
   },
+  "there_are_options_not_showed_please_type_more_text": {
+    "en": "There are options not showed, please, type more text",
+    "pt-BR": "Há opções não mostradas, favor digitar mais texto"
+  },
   "this_is_a_work_in_progress": {
     "en": "This is a work in progress...",
     "pt-BR": "Em desenvolvimento..."
