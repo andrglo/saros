@@ -1,17 +1,29 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useMemo} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
+import debug from 'debug'
+
 import Link from './Link'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useKeyPress from '../hooks/useKeyPress'
 
+// eslint-disable-next-line no-unused-vars
+const log = debug('menu:link')
+
 const getItemId = i => `link_${i}`
 
 const Menu = props => {
-  const {className, options, onClose, focus} = props
+  const {className, options, onClose, focus, menuButtonRef} = props
+  // log('render', props)
 
   const [menuNode, setMenuNode] = useState()
-  useOnClickOutside(menuNode, onClose)
+  useOnClickOutside(
+    useMemo(() => [menuNode, menuButtonRef], [
+      menuButtonRef,
+      menuNode
+    ]),
+    onClose
+  )
 
   useKeyPress('Escape', onClose)
 
@@ -70,6 +82,7 @@ Menu.propTypes = {
   className: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   focus: PropTypes.bool,
+  menuButtonRef: PropTypes.object,
   options: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,

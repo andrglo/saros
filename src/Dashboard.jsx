@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
@@ -22,6 +22,8 @@ const log = debug('dashboard')
 const Dashboard = props => {
   log('render', props)
   const {user, children, isHome, dispatch} = props
+
+  const menuButtonRef = useRef(null)
 
   const [focusItemInUserMenu, setFocusItemInUserMenu] = useState(
     false
@@ -52,6 +54,7 @@ const Dashboard = props => {
             <div className="h-2" />
             <button
               type="button"
+              ref={menuButtonRef}
               className="rounded-full focus:outline-none focus:shadow-outline"
               onClick={() => {
                 setFocusItemInUserMenu(false)
@@ -67,7 +70,7 @@ const Dashboard = props => {
             >
               {user.photoURL ? (
                 <img
-                  className="w-8 h-8 rounded-full"
+                  className="w-8 h-8 rounded-full focus:outline-none"
                   src={user.photoURL}
                   alt="Avatar of User"
                 />
@@ -81,6 +84,7 @@ const Dashboard = props => {
                 onClose={() => {
                   setShowUserMenu(false)
                 }}
+                menuButtonRef={menuButtonRef}
                 focus={focusItemInUserMenu}
                 options={[
                   {
