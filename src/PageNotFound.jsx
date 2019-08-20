@@ -1,8 +1,12 @@
 import React from 'react'
 import t from './lib/translate'
 
-export default () => {
+const PageNotFound = () => {
   return (
-    <div className="bg-red-200 w-full h-full">{t`Page not found`}</div>
+    <div className="w-full pt-5 text-center">
+      <p className="text-warning italic font-bold text-2xl">{t`Page not found`}</p>
+    </div>
   )
 }
+
+export default PageNotFound
