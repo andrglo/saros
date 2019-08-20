@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+}
+
 .signin {
   @apply bg-teal-400;
 }
