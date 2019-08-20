@@ -136,8 +136,8 @@ class App extends Component {
       <React.StrictMode key={locale}>
         <Suspense
           fallback={
-            <div className="container mx-auto h-screen flex justify-center items-center">
-              <div className="w-1/3 spinner" />
+            <div className="bg-default h-screen grid justify-center">
+              <div className="spinner-4" />
             </div>
           }
         >
