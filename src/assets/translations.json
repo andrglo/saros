@@ -7,6 +7,18 @@
     "en": "By using",
     "pt-BR": "Ao usar"
   },
+  "city": {
+    "en": "City",
+    "pt-BR": "Cidade"
+  },
+  "country": {
+    "en": "Country",
+    "pt-BR": "País"
+  },
+  "email": {
+    "en": "email",
+    "pt-BR": "email"
+  },
   "email_has_been_sent": {
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
@@ -78,6 +90,10 @@
   "signin_link": {
     "en": "Send email with a link to sign in",
     "pt-BR": "Enviar email com o link para entrar"
+  },
+  "state": {
+    "en": "State",
+    "pt-BR": "Estado"
   },
   "terms_of_service": {
     "en": "Terms of Service",

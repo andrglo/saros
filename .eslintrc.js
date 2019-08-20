@@ -66,5 +66,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react/jsx-fragments': 0,
     'react/state-in-constructor': 0,
+    'react/no-array-index-key': 0,
   }
 }

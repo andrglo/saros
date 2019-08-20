@@ -8,7 +8,8 @@ export {
   FaInfo as InfoIcon,
   FaMinusCircle as ErrorIcon,
   FaRegUserCircle as FaceIcon,
-  FaChevronDown as ChevronDown
+  FaChevronDown as ChevronDown,
+  FaCheck as Check
 } from 'react-icons/fa'
 
 export {MdLaunch as LaunchIcon} from 'react-icons/md'
