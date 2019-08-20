@@ -1,6 +1,7 @@
 import React, {useState, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+import cn from 'classnames'
 import debug from 'debug'
 
 import {disconnect} from './controller'
@@ -24,6 +25,7 @@ const Dashboard = props => {
   const {user, children, isHome, dispatch} = props
 
   const menuButtonRef = useRef(null)
+  const [isDrawerOpen, openDrawer] = useState(false)
 
   const [focusItemInUserMenu, setFocusItemInUserMenu] = useState(
     false
@@ -31,10 +33,11 @@ const Dashboard = props => {
   const [showUserMenu, setShowUserMenu] = useState(false)
   return (
     <div className="dashboard bg-default text-default h-screen">
-      <div className="fixed flex justify-between w-full shadow-lg bg-toolbar text-toolbar h-12 sm:h-16 p-2 sm:p-4 z-30">
+      <div className="toolbar flex justify-between shadow-lg bg-toolbar text-toolbar p-2 sm:p-4 z-30">
         <button
           type="button"
-          className="items-center ml-2 sm:invisible"
+          className="items-center ml-2 mt-3 mb-3 sm:invisible focus:outline-none focus:shadow-outline"
+          onClick={() => openDrawer(!isDrawerOpen)}
         >
           <BarsIcon />
         </button>
@@ -116,11 +119,17 @@ const Dashboard = props => {
           </div>
         </div>
       </div>
-      <div className="text-drawer bg-drawer fixed h-full mt-12 sm:mt-16 w-0 sm:w-40 sm:shadow-inner overflow-x-hidden">
+      <div
+        className={cn(
+          'text-drawer bg-drawer w-0 sm:w-auto overflow-hidden',
+          {
+            'w-auto': isDrawerOpen
+          }
+        )}
+      >
         Todo: Quick links
       </div>
-      <div className="h-12 sm:h-16" />
-      <div className="relative overflow-auto max-h-(screen-12) sm:max-h-(screen-16) w-screen pl-0 sm:pl-40">
+      <div className="relative overflow-auto">
         {children || 'Dashboard view will go here'}
       </div>
     </div>

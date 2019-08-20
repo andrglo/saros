@@ -19,6 +19,13 @@ html {
 
 .dashboard {
   transition: background-color 1s ease;
+  display: grid;
+  grid-template-columns: fit-content(12em) 1fr;
+  grid-template-rows: 4em 1fr
+}
+
+.dashboard .toolbar {
+  grid-column: span 2
 }
 
 .markdown h1 {

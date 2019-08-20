@@ -47,5 +47,8 @@ module.exports = {
     spinner: ['responsive'],
     borderWidth: ['responsive', 'hover']
   },
-  plugins: [require('./tailwind-spinner-plugin')]
+  plugins: [
+    require('./tailwind-grid-plugin'),
+    require('./tailwind-spinner-plugin')
+  ]
 }
