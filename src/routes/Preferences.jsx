@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import debug from 'debug'
 
 import t from '../lib/translate'
-import Input from '../components/Input'
+import SmartInput from '../components/SmartInput'
 import {getTheme, getLocale} from '../selectors/app'
 import {setTheme} from '../reducers/app'
 import {locales} from '../../saros.config'
@@ -20,7 +20,7 @@ const Preferences = props => {
   return (
     <div className="mx-auto max-w-sm">
       <div className="flex">
-        <Input
+        <SmartInput
           className="mx-1 w-1/2"
           label={t`Theme`}
           options={useMemo(
@@ -38,7 +38,7 @@ const Preferences = props => {
             dispatch(setTheme({theme}))
           }}
         />
-        <Input
+        <SmartInput
           className="mx-1 w-1/2"
           label={t`Language`}
           options={locales}

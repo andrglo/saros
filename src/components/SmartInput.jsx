@@ -44,6 +44,7 @@ const Input = props => {
     label,
     fieldErrors = {},
     options,
+    style,
     ...rest
   } = props
 
@@ -90,7 +91,7 @@ const Input = props => {
   const isSelect = Component === Select
 
   return (
-    <div className={className}>
+    <div className={cn(className, 'w-full')} style={style}>
       <label
         className="leading-tight text-sm tracking-tight"
         htmlFor={id}
@@ -144,6 +145,7 @@ const checkProps = (props, propName, componentName) => {
 
 Input.propTypes = {
   className: PropTypes.string,
+  style: PropTypes.object,
   id: PropTypes.string,
   formName: PropTypes.string,
   onChange: PropTypes.func,
@@ -187,10 +189,10 @@ const ConnectedInput = connect((state, props) => {
   return {value, fieldErrors}
 })(Input)
 
-const FormInput = props => (
+const SmartInput = props => (
   <FormContext.Consumer>
     {context => <ConnectedInput formName={context} {...props} />}
   </FormContext.Consumer>
 )
 
-export default FormInput
+export default SmartInput

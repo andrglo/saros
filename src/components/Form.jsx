@@ -17,7 +17,7 @@ const log = debug('form')
 export const FormContext = React.createContext()
 
 const Form = props => {
-  log('render', props)
+  // log('render', props)
   const {
     children,
     formName,
