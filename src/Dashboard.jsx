@@ -33,91 +33,83 @@ const Dashboard = props => {
   const [showUserMenu, setShowUserMenu] = useState(false)
   return (
     <div className="dashboard bg-default text-default h-screen">
-      <div className="toolbar flex justify-between shadow-lg bg-toolbar text-toolbar p-2 sm:p-4 z-30">
+      <div className="toolbar flex shadow-lg bg-toolbar text-toolbar p-2 sm:p-4">
         <button
           type="button"
-          className="items-center ml-2 mt-3 mb-3 sm:invisible focus:outline-none focus:shadow-outline"
+          className="ml-2 sm:hidden focus:outline-none focus:shadow-outline"
           onClick={() => openDrawer(!isDrawerOpen)}
         >
           <BarsIcon />
         </button>
-        <div className="flex items-center">
-          {!isHome && (
-            <button
-              className="w-10 h-10 mr-4 hover:bg-menuHover rounded-full focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={() => {
-                dispatch(pushBrowserLocation('/'))
-              }}
-            >
-              <HomeIcon className="w-6 h-6 m-auto" />
-            </button>
+        <p className="ml-4 sm:ml-0 flex-1 text-3xl self-center">?</p>
+        {!isHome && (
+          <button
+            className=" hover:bg-menuHover rounded-full focus:outline-none focus:shadow-outline"
+            type="button"
+            onClick={() => {
+              dispatch(pushBrowserLocation('/'))
+            }}
+          >
+            <HomeIcon className="w-6 h-6 m-auto" />
+          </button>
+        )}
+        <button
+          type="button"
+          ref={menuButtonRef}
+          className="self-center ml-4 rounded-full focus:outline-none focus:shadow-outline"
+          onClick={() => {
+            setFocusItemInUserMenu(false)
+            setShowUserMenu(!showUserMenu)
+          }}
+          onKeyDown={event => {
+            if (!showUserMenu) {
+              event.preventDefault()
+              setFocusItemInUserMenu(true)
+              setShowUserMenu(true)
+            }
+          }}
+        >
+          {user.photoURL ? (
+            <img
+              className="w-8 h-8 rounded-full focus:outline-none"
+              src={user.photoURL}
+              alt="Avatar of User"
+            />
+          ) : (
+            <FaceIcon className="w-6 h-6" />
           )}
-          <div className="relative">
-            <div className="h-2" />
-            <button
-              type="button"
-              ref={menuButtonRef}
-              className="rounded-full focus:outline-none focus:shadow-outline"
-              onClick={() => {
-                setFocusItemInUserMenu(false)
-                setShowUserMenu(!showUserMenu)
-              }}
-              onKeyDown={event => {
-                if (!showUserMenu) {
-                  event.preventDefault()
-                  setFocusItemInUserMenu(true)
-                  setShowUserMenu(true)
-                }
-              }}
-            >
-              {user.photoURL ? (
-                <img
-                  className="w-8 h-8 rounded-full focus:outline-none"
-                  src={user.photoURL}
-                  alt="Avatar of User"
-                />
-              ) : (
-                <FaceIcon className="w-6 h-6" />
-              )}
-            </button>
-            {showUserMenu && (
-              <LinkMenu
-                className="absolute right-0 mt-0 sm:mt-1"
-                onClose={() => {
-                  setShowUserMenu(false)
-                }}
-                menuButtonRef={menuButtonRef}
-                focus={focusItemInUserMenu}
-                options={[
-                  {
-                    icon: <ProfileIcon />,
-                    label: t`My account`,
-                    link: '/profile-edit'
-                  },
-                  {
-                    icon: <SettingsIcon />,
-                    label: t`Preferences`,
-                    link: '/preferences'
-                  },
-                  {
-                    divider: (
-                      <div
-                        key="div"
-                        className="m-1 border border-menu"
-                      />
-                    )
-                  },
-                  {
-                    icon: <SignoutIcon />,
-                    label: t`Log out`,
-                    link: disconnect
-                  }
-                ]}
-              />
-            )}
-          </div>
-        </div>
+        </button>
+        {showUserMenu && (
+          <LinkMenu
+            onClose={() => {
+              setShowUserMenu(false)
+            }}
+            menuButtonRef={menuButtonRef}
+            focus={focusItemInUserMenu}
+            options={[
+              {
+                icon: <ProfileIcon />,
+                label: t`My account`,
+                link: '/profile-edit'
+              },
+              {
+                icon: <SettingsIcon />,
+                label: t`Preferences`,
+                link: '/preferences'
+              },
+              {
+                divider: (
+                  <div key="div" className="m-1 border border-menu" />
+                )
+              },
+              {
+                icon: <SignoutIcon />,
+                label: t`Log out`,
+                link: disconnect
+              }
+            ]}
+          />
+        )}
       </div>
       <div
         className={cn(
