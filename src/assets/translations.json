@@ -55,6 +55,10 @@
     "en": "Name",
     "pt-BR": "Nome"
   },
+  "no_options_available": {
+    "en": "No options available",
+    "pt-BR": "Nenhuma opção disponível"
+  },
   "or": {
     "en": "or",
     "pt-BR": "ou"

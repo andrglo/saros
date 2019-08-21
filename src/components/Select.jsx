@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 // Inspired by https://github.com/sanusart/react-dropdown-select
 import React, {
   useState,
@@ -115,7 +117,9 @@ const Dropdown = props => {
         return (
           <div
             key={option.value}
-            className="bg-menu text-input outline-none"
+            className={cn('bg-menu text-input outline-none ', {
+              'border-divider border-b': index !== lastIndex
+            })}
             ref={isFocused ? focusedRef : undefined}
           >
             <div
@@ -144,13 +148,18 @@ const Dropdown = props => {
               {option.label}
             </div>
             {hasOptionsNotShowed && index === lastIndex && (
-              <div className="text-xs italic tracking-tighter text-center text-warning">
+              <div className="text-xs italic p-1 overflow-hidden tracking-tighter text-center text-warning">
                 {t`There are options not showed, please, type more text`}
               </div>
             )}
           </div>
         )
       })}
+      {options.length === 0 && (
+        <div className="text-sm italic p-1 overflow-hidden tracking-tighter text-center text-warning">
+          {t`No options available`}
+        </div>
+      )}
     </div>
   )
 }
@@ -180,6 +189,7 @@ const Select = props => {
     ...rest
   } = props
 
+  const inputRef = useRef(null)
   const containerRef = useRef(null)
   const dropdownRootRef = useRef(null)
 
@@ -287,15 +297,20 @@ const Select = props => {
         switch (event.key) {
           case Tab:
           case Enter: {
+            if (!isDropdownOpen) {
+              return
+            }
             let value
             if (multi) {
               // todo
             } else {
-              value = options[focusedIndex].value
+              value = (options[focusedIndex] || {}).value
             }
             setSearchText('')
             closeDropdown()
-            onChange(value)
+            if (value !== undefined) {
+              onChange(value)
+            }
             if (event.key === Enter) {
               event.preventDefault()
             }
@@ -328,6 +343,7 @@ const Select = props => {
     [
       closeDropdown,
       focusedIndex,
+      isDropdownOpen,
       multi,
       onChange,
       openDropdown,
@@ -389,14 +405,20 @@ const Select = props => {
       aria-expanded="true"
       aria-controls=""
     >
-      <div className={cn(classes.value, 'flex flex-1 flex-wrap')}>
+      <div
+        className={cn(classes.value, 'flex flex-1 cursor-text', {
+          'flex-wrap': multi
+        })}
+        onClick={() => inputRef.current.focus()}
+      >
         {display}
         <input
+          ref={inputRef}
           style={{
             backgroundColor: 'inherit',
             width: `${searchText.length + 1}ch`
           }}
-          className={cn(classes.input, 'focus:outline-none')}
+          className={cn(classes.input, 'flex-1 focus:outline-none')}
           onFocus={openDropdown}
           value={searchText}
           onChange={event => {
