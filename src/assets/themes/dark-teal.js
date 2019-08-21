@@ -27,6 +27,8 @@ module.exports = {
     'border-default': colors.teal[700],
     'border-focused': colors.teal[500],
 
+    divider: 'rgba(255,255,255,.1)',
+
     'text-menu': colors.teal[200],
     'bg-menu': colors.teal[800],
     'bg-menu-focused': colors.teal[700],

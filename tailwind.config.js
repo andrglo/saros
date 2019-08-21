@@ -30,7 +30,8 @@ module.exports = {
       borderColor: () => ({
         default: 'var(--color-border-default)',
         focused: 'var(--color-border-focused)',
-        menu: 'var(--color-text-menu)'
+        menu: 'var(--color-text-menu)',
+        divider: 'var(--color-divider)'
       }),
       fontWeight: {
         budget: 100,
