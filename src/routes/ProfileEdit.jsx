@@ -9,11 +9,7 @@ import SmartInput from '../components/SmartInput'
 import {getUid} from '../selectors/app'
 import {getFormValues, getForm} from '../selectors/forms'
 import {Check} from '../assets/icons'
-import {
-  getCountriesAsOptions,
-  getStatesAsOptions,
-  getCitiesAsOptions
-} from '../selectors/docs'
+import {getCountries, getStates, getCities} from '../selectors/atlas'
 
 const log = debug('profile')
 
@@ -47,17 +43,28 @@ const ProfileEdit = props => {
       <div
         className="sm:gy-span-2 grid grid-gap-1"
         style={{
-          gridTemplateColumns: '1fr minmax(4em, auto)'
+          gridTemplateColumns: '1fr minmax(5em, auto)'
         }}
       >
         <SmartInput
           id="country"
           label={t`Country`}
           options={countries}
+          allowAnyValue
         />
-        <SmartInput id="state" label={t`State`} options={states} />
+        <SmartInput
+          id="state"
+          label={t`State`}
+          options={states}
+          allowAnyValue
+        />
       </div>
-      <SmartInput id="city" label={t`City`} options={cities} />
+      <SmartInput
+        id="city"
+        label={t`City`}
+        options={cities}
+        allowAnyValue
+      />
     </Form>
   )
 }
@@ -65,9 +72,9 @@ const ProfileEdit = props => {
 ProfileEdit.propTypes = {
   dispatch: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
-  countries: PropTypes.object,
-  states: PropTypes.object,
-  cities: PropTypes.object,
+  countries: PropTypes.array,
+  states: PropTypes.array,
+  cities: PropTypes.array,
   uid: PropTypes.string.isRequired
 }
 
@@ -77,12 +84,9 @@ export default connect(state => {
   const values = (form && getFormValues(form)) || {}
   return {
     formName,
-    countries: getCountriesAsOptions(state),
-    states: getStatesAsOptions(state, {country: values.country}),
-    cities: getCitiesAsOptions(state, {
-      country: values.country,
-      state: values.state
-    }),
+    countries: getCountries(),
+    states: getStates(values.country),
+    cities: getCities(values.country, values.state),
     uid: getUid(state)
   }
 })(ProfileEdit)
