@@ -42,7 +42,7 @@ const Dropdown = props => {
   const {
     classes,
     bounds,
-    selectedOption = {},
+    selectedIndex,
     options = [],
     onChange,
     maxDropdownHeight = MAX_DROPDOWN_HEIGHT,
@@ -102,6 +102,7 @@ const Dropdown = props => {
       bounds.top - window.pageYOffset - DROPDOWN_MARGIN_Y * 2
   }
   const lastIndex = options.length - 1
+  const selectedOption = options[selectedIndex] || {}
   return (
     <div
       style={style}
@@ -117,7 +118,7 @@ const Dropdown = props => {
         return (
           <div
             key={option.value}
-            className={cn('bg-menu text-input outline-none ', {
+            className={cn('bg-menu text-input outline-none', {
               'border-divider border-b': index !== lastIndex
             })}
             ref={isFocused ? focusedRef : undefined}
@@ -128,7 +129,7 @@ const Dropdown = props => {
                 cursor: 'pointer'
               }}
               className={cn(
-                'p-1 hover:bg-focused-input',
+                'p-1 hover:bg-focused-input overflow-x-hidden',
                 {
                   [`bg-menu-selected  ${classes['option-selected']}`]:
                     isSelected && !isFocused,
@@ -170,7 +171,7 @@ Dropdown.propTypes = {
   maxDropdownHeight: PropTypes.number,
   options: PropTypes.array,
   onChange: PropTypes.func.isRequired,
-  selectedOption: PropTypes.object,
+  selectedIndex: PropTypes.number.isRequired,
   hasOptionsNotShowed: PropTypes.bool.isRequired,
   focusedIndex: PropTypes.number.isRequired
 }
@@ -182,6 +183,7 @@ const Select = props => {
     options,
     multi,
     showfirstOptionAsDefault,
+    allowAnyValue,
     onChange,
     placeholder = '',
     value = '',
@@ -248,6 +250,9 @@ const Select = props => {
     selectedIndex = options.findIndex(
       option => option.value === value
     )
+    if (showfirstOptionAsDefault && selectedIndex === -1) {
+      selectedIndex = 0
+    }
   }
 
   const openDropdown = useCallback(() => {
@@ -267,8 +272,10 @@ const Select = props => {
     document.body.removeChild(dropdownRootRef.current)
     dropdownRootRef.current = null
     setDropdownOpen(false)
-    setSearchText('')
-  }, [isDropdownOpen])
+    if (allowAnyValue !== true) {
+      setSearchText('')
+    }
+  }, [allowAnyValue, isDropdownOpen])
 
   const handleEvent = useCallback(
     event => {
@@ -290,7 +297,9 @@ const Select = props => {
         } else {
           value = option.value || null
         }
-        setSearchText('')
+        if (allowAnyValue !== true) {
+          setSearchText('')
+        }
         closeDropdown()
         onChange(value)
       } else {
@@ -300,16 +309,20 @@ const Select = props => {
             if (!isDropdownOpen) {
               return
             }
-            let value
+            let nextValue
             if (multi) {
               // todo
             } else {
-              value = (options[focusedIndex] || {}).value
+              nextValue = (options[focusedIndex] || {}).value
             }
-            setSearchText('')
             closeDropdown()
-            if (value !== undefined) {
-              onChange(value)
+            if (nextValue !== undefined) {
+              onChange(nextValue)
+              setSearchText('')
+            } else if (allowAnyValue === true) {
+              onChange(searchText)
+            } else {
+              setSearchText('')
             }
             if (event.key === Enter) {
               event.preventDefault()
@@ -341,13 +354,15 @@ const Select = props => {
       }
     },
     [
+      allowAnyValue,
       closeDropdown,
       focusedIndex,
       isDropdownOpen,
       multi,
       onChange,
       openDropdown,
-      options
+      options,
+      searchText
     ]
   )
 
@@ -361,19 +376,11 @@ const Select = props => {
     () => extractClassesByComponent(className),
     [className]
   )
-  let selectedOption
   let display
   if (multi) {
     // todo
   } else if (!searchText) {
-    selectedOption = options[selectedIndex]
-    if (
-      !selectedOption &&
-      showfirstOptionAsDefault &&
-      isValueEmpty(value)
-    ) {
-      selectedOption = options[0]
-    }
+    const selectedOption = options[selectedIndex]
     if (selectedOption) {
       display = (
         <span className={classes.display}>
@@ -382,6 +389,11 @@ const Select = props => {
       )
     }
   }
+  useEffect(() => {
+    if (selectedIndex === -1 && !isValueEmpty(value)) {
+      setSearchText(value)
+    }
+  }, [selectedIndex, value])
 
   // log('render', props, {
   //   isDropdownOpen,
@@ -452,7 +464,7 @@ const Select = props => {
         createPortal(
           <Dropdown
             options={options}
-            selectedOption={selectedOption}
+            selectedIndex={selectedIndex}
             classes={classes}
             bounds={bounds}
             maxDropdownHeight={maxDropdownHeight}
@@ -491,6 +503,7 @@ Select.propTypes = {
   multi: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   showfirstOptionAsDefault: PropTypes.bool,
+  allowAnyValue: PropTypes.bool,
   maxOptionsToShow: PropTypes.number,
   placeholder: PropTypes.string
 }
