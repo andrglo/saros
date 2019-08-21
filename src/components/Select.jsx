@@ -18,6 +18,7 @@ import useOnClickOutside from '../hooks/useOnClickOutside'
 import {ChevronDown} from '../assets/icons'
 import t from '../lib/translate'
 import useBounds from '../hooks/useBounds'
+import usePreviousValue from '../hooks/usePreviousValue'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('select')
@@ -49,12 +50,18 @@ const Dropdown = props => {
   const [height, setHeight] = useState(MAX_DROPDOWN_HEIGHT)
   const focusedRef = useRef(null)
   const dropdownRef = useRef(null)
+
+  const previousFocusedIndex = usePreviousValue(focusedIndex)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (focusedRef.current) {
       // log('useEffect', focusedIndex, focusedRef.current.innerText)
       focusedRef.current.scrollIntoView({
-        behavior: focusedIndex === 0 ? 'auto' : 'smooth',
+        behavior:
+          focusedIndex === previousFocusedIndex + 1 ||
+          focusedIndex === previousFocusedIndex - 1
+            ? 'smooth'
+            : 'auto',
         block: 'nearest'
       })
     }
