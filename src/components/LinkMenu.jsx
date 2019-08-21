@@ -6,11 +6,13 @@ import debug from 'debug'
 import Link from './Link'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 import useKeyPress from '../hooks/useKeyPress'
+import useBounds from '../hooks/useBounds'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('menu:link')
 
 const getItemId = i => `link_${i}`
+const GAP = 4
 
 const Menu = props => {
   const {className, options, onClose, focus, menuButtonRef} = props
@@ -25,6 +27,21 @@ const Menu = props => {
     onClose
   )
 
+  const style = {top: -9999}
+  const menuBounds = useBounds(menuNode)
+  const buttonBounds = useBounds(menuButtonRef)
+  if (buttonBounds && menuBounds) {
+    style.top = buttonBounds.bottom + GAP
+    if (
+      buttonBounds.left + menuBounds.width + GAP <
+      window.innerWidth
+    ) {
+      style.left = buttonBounds.left
+    } else {
+      style.right = window.innerWidth - buttonBounds.right
+    }
+  }
+
   useKeyPress('Escape', onClose)
 
   const [focused, setFocus] = useState(focus ? 0 : -1)
@@ -38,7 +55,11 @@ const Menu = props => {
   return (
     <div
       ref={setMenuNode}
-      className={cn('bg-menu text-menu rounded shadow-md', className)}
+      style={style}
+      className={cn(
+        'fixed bg-menu text-menu rounded shadow-md z-30',
+        className
+      )}
       role="menu"
       onClick={onClose}
       onKeyDown={event => {

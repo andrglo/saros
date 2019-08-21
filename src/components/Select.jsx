@@ -12,13 +12,12 @@ import cn from 'classnames'
 import debug from 'debug'
 
 import extractClassesByComponent from '../lib/extractClassesByComponent'
-import getScrollParent from '../lib/getScrollParent'
 import normalize from '../lib/normalize'
 import sanitize from '../lib/sanitize'
 import useOnClickOutside from '../hooks/useOnClickOutside'
-import useEventListener from '../hooks/useEventListener'
 import {ChevronDown} from '../assets/icons'
 import t from '../lib/translate'
+import useBounds from '../hooks/useBounds'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('select')
@@ -181,7 +180,7 @@ const Select = props => {
   const [searchText, setSearchText] = useState('')
   const [isDropdownOpen, setDropdownOpen] = useState(false)
 
-  const [bounds, setBounds] = useState()
+  const bounds = useBounds(containerRef)
   const [hasOptionsNotShowed, setOptionsNotShowed] = useState(false)
 
   options = useMemo(() => {
@@ -233,19 +232,6 @@ const Select = props => {
       option => option.value === value
     )
   }
-
-  const updateBounds = useCallback(() => {
-    if (isDropdownOpen) {
-      setBounds(containerRef.current.getBoundingClientRect())
-    }
-  }, [isDropdownOpen])
-  useEffect(updateBounds, [isDropdownOpen])
-  useEventListener('resize', updateBounds)
-  useEventListener(
-    'scroll',
-    updateBounds,
-    getScrollParent(containerRef.current)
-  )
 
   const openDropdown = useCallback(() => {
     if (isDropdownOpen) {
