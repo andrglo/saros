@@ -6,5 +6,6 @@ node_modules
 .firebaserc
 firebase.*.json
 deploy.*.sh
+countries.json
 
 
