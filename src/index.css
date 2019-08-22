@@ -9,10 +9,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  -webkit-tap-highlight-color:  transparent;
-}
-
 .signin {
   @apply bg-teal-400;
 }

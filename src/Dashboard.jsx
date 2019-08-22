@@ -56,7 +56,7 @@ const Dashboard = props => {
         <div className="toolbar flex shadow-lg bg-toolbar text-toolbar p-2 sm:p-4">
           <button
             type="button"
-            className="ml-2 sm:hidden focus:outline-none"
+            className="ml-2 h-4 self-center sm:hidden focus:outline-none"
             onClick={() => openDrawer(!isDrawerOpen)}
           >
             <BarsIcon />
@@ -78,7 +78,7 @@ const Dashboard = props => {
           <button
             type="button"
             ref={menuButtonRef}
-            className="self-center ml-4 rounded-full w-8 h-8 overflow-hidden focus:outline-none focus:shadow-outline"
+            className="self-center ml-4 rounded-sm sm:rounded-full w-8 h-8 overflow-hidden focus:outline-none focus:shadow-outline"
             onClick={() => {
               setFocusItemInUserMenu(false)
               setShowUserMenu(!showUserMenu)
