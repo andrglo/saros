@@ -5,6 +5,9 @@ module.exports = {
         default: 'var(--color-text-default)',
         error: 'var(--color-text-error)',
         warning: 'var(--color-text-warning)',
+        info: 'var(--color-text-info)',
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
         input: 'var(--color-text-input)',
         toolbar: 'var(--color-text-toolbar)',
         drawer: 'var(--color-text-drawer)',
@@ -16,13 +19,17 @@ module.exports = {
         default: 'var(--color-bg-default)',
         error: 'var(--color-bg-error)',
         warning: 'var(--color-bg-warning)',
+        info: 'var(--color-bg-info)',
+        primary: 'var(--color-bg-primary)',
+        secondary: 'var(--color-bg-secondary)',
         input: 'var(--color-bg-input)',
         'focused-input': 'var(--color-bg-input-focused)',
         toolbar: 'var(--color-bg-toolbar)',
         drawer: 'var(--color-bg-drawer)',
         menu: 'var(--color-bg-menu)',
         'menu-focused': 'var(--color-bg-menu-focused)',
-        'menu-selected': 'var(--color-bg-menu-selected)'
+        'menu-selected': 'var(--color-bg-menu-selected)',
+        divider: 'var(--color-divider)'
       },
       placeholderColor: () => ({
         input: 'var(--color-text-placeholder)'

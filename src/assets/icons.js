@@ -4,12 +4,15 @@ export {
   FaCog as SettingsIcon,
   FaBars as BarsIcon,
   FaHome as HomeIcon,
-  FaExclamationTriangle as WarningIcon,
   FaInfo as InfoIcon,
-  FaMinusCircle as ErrorIcon,
   FaRegUserCircle as FaceIcon,
   FaChevronDown as ChevronDown,
   FaCheck as Check
 } from 'react-icons/fa'
 
-export {MdLaunch as LaunchIcon} from 'react-icons/md'
+export {
+  MdLaunch as LaunchIcon,
+  MdClose as CloseIcon,
+  MdWarning as WarningIcon,
+  MdError as ErrorIcon
+} from 'react-icons/md'

@@ -16,6 +16,12 @@ module.exports = {
     'text-warning': colors.orange[900],
     'bg-warning': colors.orange[400],
 
+    'text-info': colors.teal[700],
+    'bg-info': colors.teal[100],
+
+    'text-primary': colors.black,
+    'bg-primary': colors.teal[200],
+
     'text-placeholder': colors.gray[600],
 
     'text-toolbar': colors.teal[900],

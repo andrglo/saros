@@ -1,95 +1,99 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react'
+// Inspired by https://www.tailwindtoolbox.com/components/alerts
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
+import cn from 'classnames'
 
-import {WarningIcon, InfoIcon, ErrorIcon} from '../assets/icons'
+import {
+  WarningIcon,
+  InfoIcon,
+  ErrorIcon,
+  CloseIcon
+} from '../assets/icons'
+
+const SLIDE_LEFT_TIMESPAN = 300 // --slide-left-timespan: 0.3s
 
 const Alert = props => {
   const {
     title,
-    onClose,
     message,
     buttonCaption,
     onClick,
-    position,
+    onClose,
     type
   } = props
-  let panel = ''
-  let view = ''
-  switch (position) {
-    case 'banner':
-      panel = 'alert-banner w-full fixed top-0'
-      break
-    case 'footer':
-      panel = 'alert-footer w-full fixed bottom-0'
-      break
-    default:
-      panel =
-        'alert-toast fixed bottom-0 right-0 m-8 w-5/6 md:w-full max-w-sm'
-      view = 'border-t-4 rounded-b shadow'
+
+  const [isOpen, setIsOpen] = useState(true)
+  const onAction = event => {
+    setIsOpen(false)
+    const isFromButton = event.target.nodeName === 'BUTTON'
+    event.persist()
+    setTimeout(() => {
+      if (isFromButton) {
+        onClick(event)
+        return
+      }
+      if (onClose) {
+        onClose(event)
+      }
+    }, SLIDE_LEFT_TIMESPAN)
   }
-  let icon
-  let btn =
-    'flex-initial ml-4 my-auto font-bold py-2 px-4 rounded-lg shadow-lg'
+
+  let color
+  let Icon
   switch (type) {
     case 'warning':
-      view = `${view} bg-yellow-400 text-yellow-900 border-yellow-500`
-      btn = `${btn} bg-yellow-500 hover:bg-yellow-600 text-yellow-900 `
-      icon = (
-        <WarningIcon className="flex-initial h-6 w-6 text-yellow-800 mr-2 my-auto" />
-      )
+      color = 'bg-warning text-warning'
+      Icon = WarningIcon
       break
     case 'error':
-      view = `${view} bg-red-400 text-red-900 border-red-500`
-      btn = `${btn} bg-red-500 hover:bg-red-600 text-red-900`
-      icon = (
-        <ErrorIcon className="flex-initial h-6 w-6 text-red-800 mr-2 my-auto" />
-      )
+      color = 'bg-error text-error'
+      Icon = ErrorIcon
       break
     default:
-      view = `${view} bg-teal-100 text-teal-900 border-teal-500`
-      btn = `${btn} bg-teal-200 hover:bg-teal-300 text-teal-900`
-      icon = (
-        <InfoIcon className="flex-initial h-6 w-6 text-teal-800 mr-2 my-auto" />
-      )
+      color = 'bg-info text-info'
+      Icon = InfoIcon
   }
+  const hasButton = Boolean(onClick)
   return (
-    <div className={panel}>
-      <input
-        type="checkbox"
-        className="hidden"
-        id="alert"
-        onClick={() => setTimeout(() => onClose(), 1000)}
-      />
-      <div className={view}>
-        <div className="flex items-start justify-start w-full p-2">
-          {icon}
-          <div className="flex-initial">
-            {title && <p className="font-bold">{title}</p>}
-            <p className="text-sm">{message}</p>
-          </div>
-          {onClick && (
-            <button className={btn} type="button" onClick={onClick}>
-              {buttonCaption}
-            </button>
-          )}
-          <label
-            className="close cursor-pointer flex-1"
-            title="close"
-            htmlFor="alert"
-          >
-            <svg
-              className="fill-current float-right"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-            >
-              <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-            </svg>
-          </label>
-        </div>
+    <div
+      className={cn(
+        color,
+        'fixed bottom-0 left-0 m-4',
+        'rounded-sm shadow border-divider border',
+        'grid grid-columns-4 items-center p-2',
+        {
+          'slide-in-left': isOpen,
+          'slide-out-left': !isOpen
+        }
+      )}
+      style={{
+        gridTemplateColumns: `1.5em auto ${
+          hasButton ? '6' : '1'
+        }em 1.5em`
+      }}
+    >
+      <Icon className="h-6 w-6" />
+      <div className="mx-2">
+        {title && <p className="font-bold">{title}</p>}
+        <p className="text-sm">{message}</p>
       </div>
+      <button
+        className={cn(
+          'bg-primary hover:bg-divider text-primary font-semibold mx-3 py-1 px-1 border border-divider rounded shadow',
+          {
+            invisible: !hasButton
+          }
+        )}
+        type="button"
+        onClick={onAction}
+      >
+        {buttonCaption}
+      </button>
+      <CloseIcon
+        className="close self-start w-6 h-6 -mt-2 ml-2"
+        onClick={onAction}
+      />
     </div>
   )
 }
@@ -98,9 +102,8 @@ Alert.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string.isRequired,
   type: PropTypes.oneOf(['warning', 'error', 'info']),
-  position: PropTypes.oneOf(['banner', 'footer', 'toast']),
   onClick: PropTypes.func,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   buttonCaption: PropTypes.string
 }
 
