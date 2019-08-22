@@ -48,12 +48,16 @@ exports.updateCurrencyRates = functions.pubsub
       `http://data.fixer.io/api/latest?access_key=${fixer.key}`
     )
     const {timestamp, date, success, ...data} = result.data
-    data.updatedAt = new Date(timestamp * 1000)
-    await admin
-      .firestore()
-      .collection('atlas')
-      .doc('currencyRates')
-      .set(data)
+    if (success === true) {
+      data.updatedAt = new Date(timestamp * 1000)
+      await admin
+        .firestore()
+        .collection('atlas')
+        .doc('currencyRates')
+        .set(data)
+    } else {
+      console.error('Error reading fixer:', result.data)
+    }
   })
 
 exports.checkBudget = checkBudget
