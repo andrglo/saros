@@ -250,7 +250,11 @@ const Select = props => {
     selectedIndex = options.findIndex(
       option => option.value === value
     )
-    if (showfirstOptionAsDefault && selectedIndex === -1) {
+    if (
+      showfirstOptionAsDefault &&
+      selectedIndex === -1 &&
+      isValueEmpty(searchText)
+    ) {
       selectedIndex = 0
     }
   }
@@ -297,9 +301,7 @@ const Select = props => {
         } else {
           value = option.value || null
         }
-        if (allowAnyValue !== true) {
-          setSearchText('')
-        }
+        setSearchText('')
         closeDropdown()
         onChange(value)
       } else {
@@ -389,11 +391,15 @@ const Select = props => {
       )
     }
   }
-  useEffect(() => {
-    if (selectedIndex === -1 && !isValueEmpty(value)) {
-      setSearchText(value)
+  const previousValue = usePreviousValue(value)
+  if (value !== previousValue) {
+    if (selectedIndex === -1 && isValueEmpty(searchText)) {
+      if (!Object.is(value, searchText)) {
+        // Why this test is required?
+        setSearchText(value)
+      }
     }
-  }, [selectedIndex, value])
+  }
 
   // log('render', props, {
   //   isDropdownOpen,
@@ -438,6 +444,9 @@ const Select = props => {
             openDropdown()
             setSearchText(searchText)
             setFocusedIndex(0)
+            if (allowAnyValue) {
+              onChange(searchText)
+            }
           }}
           placeholder={display ? '' : placeholder}
         />
