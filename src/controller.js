@@ -81,6 +81,8 @@ const sleep = milliseconds =>
 
 const timestamps = new Map()
 
+export const getStore = () => store
+
 const savePendingItems = async items => {
   // log('savePendingItems', 'localDb', items)
   for (const [path, data] of items) {
