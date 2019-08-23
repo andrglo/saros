@@ -83,6 +83,7 @@ const Input = props => {
     Component = Select
     inputProps.options = options
     inputProps.onChange = onSelectChange
+    inputProps.caption = label
   } else {
     Component = SimpleInput
     inputProps.onChange = onInputChange

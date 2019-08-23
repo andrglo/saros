@@ -47,7 +47,8 @@ const Dropdown = props => {
     onChange,
     maxDropdownHeight = MAX_DROPDOWN_HEIGHT,
     hasOptionsNotShowed,
-    focusedIndex
+    focusedIndex,
+    caption
   } = props
   const [height, setHeight] = useState(MAX_DROPDOWN_HEIGHT)
   const focusedRef = useRef(null)
@@ -85,16 +86,17 @@ const Dropdown = props => {
     marginBottom: DROPDOWN_MARGIN_Y,
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'auto',
     zIndex: 9999
   }
 
+  let topExpanded
   style.maxHeight =
     window.innerHeight -
     bounds.bottom -
     window.pageYOffset -
     DROPDOWN_MARGIN_Y * 2
   if (style.maxHeight < MIN_OPTION_HEIGHT) {
+    topExpanded = true
     style.top = bounds.top - height - DROPDOWN_MARGIN_Y * 2
     style.maxHeight =
       bounds.top - window.pageYOffset - DROPDOWN_MARGIN_Y * 2
@@ -107,61 +109,71 @@ const Dropdown = props => {
   return (
     <div
       style={style}
-      className={classes.dropdown}
       ref={dropdownRef}
       tabIndex="-1"
       aria-expanded="true"
       role="list"
     >
-      {options.map((option, index) => {
-        const isSelected = option.value === selectedOption.value
-        const isFocused = index === focusedIndex
-        return (
-          <div
-            key={option.value}
-            className={cn('bg-menu text-input outline-none', {
-              'border-divider border-b': index !== lastIndex
-            })}
-            ref={isFocused ? focusedRef : undefined}
-          >
-            <div
-              id={option.value}
-              style={{
-                cursor: 'pointer'
-              }}
-              className={cn(
-                'p-1 hover:bg-focused-input overflow-x-hidden',
-                {
-                  [`bg-menu-selected  ${classes['option-selected']}`]:
-                    isSelected && !isFocused,
-                  [`bg-menu-focused ${
-                    classes['option-focused']
-                  }`]: isFocused
-                },
-                classes.option
-              )}
-              onClick={onChange}
-              onKeyPress={onChange}
-              role="option"
-              tabIndex="-1"
-              aria-selected={isSelected}
-              aria-disabled={false}
-            >
-              {option.label}
-            </div>
-            {hasOptionsNotShowed && index === lastIndex && (
-              <div className="text-xs italic p-1 overflow-hidden tracking-tighter text-center text-warning">
-                {t`There are options not showed, please, type more text`}
-              </div>
-            )}
-          </div>
-        )
-      })}
-      {options.length === 0 && (
-        <div className="text-sm italic p-1 overflow-hidden tracking-tighter text-center text-warning">
-          {t`No options available`}
+      {topExpanded && caption && (
+        <div
+          className="text-sm absolute rounded tracking-tighter font-bold text-default"
+          style={{top: '-1.4em'}}
+        >
+          {caption}
         </div>
       )}
+      <div className={cn(classes.dropdown, 'overflow-auto')}>
+        {options.map((option, index) => {
+          const isSelected = option.value === selectedOption.value
+          const isFocused = index === focusedIndex
+          return (
+            <div
+              key={option.value}
+              className={cn('bg-menu text-input outline-none', {
+                'border-divider border-b': index !== lastIndex
+              })}
+              ref={isFocused ? focusedRef : undefined}
+            >
+              <div
+                id={option.value}
+                style={{
+                  cursor: 'pointer'
+                }}
+                className={cn(
+                  'p-1 hover:bg-focused-input overflow-x-hidden',
+                  {
+                    [`bg-menu-selected  ${
+                      classes['option-selected']
+                    }`]: isSelected && !isFocused,
+                    [`bg-menu-focused ${
+                      classes['option-focused']
+                    }`]: isFocused
+                  },
+                  classes.option
+                )}
+                onClick={onChange}
+                onKeyPress={onChange}
+                role="option"
+                tabIndex="-1"
+                aria-selected={isSelected}
+                aria-disabled={false}
+              >
+                {option.label}
+              </div>
+              {hasOptionsNotShowed && index === lastIndex && (
+                <div className="text-xs italic p-1 overflow-hidden tracking-tighter text-center text-warning">
+                  {t`There are options not showed, please, type more text`}
+                </div>
+              )}
+            </div>
+          )
+        })}
+        {options.length === 0 && (
+          <div className="text-sm italic p-1 overflow-hidden tracking-tighter text-center text-warning">
+            {t`No options available`}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -174,6 +186,7 @@ Dropdown.propTypes = {
   onChange: PropTypes.func.isRequired,
   selectedIndex: PropTypes.number.isRequired,
   hasOptionsNotShowed: PropTypes.bool.isRequired,
+  caption: PropTypes.string,
   focusedIndex: PropTypes.number.isRequired
 }
 
@@ -189,6 +202,7 @@ const Select = props => {
     placeholder = '',
     value = '',
     maxOptionsToShow = -1,
+    caption,
     ...rest
   } = props
 
@@ -481,6 +495,7 @@ const Select = props => {
             focusedIndex={focusedIndex}
             onChange={handleEvent}
             hasOptionsNotShowed={hasOptionsNotShowed}
+            caption={caption}
           />,
           dropdownRootRef.current
         )}
@@ -515,6 +530,7 @@ Select.propTypes = {
   showfirstOptionAsDefault: PropTypes.bool,
   allowAnyValue: PropTypes.bool,
   maxOptionsToShow: PropTypes.number,
+  caption: PropTypes.string,
   placeholder: PropTypes.string
 }
 
