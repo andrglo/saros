@@ -25,7 +25,7 @@ import usePreviousValue from '../hooks/usePreviousValue'
 // eslint-disable-next-line no-unused-vars
 const log = debug('select')
 
-const MAX_DROPDOWN_HEIGHT = 400
+const MAX_DROPDOWN_HEIGHT = 200
 const DROPDOWN_MARGIN_Y = 4
 const MIN_OPTION_HEIGHT = 48
 
@@ -85,7 +85,6 @@ const Dropdown = props => {
     marginBottom: DROPDOWN_MARGIN_Y,
     display: 'flex',
     flexDirection: 'column',
-    maxHeight: maxDropdownHeight,
     overflow: 'auto',
     zIndex: 9999
   }
@@ -97,9 +96,11 @@ const Dropdown = props => {
     DROPDOWN_MARGIN_Y * 2
   if (style.maxHeight < MIN_OPTION_HEIGHT) {
     style.top = bounds.top - height - DROPDOWN_MARGIN_Y * 2
-    style.height = height
     style.maxHeight =
       bounds.top - window.pageYOffset - DROPDOWN_MARGIN_Y * 2
+  }
+  if (style.maxHeight > maxDropdownHeight) {
+    style.maxHeight = maxDropdownHeight
   }
   const lastIndex = options.length - 1
   const selectedOption = options[selectedIndex] || {}
