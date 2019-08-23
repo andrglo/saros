@@ -202,6 +202,7 @@ const Select = props => {
     value = '',
     maxOptionsToShow = -1,
     caption,
+    isLoading,
     ...rest
   } = props
 
@@ -213,13 +214,16 @@ const Select = props => {
   const [focusedIndex, setFocusedIndex] = useState(0)
   const [searchText, setSearchText] = useState('')
   const [isDropdownOpen, setDropdownOpen] = useState(false)
+  const [shouldCloseDropdown, setShouldCloseDropdown] = useState(
+    false
+  )
 
   const bounds = useBounds(containerRef)
   const [hasOptionsNotShowed, setOptionsNotShowed] = useState(false)
 
   options = useMemo(() => {
     let result = options
-    if (searchText) {
+    if (searchText && searchText !== value) {
       const slug = normalize(searchText)
       const betterMatches = []
       const matches = []
@@ -258,7 +262,7 @@ const Select = props => {
       result = options.slice(0, maxOptionsToShow)
     }
     return result
-  }, [maxOptionsToShow, options, searchText])
+  }, [maxOptionsToShow, options, searchText, value])
 
   let selectedIndex = -1
   if (!multi) {
@@ -275,6 +279,7 @@ const Select = props => {
   }
 
   const openDropdown = useCallback(() => {
+    setShouldCloseDropdown(false)
     if (isDropdownOpen) {
       return
     }
@@ -296,14 +301,20 @@ const Select = props => {
     }
   }, [allowAnyValue, isDropdownOpen])
 
+  useEffect(() => {
+    if (shouldCloseDropdown) {
+      closeDropdown()
+    }
+  })
+
   const onBlur = useCallback(() => {
     if (
       document.activeElement !== inputRef.current &&
       document.activeElement !== buttonRef.current
     ) {
-      closeDropdown()
+      setTimeout(() => setShouldCloseDropdown(true), 100)
     }
-  }, [closeDropdown])
+  }, [])
 
   const handleEvent = useCallback(
     event => {
@@ -428,14 +439,11 @@ const Select = props => {
         setSearchText(value)
       }
     }
+  } else if (selectedIndex > 0 && searchText) {
+    setSearchText('')
   }
 
-  // log('render', props, {
-  //   isDropdownOpen,
-  //   bounds,
-  //   dropdownRootRef,
-  //   focusedIndex
-  // })
+  // log('render', props)
   return (
     <div
       {...rest}
@@ -444,7 +452,7 @@ const Select = props => {
         {
           'shadow-outline': isDropdownOpen
         },
-        'flex'
+        'flex relative'
       )}
       ref={containerRef}
       onKeyDown={handleEvent}
@@ -481,25 +489,37 @@ const Select = props => {
           placeholder={display ? '' : placeholder}
         />
       </div>
-      <button
-        ref={buttonRef}
-        className={cn('focus:outline-none', classes['expand-button'])}
-        type="button"
-        tabIndex="-1"
-        style={{
-          transform: `rotate(${isDropdownOpen ? 180 : 0}deg)`,
-          transition: 'transform .3s ease'
-        }}
-        onClick={() => {
-          if (isDropdownOpen) {
-            closeDropdown()
-          } else {
-            openDropdown()
-          }
-        }}
-      >
-        <ChevronDown />
-      </button>
+      {isLoading ? (
+        <div
+          className="spinner-1"
+          style={{
+            transform: 'translateX(-1em) translateY(1px)'
+          }}
+        />
+      ) : (
+        <button
+          ref={buttonRef}
+          className={cn(
+            'focus:outline-none',
+            classes['expand-button']
+          )}
+          type="button"
+          tabIndex="-1"
+          style={{
+            transform: `rotate(${isDropdownOpen ? 180 : 0}deg)`,
+            transition: 'transform .3s ease'
+          }}
+          onClick={() => {
+            if (isDropdownOpen) {
+              closeDropdown()
+            } else {
+              openDropdown()
+            }
+          }}
+        >
+          <ChevronDown />
+        </button>
+      )}
       {isDropdownOpen &&
         createPortal(
           <Dropdown
@@ -547,6 +567,7 @@ Select.propTypes = {
   allowAnyValue: PropTypes.bool,
   maxOptionsToShow: PropTypes.number,
   caption: PropTypes.string,
+  isLoading: PropTypes.bool,
   placeholder: PropTypes.string
 }
 

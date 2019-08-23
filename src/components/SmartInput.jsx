@@ -45,6 +45,7 @@ const Input = props => {
     fieldErrors = {},
     options,
     style,
+    isLoading,
     ...rest
   } = props
 
@@ -84,6 +85,7 @@ const Input = props => {
     inputProps.options = options
     inputProps.onChange = onSelectChange
     inputProps.caption = label
+    inputProps.isLoading = isLoading
   } else {
     Component = SimpleInput
     inputProps.onChange = onInputChange
@@ -162,22 +164,28 @@ Input.propTypes = {
   validate: PropTypes.func,
   label: PropTypes.string,
   fieldErrors: PropTypes.object,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string,
-      value: PropTypes.oneOfType([
-        PropTypes.string.isRequired,
-        PropTypes.number.isRequired
-      ])
-    }).isRequired
-  ),
+  options: PropTypes.oneOfType([
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.oneOfType([
+          PropTypes.string.isRequired,
+          PropTypes.number.isRequired
+        ])
+      }).isRequired
+    ),
+    PropTypes.func
+  ]),
+  isLoading: PropTypes.bool,
   type: PropTypes.oneOf(['']),
   dispatch: PropTypes.func.isRequired,
   _: checkProps
 }
 
+const noOptions = []
+
 const ConnectedInput = connect((state, props) => {
-  const {formName, id} = props
+  let {formName, id, options} = props
   const form = getForm(state, {formName})
   const values = form ? getFormValues(form) : undefined
   let value
@@ -187,7 +195,15 @@ const ConnectedInput = connect((state, props) => {
     value = props.value
   }
   const fieldErrors = form ? getFieldErrors(form) : undefined
-  return {value, fieldErrors}
+  let isLoading
+  if (typeof options === 'function') {
+    options = options(state)
+    if (!options) {
+      options = noOptions
+      isLoading = true
+    }
+  }
+  return {value, fieldErrors, options, isLoading}
 })(Input)
 
 const SmartInput = props => (
