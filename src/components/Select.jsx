@@ -50,7 +50,7 @@ const Dropdown = props => {
     focusedIndex,
     caption
   } = props
-  const [height, setHeight] = useState(MAX_DROPDOWN_HEIGHT)
+  const [height, setHeight] = useState(9999)
   const focusedRef = useRef(null)
   const dropdownRef = useRef(null)
 
@@ -58,7 +58,6 @@ const Dropdown = props => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (focusedRef.current) {
-      // log('useEffect', focusedIndex, focusedRef.current.innerText)
       focusedRef.current.scrollIntoView({
         behavior:
           focusedIndex === previousFocusedIndex + 1 ||
@@ -116,8 +115,8 @@ const Dropdown = props => {
     >
       {topExpanded && caption && (
         <div
-          className="text-sm absolute rounded tracking-tighter font-bold text-default"
-          style={{top: '-1.4em'}}
+          className="text-sm absolute px-2 border-t border-r border-l bg-default rounded-t tracking-tighter font-bold text-default"
+          style={{top: '-1.5em'}}
         >
           {caption}
         </div>
@@ -207,6 +206,7 @@ const Select = props => {
   } = props
 
   const inputRef = useRef(null)
+  const buttonRef = useRef(null)
   const containerRef = useRef(null)
   const dropdownRootRef = useRef(null)
 
@@ -296,6 +296,15 @@ const Select = props => {
     }
   }, [allowAnyValue, isDropdownOpen])
 
+  const onBlur = useCallback(() => {
+    if (
+      document.activeElement !== inputRef.current &&
+      document.activeElement !== buttonRef.current
+    ) {
+      closeDropdown()
+    }
+  }, [closeDropdown])
+
   const handleEvent = useCallback(
     event => {
       // log(
@@ -320,7 +329,12 @@ const Select = props => {
         closeDropdown()
         onChange(value)
       } else {
-        switch (event.key) {
+        let key = event.key
+        if (event.keyCode === 13) {
+          // Android support
+          key = Enter
+        }
+        switch (key) {
           case Tab:
           case Enter: {
             if (!isDropdownOpen) {
@@ -332,7 +346,6 @@ const Select = props => {
             } else {
               nextValue = (options[focusedIndex] || {}).value
             }
-            closeDropdown()
             if (nextValue !== undefined) {
               onChange(nextValue)
               setSearchText('')
@@ -343,6 +356,7 @@ const Select = props => {
             }
             if (event.key === Enter) {
               event.preventDefault()
+              closeDropdown()
             }
             break
           }
@@ -451,6 +465,7 @@ const Select = props => {
             backgroundColor: 'inherit',
             width: `${searchText.length + 1}ch`
           }}
+          onBlur={onBlur}
           className={cn(classes.input, 'flex-1 focus:outline-none')}
           onFocus={openDropdown}
           value={searchText}
@@ -467,6 +482,7 @@ const Select = props => {
         />
       </div>
       <button
+        ref={buttonRef}
         className={cn('focus:outline-none', classes['expand-button'])}
         type="button"
         tabIndex="-1"
