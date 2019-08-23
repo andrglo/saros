@@ -197,7 +197,7 @@ const ConnectedInput = connect((state, props) => {
   const fieldErrors = form ? getFieldErrors(form) : undefined
   let isLoading
   if (typeof options === 'function') {
-    options = options(state)
+    options = options(state, {...(values || {})})
     if (!options) {
       options = noOptions
       isLoading = true

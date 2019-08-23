@@ -15,7 +15,7 @@ const log = debug('profile')
 
 const ProfileEdit = props => {
   log('render', props)
-  const {dispatch, formName, uid, countries, states, cities} = props
+  const {dispatch, formName, uid, states = [], cities = []} = props
 
   return (
     <Form
@@ -49,7 +49,7 @@ const ProfileEdit = props => {
         <SmartInput
           id="country"
           label={t`Country`}
-          options={countries}
+          options={getCountries}
           allowAnyValue
         />
         <SmartInput
@@ -72,7 +72,6 @@ const ProfileEdit = props => {
 ProfileEdit.propTypes = {
   dispatch: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
-  countries: PropTypes.array,
   states: PropTypes.array,
   cities: PropTypes.array,
   uid: PropTypes.string.isRequired
@@ -84,7 +83,6 @@ export default connect(state => {
   const values = (form && getFormValues(form)) || {}
   return {
     formName,
-    countries: getCountries(),
     states: getStates(values.country),
     cities: getCities(values.country, values.state),
     uid: getUid(state)

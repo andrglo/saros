@@ -1,21 +1,29 @@
 import {defaultMemoize as memoize} from 'reselect'
+import {setCountries} from '../reducers/atlas'
+import {getStore} from '../controller'
 // import {LocalDate} from 'js-joda'
 // import calc from 'date-easter'
 
-import atlas from '../loaders/atlas!'
+export const getAtlasIsLoading = state => state.atlas.isLoading
 
-let countries
+let isLoading
 
-export const getCountries = () => {
-  if (!countries) {
-    countries = []
-    const data = atlas.countries
-    for (const key of Object.keys(data)) {
-      countries.push({
-        label: data[key].nativeName,
-        value: key
-      })
-    }
+export const getCountries = state => {
+  const countries = state.atlas.countries
+  if (!countries && !isLoading) {
+    isLoading = true
+    import('../loaders/atlas!').then(({default: atlas}) => {
+      const data = atlas.countries
+      const countries = []
+      for (const key of Object.keys(data)) {
+        countries.push({
+          label: data[key].nativeName,
+          value: key
+        })
+      }
+      isLoading = false
+      getStore().dispatch(setCountries({countries}))
+    }) // if error do not retry => require page refresh
   }
   return countries
 }
