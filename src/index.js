@@ -2,14 +2,33 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 // Check browser compatibility
-// If has service worker => support async and object spread
-if (!('serviceWorker' in navigator)) {
+let browserIsOk
+try {
+  const a = {a: 'compatible!'}
+  const f = () => {
+    const b = {...a}
+    console.log(`Browser is ${b.a}`)
+  }
+  f()
+  browserIsOk = true
+} catch (err) {
   const message = 'Sorry, browser is not supported!' // todo improve message and give instructions
   ReactDOM.render(
-    React.createElement('h1', {}, message),
+    React.createElement(
+      'h1',
+      {
+        style: {
+          color: 'red',
+          margin: '1em'
+        }
+      },
+      message
+    ),
     document.getElementById('saros')
   )
-} else {
+}
+
+if (browserIsOk) {
   const boot = async () => {
     const {createStore} = await import('./controller')
     const store = await createStore()
@@ -26,7 +45,10 @@ if (!('serviceWorker' in navigator)) {
       document.getElementById('saros')
     )
   }
-  if (process.env.NODE_ENV === 'production') {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    'serviceWorker' in navigator
+  ) {
     window.addEventListener('load', () => {
       navigator.serviceWorker
         .register('/service-worker.js')
@@ -41,6 +63,8 @@ if (!('serviceWorker' in navigator)) {
     })
   } else {
     boot()
-    require('./assets/translations.json') // to trigger rebuild
+    if (process.env.NODE_ENV === 'development') {
+      require('./assets/translations.json') // to trigger rebuild
+    }
   }
 }
