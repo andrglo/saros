@@ -38,9 +38,9 @@ module.exports = {
     'border-default': colors.gray[700],
     'border-highlight': colors.gray[400],
 
-    'bg-menu': colors.black,
-    'bg-menu-focused': colors.gray[700],
-    'bg-menu-selected': colors.gray[800],
+    'bg-menu': colors.gray[800],
+    'bg-menu-focused': colors.gray[600],
+    'bg-menu-selected': colors.gray[700],
 
     income: colors.blue[400],
     expense: colors.red[400]

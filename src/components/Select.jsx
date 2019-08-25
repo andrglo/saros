@@ -116,7 +116,7 @@ const Dropdown = props => {
     >
       {topExpanded && caption && (
         <div
-          className="text-sm absolute px-2 border-t border-r border-l bg-default rounded-t tracking-tighter font-bold text-default"
+          className="text-sm absolute px-4 border-t border-r border-l bg-menu rounded-t tracking-tighter font-bold text-default"
           style={{top: '-1.5em'}}
         >
           {caption}
@@ -161,7 +161,7 @@ const Dropdown = props => {
                 {option.label}
               </div>
               {hasOptionsNotShowed && index === lastIndex && (
-                <div className="text-xs italic p-1 overflow-hidden tracking-tighter text-center text-warning">
+                <div className="text-xs bg-menu italic p-1 overflow-hidden tracking-tighter text-center text-warning">
                   {t`There are options not showed, please, type more text`}
                 </div>
               )}
@@ -169,7 +169,7 @@ const Dropdown = props => {
           )
         })}
         {options.length === 0 && (
-          <div className="text-sm italic p-1 overflow-hidden tracking-tighter text-center text-warning">
+          <div className="text-sm bg-menu italic p-1 overflow-hidden tracking-tighter text-center text-warning">
             {t`No options available`}
           </div>
         )}
