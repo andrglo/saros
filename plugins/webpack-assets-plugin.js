@@ -8,7 +8,7 @@ const deburr = require('lodash/deburr')
 const snakeCase = require('lodash/snakeCase')
 const isEqual = require('lodash/isEqual')
 
-const config = require('./saros.config')
+const config = require('../saros.config')
 
 const readFile = util.promisify(fs.readFile)
 const writeFile = util.promisify(fs.writeFile)
@@ -137,7 +137,10 @@ class AssetsPlugin {
     compiler.hooks.emit.tapAsync(
       'TranslationPlugin',
       (compilation, callback) => {
-        const translationsFilename = './src/assets/translations.json'
+        const translationsFilename = path.join(
+          __dirname,
+          '../src/assets/translations.json'
+        )
         let oldTranslations
         const newTranslations = {}
         const regex = /t`[^`]+`/gm
@@ -197,43 +200,46 @@ class AssetsPlugin {
             JSON.stringify(translations, null, '  ') + '\n'
           )
         }
-        glob(path.join(__dirname, 'src/**/*.js*'), (err, matches) => {
-          if (err) {
-            callback(err)
-            return
-          }
-          const tasks = []
-          for (const filename of matches) {
-            if (!filename.includes('test')) {
-              tasks.push(extractTranslations(filename))
+        glob(
+          path.join(__dirname, '../src/**/*.js*'),
+          (err, matches) => {
+            if (err) {
+              callback(err)
+              return
             }
-          }
-          Promise.all(tasks)
-            .then(saveNewTranslations)
-            .then(() => {
-              const runtimeTranslations = {}
-              Object.keys(newTranslations).forEach(text => {
-                const textTranslations = newTranslations[text]
-                Object.keys(textTranslations).forEach(language => {
-                  runtimeTranslations[language] =
-                    runtimeTranslations[language] || {}
-                  runtimeTranslations[language][text] =
-                    textTranslations[language]
+            const tasks = []
+            for (const filename of matches) {
+              if (!filename.includes('test')) {
+                tasks.push(extractTranslations(filename))
+              }
+            }
+            Promise.all(tasks)
+              .then(saveNewTranslations)
+              .then(() => {
+                const runtimeTranslations = {}
+                Object.keys(newTranslations).forEach(text => {
+                  const textTranslations = newTranslations[text]
+                  Object.keys(textTranslations).forEach(language => {
+                    runtimeTranslations[language] =
+                      runtimeTranslations[language] || {}
+                    runtimeTranslations[language][text] =
+                      textTranslations[language]
+                  })
                 })
+                Object.keys(runtimeTranslations).forEach(language => {
+                  const content = JSON.stringify(
+                    runtimeTranslations[language]
+                  )
+                  compilation.assets[`locale/${language}.json`] = {
+                    source: () => content,
+                    size: () => content.length
+                  }
+                })
+                callback()
               })
-              Object.keys(runtimeTranslations).forEach(language => {
-                const content = JSON.stringify(
-                  runtimeTranslations[language]
-                )
-                compilation.assets[`locale/${language}.json`] = {
-                  source: () => content,
-                  size: () => content.length
-                }
-              })
-              callback()
-            })
-            .catch(callback)
-        })
+              .catch(callback)
+          }
+        )
       }
     )
   }

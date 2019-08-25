@@ -52,7 +52,7 @@ module.exports = {
     borderWidth: ['responsive', 'hover']
   },
   plugins: [
-    require('./tailwind-grid-plugin'),
-    require('./tailwind-spinner-plugin')
+    require('./plugins/tailwind-grid-plugin'),
+    require('./plugins/tailwind-spinner-plugin')
   ]
 }
