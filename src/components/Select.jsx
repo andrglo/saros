@@ -416,7 +416,7 @@ const Select = props => {
   useOnClickOutside(selectRefs, closeDropdown)
 
   const classes = useMemo(
-    () => extractClassesByComponent(className),
+    () => (className && extractClassesByComponent(className)) || {},
     [className]
   )
   let display
@@ -542,7 +542,7 @@ const Select = props => {
 
 Select.propTypes = {
   // ref: todo Support ref
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   maxDropdownHeight: PropTypes.number,
   options: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.string),
