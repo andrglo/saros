@@ -108,6 +108,7 @@ const Dropdown = props => {
   return (
     <div
       style={style}
+      className="text-default"
       ref={dropdownRef}
       tabIndex="-1"
       aria-expanded="true"
@@ -128,8 +129,8 @@ const Dropdown = props => {
           return (
             <div
               key={option.value}
-              className={cn('bg-menu text-input outline-none', {
-                'border-divider border-b': index !== lastIndex
+              className={cn('bg-menu outline-none', {
+                'border-b': index !== lastIndex
               })}
               ref={isFocused ? focusedRef : undefined}
             >
@@ -139,7 +140,7 @@ const Dropdown = props => {
                   cursor: 'pointer'
                 }}
                 className={cn(
-                  'p-1 hover:bg-focused-input overflow-x-hidden',
+                  'p-1 hover:bg-highlight overflow-x-hidden',
                   {
                     [`bg-menu-selected  ${
                       classes['option-selected']

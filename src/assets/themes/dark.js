@@ -3,42 +3,44 @@ const colors = require('../colors')
 module.exports = {
   name: 'theme dark', // t`theme dark`
   colors: {
-    'text-default': colors.gray[100],
+    highlight: 'rgba(255,255,255,.3)',
+
+    'text-default': colors.gray[300],
     'bg-default': colors.gray[900],
 
-    'text-input': colors.gray[200],
-    'bg-input': colors.gray[900],
-    'bg-input-focused': colors.gray[600],
+    'text-error': colors.red[600],
+    'bg-error': colors.red[200],
 
-    'text-error': colors.red[100],
-    'bg-error': colors.red[900],
+    'text-warning': colors.yellow[400],
+    'bg-warning': colors.yellow[900],
 
-    'text-warning': colors.orange[400],
-    'bg-warning': colors.orange[900],
+    'text-info': colors.green[300],
+    'bg-info': colors.green[900],
 
-    'text-info': colors.gray[100],
-    'bg-info': colors.gray[700],
+    'text-toolbar': colors.blue[200],
+    'bg-toolbar': colors.blue[900],
+
+    'text-drawer': colors.gray[400],
+    'bg-drawer': colors.gray[800],
 
     'text-primary': colors.white,
     'bg-primary': colors.gray[600],
 
-    'text-placeholder': colors.gray[700],
+    'text-secondary': colors.pink[200],
+    'bg-secondary': colors.pink[600],
 
-    'text-toolbar': colors.gray[200],
-    'bg-toolbar': colors.gray[900],
+    'text-tertiary': colors.purple[200],
+    'bg-tertiary': colors.purple[600],
 
-    'text-drawer': colors.gray[200],
-    'bg-drawer': colors.gray[800],
+    'text-contrast': colors.red[300],
+    'bg-contrast': colors.orange[600],
 
     'border-default': colors.gray[700],
-    'border-focused': colors.gray[500],
+    'border-highlight': colors.gray[400],
 
-    divider: 'rgba(255,255,255,.1)',
-
-    'text-menu': colors.gray[200],
-    'bg-menu': colors.gray[800],
+    'bg-menu': colors.black,
     'bg-menu-focused': colors.gray[700],
-    'bg-menu-selected': colors.gray[900],
+    'bg-menu-selected': colors.gray[800],
 
     income: colors.blue[400],
     expense: colors.red[400]

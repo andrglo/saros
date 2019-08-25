@@ -136,7 +136,7 @@ const Dashboard = props => {
             />
           )}
         </div>
-        <div className="w-0 sm:w-auto overflow-hidden text-drawer bg-drawer">
+        <div className="w-0 sm:w-auto overflow-hidden shadow-lg text-drawer bg-drawer">
           {drawer}
         </div>
         <div className="relative overflow-auto">

@@ -8,7 +8,8 @@ module.exports = {
         info: 'var(--color-text-info)',
         primary: 'var(--color-text-primary)',
         secondary: 'var(--color-text-secondary)',
-        input: 'var(--color-text-input)',
+        tertiary: 'var(--color-text-tertiary)',
+        contrast: 'var(--color-text-contrast)',
         toolbar: 'var(--color-text-toolbar)',
         drawer: 'var(--color-text-drawer)',
         menu: 'var(--color-text-menu)',
@@ -22,23 +23,18 @@ module.exports = {
         info: 'var(--color-bg-info)',
         primary: 'var(--color-bg-primary)',
         secondary: 'var(--color-bg-secondary)',
-        input: 'var(--color-bg-input)',
-        'focused-input': 'var(--color-bg-input-focused)',
+        tertiary: 'var(--color-bg-tertiary)',
+        contrast: 'var(--color-bg-contrast)',
         toolbar: 'var(--color-bg-toolbar)',
         drawer: 'var(--color-bg-drawer)',
         menu: 'var(--color-bg-menu)',
-        'menu-focused': 'var(--color-bg-menu-focused)',
+        'menu-focused': 'var(--color-bg-menu-focused)', // some cases outline do not work
         'menu-selected': 'var(--color-bg-menu-selected)',
-        divider: 'var(--color-divider)'
+        highlight: 'var(--color-highlight)'
       },
-      placeholderColor: () => ({
-        input: 'var(--color-text-placeholder)'
-      }),
       borderColor: () => ({
         default: 'var(--color-border-default)',
-        focused: 'var(--color-border-focused)',
-        menu: 'var(--color-text-menu)',
-        divider: 'var(--color-divider)'
+        highlight: 'var(--color-border-highlight)'
       }),
       fontWeight: {
         budget: 100,

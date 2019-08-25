@@ -57,7 +57,7 @@ const Menu = props => {
       ref={setMenuNode}
       style={style}
       className={cn(
-        'fixed bg-menu text-menu rounded shadow-md z-30',
+        'fixed bg-menu rounded shadow-md z-30 text-default',
         className
       )}
       role="menu"
@@ -87,7 +87,7 @@ const Menu = props => {
                   setFocus(0)
                 }
               }}
-              className="bg-menu text-menu hover:bg-menu-focused p-2 w-full text-left block hover:no-underline flex justify-start items-center mb-1 rounded-sm"
+              className="hover:bg-highlight p-2 w-full text-left block hover:no-underline flex justify-start items-center rounded-sm"
             >
               {icon}
               <span className="pl-2">{label}</span>

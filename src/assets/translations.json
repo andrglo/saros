@@ -111,25 +111,9 @@
     "en": "Dark",
     "pt-BR": "Noite"
   },
-  "theme_dark_blue": {
-    "en": "Dark blue",
-    "pt-BR": "Azul escuro"
-  },
-  "theme_dark_teal": {
-    "en": "Dark teal",
-    "pt-BR": "Verde escuro"
-  },
   "theme_light": {
     "en": "Light",
     "pt-BR": "Dia"
-  },
-  "theme_light_blue": {
-    "en": "Light blue",
-    "pt-BR": "Azul claro"
-  },
-  "theme_light_teal": {
-    "en": "Light teal",
-    "pt-BR": "Verde claro"
   },
   "theme_system": {
     "en": "System",

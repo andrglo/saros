@@ -22,7 +22,10 @@ const SimpleInput = props => {
   return (
     <input
       {...props}
-      className={extractClassesByComponent(props.className).container}
+      className={cn(
+        extractClassesByComponent(props.className).container,
+        'text-default bg-default'
+      )}
     />
   )
 }
@@ -107,14 +110,12 @@ const Input = props => {
           className={cn(
             {
               'text-error': Boolean(error),
-              'text-input': !error,
-              'input { placeholder-input }': isSelect,
               'content-single {}': isSelect,
               'content-multi {}': isSelect,
               'clear {  }': isSelect
             },
-            'bg-input hover:bg-focused-input border hover:border-focused',
-            'placeholder-input block w-full text-base rounded-sm',
+            'border hover:bg-highlight hover:border hover:border-highlight',
+            'block w-full text-base rounded-sm',
             'appearance-none py-1 px-1 leading-tight',
             'focus:outline-none focus:shadow-outline',
             'dropdown { bg-input border rounded-sm }',
@@ -126,7 +127,7 @@ const Input = props => {
         />
       </label>
       {error && (
-        <div className="text-sm text-red-600 w-full">{error}</div>
+        <div className="text-sm text-error w-full">{error}</div>
       )}
     </div>
   )
