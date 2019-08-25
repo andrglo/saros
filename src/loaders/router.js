@@ -44,7 +44,6 @@ module.exports = function routesLoader() {
     export default pathname => {
       switch (pathname) {
         case '/':
-        case '/index.html':
           return null
         ${routes.join('\n')}
         default:
