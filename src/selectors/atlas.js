@@ -54,10 +54,11 @@ const loadCountryData = code => {
 }
 
 export const getStates = createSelector(
+  getCountries,
   (state, {country}) => get(state, `atlas.${country}.states`),
   (state, {country}) => country,
-  (data, code) => {
-    if (!data) {
+  (countries = {}, data, code) => {
+    if (!data && countries[code]) {
       loadCountryData(code)
     }
     return data
@@ -79,11 +80,12 @@ export const getStatesAsOptions = createSelector(
 )
 
 export const getCities = createSelector(
+  getCountries,
   (state, {country, state: code}) =>
     get(state, `atlas.${country}.states[${code}].regions`),
   (state, {country}) => country,
-  (data, code) => {
-    if (!data) {
+  (countries = {}, data, code) => {
+    if (!data && countries[code]) {
       loadCountryData(code)
     }
     return data
