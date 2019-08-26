@@ -1,0 +1,213 @@
+{
+  "name": "United States of America",
+  "currency": "USD",
+  "language": "en",
+  "flag": "https://restcountries.eu/data/usa.svg",
+  "holidays": {},
+  "states": {
+    "AL": {
+      "name": "Alabama",
+      "regions": {}
+    },
+    "AK": {
+      "name": "Alaska",
+      "regions": {}
+    },
+    "AZ": {
+      "name": "Arizona",
+      "regions": {}
+    },
+    "AR": {
+      "name": "Arkansas",
+      "regions": {}
+    },
+    "CA": {
+      "name": "California",
+      "regions": {}
+    },
+    "CO": {
+      "name": "Colorado",
+      "regions": {}
+    },
+    "CT": {
+      "name": "Connecticut",
+      "regions": {}
+    },
+    "DE": {
+      "name": "Delaware",
+      "regions": {}
+    },
+    "DC": {
+      "name": "District of Columbia",
+      "regions": {}
+    },
+    "FL": {
+      "name": "Florida",
+      "regions": {}
+    },
+    "GA": {
+      "name": "Georgia",
+      "regions": {}
+    },
+    "HI": {
+      "name": "Hawaii",
+      "regions": {}
+    },
+    "ID": {
+      "name": "Idaho",
+      "regions": {}
+    },
+    "IL": {
+      "name": "Illinois",
+      "regions": {}
+    },
+    "IN": {
+      "name": "Indiana",
+      "regions": {}
+    },
+    "IA": {
+      "name": "Iowa",
+      "regions": {}
+    },
+    "KS": {
+      "name": "Kansas",
+      "regions": {}
+    },
+    "KY": {
+      "name": "Kentucky",
+      "regions": {}
+    },
+    "LA": {
+      "name": "Louisiana",
+      "regions": {}
+    },
+    "ME": {
+      "name": "Maine",
+      "regions": {}
+    },
+    "MD": {
+      "name": "Maryland",
+      "regions": {}
+    },
+    "MA": {
+      "name": "Massachusetts",
+      "regions": {}
+    },
+    "MI": {
+      "name": "Michigan",
+      "regions": {}
+    },
+    "MN": {
+      "name": "Minnesota",
+      "regions": {}
+    },
+    "MS": {
+      "name": "Mississippi",
+      "regions": {}
+    },
+    "MO": {
+      "name": "Missouri",
+      "regions": {}
+    },
+    "MT": {
+      "name": "Montana",
+      "regions": {}
+    },
+    "NE": {
+      "name": "Nebraska",
+      "regions": {}
+    },
+    "NV": {
+      "name": "Nevada",
+      "regions": {}
+    },
+    "NH": {
+      "name": "New Hampshire",
+      "regions": {}
+    },
+    "NJ": {
+      "name": "New Jersey",
+      "regions": {}
+    },
+    "NM": {
+      "name": "New Mexico",
+      "regions": {}
+    },
+    "NY": {
+      "name": "New York",
+      "regions": {}
+    },
+    "NC": {
+      "name": "North Carolina",
+      "regions": {}
+    },
+    "ND": {
+      "name": "North Dakota",
+      "regions": {}
+    },
+    "OH": {
+      "name": "Ohio",
+      "regions": {}
+    },
+    "OK": {
+      "name": "Oklahoma",
+      "regions": {}
+    },
+    "OR": {
+      "name": "Oregon",
+      "regions": {}
+    },
+    "PA": {
+      "name": "Pennsylvania",
+      "regions": {}
+    },
+    "RI": {
+      "name": "Rhode Island",
+      "regions": {}
+    },
+    "SC": {
+      "name": "South Carolina",
+      "regions": {}
+    },
+    "SD": {
+      "name": "South Dakota",
+      "regions": {}
+    },
+    "TN": {
+      "name": "Tennessee",
+      "regions": {}
+    },
+    "TX": {
+      "name": "Texas",
+      "regions": {}
+    },
+    "UT": {
+      "name": "Utah",
+      "regions": {}
+    },
+    "VT": {
+      "name": "Vermont",
+      "regions": {}
+    },
+    "VA": {
+      "name": "Virginia",
+      "regions": {}
+    },
+    "WA": {
+      "name": "Washington",
+      "regions": {}
+    },
+    "WV": {
+      "name": "West Virginia",
+      "regions": {}
+    },
+    "WI": {
+      "name": "Wisconsin",
+      "regions": {}
+    },
+    "WY": {
+      "name": "Wyoming",
+      "regions": {}
+    }
+  }
+}

@@ -1,0 +1,1490 @@
+{
+  "AF": {
+    "name": "Afghanistan",
+    "nativeName": "افغانستان",
+    "currency": "AFN",
+    "flag": "https://restcountries.eu/data/afg.svg"
+  },
+  "AX": {
+    "name": "Åland Islands",
+    "nativeName": "Åland",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/ala.svg"
+  },
+  "AL": {
+    "name": "Albania",
+    "nativeName": "Shqipëria",
+    "currency": "ALL",
+    "flag": "https://restcountries.eu/data/alb.svg"
+  },
+  "DZ": {
+    "name": "Algeria",
+    "nativeName": "الجزائر",
+    "currency": "DZD",
+    "flag": "https://restcountries.eu/data/dza.svg"
+  },
+  "AS": {
+    "name": "American Samoa",
+    "nativeName": "American Samoa",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/asm.svg"
+  },
+  "AD": {
+    "name": "Andorra",
+    "nativeName": "Andorra",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/and.svg"
+  },
+  "AO": {
+    "name": "Angola",
+    "nativeName": "Angola",
+    "currency": "AOA",
+    "flag": "https://restcountries.eu/data/ago.svg"
+  },
+  "AI": {
+    "name": "Anguilla",
+    "nativeName": "Anguilla",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/aia.svg"
+  },
+  "AQ": {
+    "name": "Antarctica",
+    "nativeName": "Antarctica",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/ata.svg"
+  },
+  "AG": {
+    "name": "Antigua and Barbuda",
+    "nativeName": "Antigua and Barbuda",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/atg.svg"
+  },
+  "AR": {
+    "name": "Argentina",
+    "nativeName": "Argentina",
+    "currency": "ARS",
+    "flag": "https://restcountries.eu/data/arg.svg"
+  },
+  "AM": {
+    "name": "Armenia",
+    "nativeName": "Հայաստան",
+    "currency": "AMD",
+    "flag": "https://restcountries.eu/data/arm.svg"
+  },
+  "AW": {
+    "name": "Aruba",
+    "nativeName": "Aruba",
+    "currency": "AWG",
+    "flag": "https://restcountries.eu/data/abw.svg"
+  },
+  "AU": {
+    "name": "Australia",
+    "nativeName": "Australia",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/aus.svg"
+  },
+  "AT": {
+    "name": "Austria",
+    "nativeName": "Österreich",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/aut.svg"
+  },
+  "AZ": {
+    "name": "Azerbaijan",
+    "nativeName": "Azərbaycan",
+    "currency": "AZN",
+    "flag": "https://restcountries.eu/data/aze.svg"
+  },
+  "BS": {
+    "name": "Bahamas",
+    "nativeName": "Bahamas",
+    "currency": "BSD",
+    "flag": "https://restcountries.eu/data/bhs.svg"
+  },
+  "BH": {
+    "name": "Bahrain",
+    "nativeName": "‏البحرين",
+    "currency": "BHD",
+    "flag": "https://restcountries.eu/data/bhr.svg"
+  },
+  "BD": {
+    "name": "Bangladesh",
+    "nativeName": "Bangladesh",
+    "currency": "BDT",
+    "flag": "https://restcountries.eu/data/bgd.svg"
+  },
+  "BB": {
+    "name": "Barbados",
+    "nativeName": "Barbados",
+    "currency": "BBD",
+    "flag": "https://restcountries.eu/data/brb.svg"
+  },
+  "BY": {
+    "name": "Belarus",
+    "nativeName": "Белару́сь",
+    "currency": "BYN",
+    "flag": "https://restcountries.eu/data/blr.svg"
+  },
+  "BE": {
+    "name": "Belgium",
+    "nativeName": "België",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/bel.svg"
+  },
+  "BZ": {
+    "name": "Belize",
+    "nativeName": "Belize",
+    "currency": "BZD",
+    "flag": "https://restcountries.eu/data/blz.svg"
+  },
+  "BJ": {
+    "name": "Benin",
+    "nativeName": "Bénin",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/ben.svg"
+  },
+  "BM": {
+    "name": "Bermuda",
+    "nativeName": "Bermuda",
+    "currency": "BMD",
+    "flag": "https://restcountries.eu/data/bmu.svg"
+  },
+  "BT": {
+    "name": "Bhutan",
+    "nativeName": "ʼbrug-yul",
+    "currency": "BTN",
+    "flag": "https://restcountries.eu/data/btn.svg"
+  },
+  "BO": {
+    "name": "Bolivia (Plurinational State of)",
+    "nativeName": "Bolivia",
+    "currency": "BOB",
+    "flag": "https://restcountries.eu/data/bol.svg"
+  },
+  "BQ": {
+    "name": "Bonaire, Sint Eustatius and Saba",
+    "nativeName": "Bonaire",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/bes.svg"
+  },
+  "BA": {
+    "name": "Bosnia and Herzegovina",
+    "nativeName": "Bosna i Hercegovina",
+    "currency": "BAM",
+    "flag": "https://restcountries.eu/data/bih.svg"
+  },
+  "BW": {
+    "name": "Botswana",
+    "nativeName": "Botswana",
+    "currency": "BWP",
+    "flag": "https://restcountries.eu/data/bwa.svg"
+  },
+  "BV": {
+    "name": "Bouvet Island",
+    "nativeName": "Bouvetøya",
+    "currency": "NOK",
+    "flag": "https://restcountries.eu/data/bvt.svg"
+  },
+  "BR": {
+    "name": "Brazil",
+    "nativeName": "Brasil",
+    "currency": "BRL",
+    "flag": "https://restcountries.eu/data/bra.svg"
+  },
+  "IO": {
+    "name": "British Indian Ocean Territory",
+    "nativeName": "British Indian Ocean Territory",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/iot.svg"
+  },
+  "UM": {
+    "name": "United States Minor Outlying Islands",
+    "nativeName": "United States Minor Outlying Islands",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/umi.svg"
+  },
+  "VI": {
+    "name": "Virgin Islands (U.S.)",
+    "nativeName": "Virgin Islands of the United States",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/vir.svg"
+  },
+  "BN": {
+    "name": "Brunei Darussalam",
+    "nativeName": "Negara Brunei Darussalam",
+    "currency": "BND",
+    "flag": "https://restcountries.eu/data/brn.svg"
+  },
+  "BG": {
+    "name": "Bulgaria",
+    "nativeName": "България",
+    "currency": "BGN",
+    "flag": "https://restcountries.eu/data/bgr.svg"
+  },
+  "BF": {
+    "name": "Burkina Faso",
+    "nativeName": "Burkina Faso",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/bfa.svg"
+  },
+  "BI": {
+    "name": "Burundi",
+    "nativeName": "Burundi",
+    "currency": "BIF",
+    "flag": "https://restcountries.eu/data/bdi.svg"
+  },
+  "KH": {
+    "name": "Cambodia",
+    "nativeName": "Kâmpŭchéa",
+    "currency": "KHR",
+    "flag": "https://restcountries.eu/data/khm.svg"
+  },
+  "CM": {
+    "name": "Cameroon",
+    "nativeName": "Cameroon",
+    "currency": "XAF",
+    "flag": "https://restcountries.eu/data/cmr.svg"
+  },
+  "CA": {
+    "name": "Canada",
+    "nativeName": "Canada",
+    "currency": "CAD",
+    "flag": "https://restcountries.eu/data/can.svg"
+  },
+  "CV": {
+    "name": "Cabo Verde",
+    "nativeName": "Cabo Verde",
+    "currency": "CVE",
+    "flag": "https://restcountries.eu/data/cpv.svg"
+  },
+  "KY": {
+    "name": "Cayman Islands",
+    "nativeName": "Cayman Islands",
+    "currency": "KYD",
+    "flag": "https://restcountries.eu/data/cym.svg"
+  },
+  "CF": {
+    "name": "Central African Republic",
+    "nativeName": "Ködörösêse tî Bêafrîka",
+    "currency": "XAF",
+    "flag": "https://restcountries.eu/data/caf.svg"
+  },
+  "TD": {
+    "name": "Chad",
+    "nativeName": "Tchad",
+    "currency": "XAF",
+    "flag": "https://restcountries.eu/data/tcd.svg"
+  },
+  "CL": {
+    "name": "Chile",
+    "nativeName": "Chile",
+    "currency": "CLP",
+    "flag": "https://restcountries.eu/data/chl.svg"
+  },
+  "CN": {
+    "name": "China",
+    "nativeName": "中国",
+    "currency": "CNY",
+    "flag": "https://restcountries.eu/data/chn.svg"
+  },
+  "CX": {
+    "name": "Christmas Island",
+    "nativeName": "Christmas Island",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/cxr.svg"
+  },
+  "CC": {
+    "name": "Cocos (Keeling) Islands",
+    "nativeName": "Cocos (Keeling) Islands",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/cck.svg"
+  },
+  "CO": {
+    "name": "Colombia",
+    "nativeName": "Colombia",
+    "currency": "COP",
+    "flag": "https://restcountries.eu/data/col.svg"
+  },
+  "KM": {
+    "name": "Comoros",
+    "nativeName": "Komori",
+    "currency": "KMF",
+    "flag": "https://restcountries.eu/data/com.svg"
+  },
+  "CG": {
+    "name": "Congo",
+    "nativeName": "République du Congo",
+    "currency": "XAF",
+    "flag": "https://restcountries.eu/data/cog.svg"
+  },
+  "CD": {
+    "name": "Congo (Democratic Republic of the)",
+    "nativeName": "République démocratique du Congo",
+    "currency": "CDF",
+    "flag": "https://restcountries.eu/data/cod.svg"
+  },
+  "CK": {
+    "name": "Cook Islands",
+    "nativeName": "Cook Islands",
+    "currency": "NZD",
+    "flag": "https://restcountries.eu/data/cok.svg"
+  },
+  "CR": {
+    "name": "Costa Rica",
+    "nativeName": "Costa Rica",
+    "currency": "CRC",
+    "flag": "https://restcountries.eu/data/cri.svg"
+  },
+  "HR": {
+    "name": "Croatia",
+    "nativeName": "Hrvatska",
+    "currency": "HRK",
+    "flag": "https://restcountries.eu/data/hrv.svg"
+  },
+  "CU": {
+    "name": "Cuba",
+    "nativeName": "Cuba",
+    "currency": "CUC",
+    "flag": "https://restcountries.eu/data/cub.svg"
+  },
+  "CW": {
+    "name": "Curaçao",
+    "nativeName": "Curaçao",
+    "currency": "ANG",
+    "flag": "https://restcountries.eu/data/cuw.svg"
+  },
+  "CY": {
+    "name": "Cyprus",
+    "nativeName": "Κύπρος",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/cyp.svg"
+  },
+  "CZ": {
+    "name": "Czech Republic",
+    "nativeName": "Česká republika",
+    "currency": "CZK",
+    "flag": "https://restcountries.eu/data/cze.svg"
+  },
+  "DK": {
+    "name": "Denmark",
+    "nativeName": "Danmark",
+    "currency": "DKK",
+    "flag": "https://restcountries.eu/data/dnk.svg"
+  },
+  "DJ": {
+    "name": "Djibouti",
+    "nativeName": "Djibouti",
+    "currency": "DJF",
+    "flag": "https://restcountries.eu/data/dji.svg"
+  },
+  "DM": {
+    "name": "Dominica",
+    "nativeName": "Dominica",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/dma.svg"
+  },
+  "DO": {
+    "name": "Dominican Republic",
+    "nativeName": "República Dominicana",
+    "currency": "DOP",
+    "flag": "https://restcountries.eu/data/dom.svg"
+  },
+  "EC": {
+    "name": "Ecuador",
+    "nativeName": "Ecuador",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/ecu.svg"
+  },
+  "EG": {
+    "name": "Egypt",
+    "nativeName": "مصر‎",
+    "currency": "EGP",
+    "flag": "https://restcountries.eu/data/egy.svg"
+  },
+  "SV": {
+    "name": "El Salvador",
+    "nativeName": "El Salvador",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/slv.svg"
+  },
+  "GQ": {
+    "name": "Equatorial Guinea",
+    "nativeName": "Guinea Ecuatorial",
+    "currency": "XAF",
+    "flag": "https://restcountries.eu/data/gnq.svg"
+  },
+  "ER": {
+    "name": "Eritrea",
+    "nativeName": "ኤርትራ",
+    "currency": "ERN",
+    "flag": "https://restcountries.eu/data/eri.svg"
+  },
+  "EE": {
+    "name": "Estonia",
+    "nativeName": "Eesti",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/est.svg"
+  },
+  "ET": {
+    "name": "Ethiopia",
+    "nativeName": "ኢትዮጵያ",
+    "currency": "ETB",
+    "flag": "https://restcountries.eu/data/eth.svg"
+  },
+  "FK": {
+    "name": "Falkland Islands (Malvinas)",
+    "nativeName": "Falkland Islands",
+    "currency": "FKP",
+    "flag": "https://restcountries.eu/data/flk.svg"
+  },
+  "FO": {
+    "name": "Faroe Islands",
+    "nativeName": "Føroyar",
+    "currency": "DKK",
+    "flag": "https://restcountries.eu/data/fro.svg"
+  },
+  "FJ": {
+    "name": "Fiji",
+    "nativeName": "Fiji",
+    "currency": "FJD",
+    "flag": "https://restcountries.eu/data/fji.svg"
+  },
+  "FI": {
+    "name": "Finland",
+    "nativeName": "Suomi",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/fin.svg"
+  },
+  "FR": {
+    "name": "France",
+    "nativeName": "France",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/fra.svg"
+  },
+  "GF": {
+    "name": "French Guiana",
+    "nativeName": "Guyane française",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/guf.svg"
+  },
+  "PF": {
+    "name": "French Polynesia",
+    "nativeName": "Polynésie française",
+    "currency": "XPF",
+    "flag": "https://restcountries.eu/data/pyf.svg"
+  },
+  "TF": {
+    "name": "French Southern Territories",
+    "nativeName": "Territoire des Terres australes et antarctiques françaises",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/atf.svg"
+  },
+  "GA": {
+    "name": "Gabon",
+    "nativeName": "Gabon",
+    "currency": "XAF",
+    "flag": "https://restcountries.eu/data/gab.svg"
+  },
+  "GM": {
+    "name": "Gambia",
+    "nativeName": "Gambia",
+    "currency": "GMD",
+    "flag": "https://restcountries.eu/data/gmb.svg"
+  },
+  "GE": {
+    "name": "Georgia",
+    "nativeName": "საქართველო",
+    "currency": "GEL",
+    "flag": "https://restcountries.eu/data/geo.svg"
+  },
+  "DE": {
+    "name": "Germany",
+    "nativeName": "Deutschland",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/deu.svg"
+  },
+  "GH": {
+    "name": "Ghana",
+    "nativeName": "Ghana",
+    "currency": "GHS",
+    "flag": "https://restcountries.eu/data/gha.svg"
+  },
+  "GI": {
+    "name": "Gibraltar",
+    "nativeName": "Gibraltar",
+    "currency": "GIP",
+    "flag": "https://restcountries.eu/data/gib.svg"
+  },
+  "GR": {
+    "name": "Greece",
+    "nativeName": "Ελλάδα",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/grc.svg"
+  },
+  "GL": {
+    "name": "Greenland",
+    "nativeName": "Kalaallit Nunaat",
+    "currency": "DKK",
+    "flag": "https://restcountries.eu/data/grl.svg"
+  },
+  "GD": {
+    "name": "Grenada",
+    "nativeName": "Grenada",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/grd.svg"
+  },
+  "GP": {
+    "name": "Guadeloupe",
+    "nativeName": "Guadeloupe",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/glp.svg"
+  },
+  "GU": {
+    "name": "Guam",
+    "nativeName": "Guam",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/gum.svg"
+  },
+  "GT": {
+    "name": "Guatemala",
+    "nativeName": "Guatemala",
+    "currency": "GTQ",
+    "flag": "https://restcountries.eu/data/gtm.svg"
+  },
+  "GG": {
+    "name": "Guernsey",
+    "nativeName": "Guernsey",
+    "currency": "GBP",
+    "flag": "https://restcountries.eu/data/ggy.svg"
+  },
+  "GN": {
+    "name": "Guinea",
+    "nativeName": "Guinée",
+    "currency": "GNF",
+    "flag": "https://restcountries.eu/data/gin.svg"
+  },
+  "GW": {
+    "name": "Guinea-Bissau",
+    "nativeName": "Guiné-Bissau",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/gnb.svg"
+  },
+  "GY": {
+    "name": "Guyana",
+    "nativeName": "Guyana",
+    "currency": "GYD",
+    "flag": "https://restcountries.eu/data/guy.svg"
+  },
+  "HT": {
+    "name": "Haiti",
+    "nativeName": "Haïti",
+    "currency": "HTG",
+    "flag": "https://restcountries.eu/data/hti.svg"
+  },
+  "HM": {
+    "name": "Heard Island and McDonald Islands",
+    "nativeName": "Heard Island and McDonald Islands",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/hmd.svg"
+  },
+  "VA": {
+    "name": "Holy See",
+    "nativeName": "Sancta Sedes",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/vat.svg"
+  },
+  "HN": {
+    "name": "Honduras",
+    "nativeName": "Honduras",
+    "currency": "HNL",
+    "flag": "https://restcountries.eu/data/hnd.svg"
+  },
+  "HK": {
+    "name": "Hong Kong",
+    "nativeName": "香港",
+    "currency": "HKD",
+    "flag": "https://restcountries.eu/data/hkg.svg"
+  },
+  "HU": {
+    "name": "Hungary",
+    "nativeName": "Magyarország",
+    "currency": "HUF",
+    "flag": "https://restcountries.eu/data/hun.svg"
+  },
+  "IS": {
+    "name": "Iceland",
+    "nativeName": "Ísland",
+    "currency": "ISK",
+    "flag": "https://restcountries.eu/data/isl.svg"
+  },
+  "IN": {
+    "name": "India",
+    "nativeName": "भारत",
+    "currency": "INR",
+    "flag": "https://restcountries.eu/data/ind.svg"
+  },
+  "ID": {
+    "name": "Indonesia",
+    "nativeName": "Indonesia",
+    "currency": "IDR",
+    "flag": "https://restcountries.eu/data/idn.svg"
+  },
+  "CI": {
+    "name": "Côte d'Ivoire",
+    "nativeName": "Côte d'Ivoire",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/civ.svg"
+  },
+  "IR": {
+    "name": "Iran (Islamic Republic of)",
+    "nativeName": "ایران",
+    "currency": "IRR",
+    "flag": "https://restcountries.eu/data/irn.svg"
+  },
+  "IQ": {
+    "name": "Iraq",
+    "nativeName": "العراق",
+    "currency": "IQD",
+    "flag": "https://restcountries.eu/data/irq.svg"
+  },
+  "IE": {
+    "name": "Ireland",
+    "nativeName": "Éire",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/irl.svg"
+  },
+  "IM": {
+    "name": "Isle of Man",
+    "nativeName": "Isle of Man",
+    "currency": "GBP",
+    "flag": "https://restcountries.eu/data/imn.svg"
+  },
+  "IL": {
+    "name": "Israel",
+    "nativeName": "יִשְׂרָאֵל",
+    "currency": "ILS",
+    "flag": "https://restcountries.eu/data/isr.svg"
+  },
+  "IT": {
+    "name": "Italy",
+    "nativeName": "Italia",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/ita.svg"
+  },
+  "JM": {
+    "name": "Jamaica",
+    "nativeName": "Jamaica",
+    "currency": "JMD",
+    "flag": "https://restcountries.eu/data/jam.svg"
+  },
+  "JP": {
+    "name": "Japan",
+    "nativeName": "日本",
+    "currency": "JPY",
+    "flag": "https://restcountries.eu/data/jpn.svg"
+  },
+  "JE": {
+    "name": "Jersey",
+    "nativeName": "Jersey",
+    "currency": "GBP",
+    "flag": "https://restcountries.eu/data/jey.svg"
+  },
+  "JO": {
+    "name": "Jordan",
+    "nativeName": "الأردن",
+    "currency": "JOD",
+    "flag": "https://restcountries.eu/data/jor.svg"
+  },
+  "KZ": {
+    "name": "Kazakhstan",
+    "nativeName": "Қазақстан",
+    "currency": "KZT",
+    "flag": "https://restcountries.eu/data/kaz.svg"
+  },
+  "KE": {
+    "name": "Kenya",
+    "nativeName": "Kenya",
+    "currency": "KES",
+    "flag": "https://restcountries.eu/data/ken.svg"
+  },
+  "KI": {
+    "name": "Kiribati",
+    "nativeName": "Kiribati",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/kir.svg"
+  },
+  "KW": {
+    "name": "Kuwait",
+    "nativeName": "الكويت",
+    "currency": "KWD",
+    "flag": "https://restcountries.eu/data/kwt.svg"
+  },
+  "KG": {
+    "name": "Kyrgyzstan",
+    "nativeName": "Кыргызстан",
+    "currency": "KGS",
+    "flag": "https://restcountries.eu/data/kgz.svg"
+  },
+  "LA": {
+    "name": "Lao People's Democratic Republic",
+    "nativeName": "ສປປລາວ",
+    "currency": "LAK",
+    "flag": "https://restcountries.eu/data/lao.svg"
+  },
+  "LV": {
+    "name": "Latvia",
+    "nativeName": "Latvija",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/lva.svg"
+  },
+  "LB": {
+    "name": "Lebanon",
+    "nativeName": "لبنان",
+    "currency": "LBP",
+    "flag": "https://restcountries.eu/data/lbn.svg"
+  },
+  "LS": {
+    "name": "Lesotho",
+    "nativeName": "Lesotho",
+    "currency": "LSL",
+    "flag": "https://restcountries.eu/data/lso.svg"
+  },
+  "LR": {
+    "name": "Liberia",
+    "nativeName": "Liberia",
+    "currency": "LRD",
+    "flag": "https://restcountries.eu/data/lbr.svg"
+  },
+  "LY": {
+    "name": "Libya",
+    "nativeName": "‏ليبيا",
+    "currency": "LYD",
+    "flag": "https://restcountries.eu/data/lby.svg"
+  },
+  "LI": {
+    "name": "Liechtenstein",
+    "nativeName": "Liechtenstein",
+    "currency": "CHF",
+    "flag": "https://restcountries.eu/data/lie.svg"
+  },
+  "LT": {
+    "name": "Lithuania",
+    "nativeName": "Lietuva",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/ltu.svg"
+  },
+  "LU": {
+    "name": "Luxembourg",
+    "nativeName": "Luxembourg",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/lux.svg"
+  },
+  "MO": {
+    "name": "Macao",
+    "nativeName": "澳門",
+    "currency": "MOP",
+    "flag": "https://restcountries.eu/data/mac.svg"
+  },
+  "MK": {
+    "name": "Macedonia (the former Yugoslav Republic of)",
+    "nativeName": "Македонија",
+    "currency": "MKD",
+    "flag": "https://restcountries.eu/data/mkd.svg"
+  },
+  "MG": {
+    "name": "Madagascar",
+    "nativeName": "Madagasikara",
+    "currency": "MGA",
+    "flag": "https://restcountries.eu/data/mdg.svg"
+  },
+  "MW": {
+    "name": "Malawi",
+    "nativeName": "Malawi",
+    "currency": "MWK",
+    "flag": "https://restcountries.eu/data/mwi.svg"
+  },
+  "MY": {
+    "name": "Malaysia",
+    "nativeName": "Malaysia",
+    "currency": "MYR",
+    "flag": "https://restcountries.eu/data/mys.svg"
+  },
+  "MV": {
+    "name": "Maldives",
+    "nativeName": "Maldives",
+    "currency": "MVR",
+    "flag": "https://restcountries.eu/data/mdv.svg"
+  },
+  "ML": {
+    "name": "Mali",
+    "nativeName": "Mali",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/mli.svg"
+  },
+  "MT": {
+    "name": "Malta",
+    "nativeName": "Malta",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/mlt.svg"
+  },
+  "MH": {
+    "name": "Marshall Islands",
+    "nativeName": "M̧ajeļ",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/mhl.svg"
+  },
+  "MQ": {
+    "name": "Martinique",
+    "nativeName": "Martinique",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/mtq.svg"
+  },
+  "MR": {
+    "name": "Mauritania",
+    "nativeName": "موريتانيا",
+    "currency": "MRO",
+    "flag": "https://restcountries.eu/data/mrt.svg"
+  },
+  "MU": {
+    "name": "Mauritius",
+    "nativeName": "Maurice",
+    "currency": "MUR",
+    "flag": "https://restcountries.eu/data/mus.svg"
+  },
+  "YT": {
+    "name": "Mayotte",
+    "nativeName": "Mayotte",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/myt.svg"
+  },
+  "MX": {
+    "name": "Mexico",
+    "nativeName": "México",
+    "currency": "MXN",
+    "flag": "https://restcountries.eu/data/mex.svg"
+  },
+  "MD": {
+    "name": "Moldova (Republic of)",
+    "nativeName": "Moldova",
+    "currency": "MDL",
+    "flag": "https://restcountries.eu/data/mda.svg"
+  },
+  "MC": {
+    "name": "Monaco",
+    "nativeName": "Monaco",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/mco.svg"
+  },
+  "MN": {
+    "name": "Mongolia",
+    "nativeName": "Монгол улс",
+    "currency": "MNT",
+    "flag": "https://restcountries.eu/data/mng.svg"
+  },
+  "ME": {
+    "name": "Montenegro",
+    "nativeName": "Црна Гора",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/mne.svg"
+  },
+  "MS": {
+    "name": "Montserrat",
+    "nativeName": "Montserrat",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/msr.svg"
+  },
+  "MA": {
+    "name": "Morocco",
+    "nativeName": "المغرب",
+    "currency": "MAD",
+    "flag": "https://restcountries.eu/data/mar.svg"
+  },
+  "MZ": {
+    "name": "Mozambique",
+    "nativeName": "Moçambique",
+    "currency": "MZN",
+    "flag": "https://restcountries.eu/data/moz.svg"
+  },
+  "MM": {
+    "name": "Myanmar",
+    "nativeName": "Myanma",
+    "currency": "MMK",
+    "flag": "https://restcountries.eu/data/mmr.svg"
+  },
+  "NA": {
+    "name": "Namibia",
+    "nativeName": "Namibia",
+    "currency": "NAD",
+    "flag": "https://restcountries.eu/data/nam.svg"
+  },
+  "NR": {
+    "name": "Nauru",
+    "nativeName": "Nauru",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/nru.svg"
+  },
+  "NP": {
+    "name": "Nepal",
+    "nativeName": "नेपाल",
+    "currency": "NPR",
+    "flag": "https://restcountries.eu/data/npl.svg"
+  },
+  "NL": {
+    "name": "Netherlands",
+    "nativeName": "Nederland",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/nld.svg"
+  },
+  "NC": {
+    "name": "New Caledonia",
+    "nativeName": "Nouvelle-Calédonie",
+    "currency": "XPF",
+    "flag": "https://restcountries.eu/data/ncl.svg"
+  },
+  "NZ": {
+    "name": "New Zealand",
+    "nativeName": "New Zealand",
+    "currency": "NZD",
+    "flag": "https://restcountries.eu/data/nzl.svg"
+  },
+  "NI": {
+    "name": "Nicaragua",
+    "nativeName": "Nicaragua",
+    "currency": "NIO",
+    "flag": "https://restcountries.eu/data/nic.svg"
+  },
+  "NE": {
+    "name": "Niger",
+    "nativeName": "Niger",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/ner.svg"
+  },
+  "NG": {
+    "name": "Nigeria",
+    "nativeName": "Nigeria",
+    "currency": "NGN",
+    "flag": "https://restcountries.eu/data/nga.svg"
+  },
+  "NU": {
+    "name": "Niue",
+    "nativeName": "Niuē",
+    "currency": "NZD",
+    "flag": "https://restcountries.eu/data/niu.svg"
+  },
+  "NF": {
+    "name": "Norfolk Island",
+    "nativeName": "Norfolk Island",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/nfk.svg"
+  },
+  "KP": {
+    "name": "Korea (Democratic People's Republic of)",
+    "nativeName": "북한",
+    "currency": "KPW",
+    "flag": "https://restcountries.eu/data/prk.svg"
+  },
+  "MP": {
+    "name": "Northern Mariana Islands",
+    "nativeName": "Northern Mariana Islands",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/mnp.svg"
+  },
+  "NO": {
+    "name": "Norway",
+    "nativeName": "Norge",
+    "currency": "NOK",
+    "flag": "https://restcountries.eu/data/nor.svg"
+  },
+  "OM": {
+    "name": "Oman",
+    "nativeName": "عمان",
+    "currency": "OMR",
+    "flag": "https://restcountries.eu/data/omn.svg"
+  },
+  "PK": {
+    "name": "Pakistan",
+    "nativeName": "Pakistan",
+    "currency": "PKR",
+    "flag": "https://restcountries.eu/data/pak.svg"
+  },
+  "PW": {
+    "name": "Palau",
+    "nativeName": "Palau",
+    "currency": "(none)",
+    "flag": "https://restcountries.eu/data/plw.svg"
+  },
+  "PS": {
+    "name": "Palestine, State of",
+    "nativeName": "فلسطين",
+    "currency": "ILS",
+    "flag": "https://restcountries.eu/data/pse.svg"
+  },
+  "PA": {
+    "name": "Panama",
+    "nativeName": "Panamá",
+    "currency": "PAB",
+    "flag": "https://restcountries.eu/data/pan.svg"
+  },
+  "PG": {
+    "name": "Papua New Guinea",
+    "nativeName": "Papua Niugini",
+    "currency": "PGK",
+    "flag": "https://restcountries.eu/data/png.svg"
+  },
+  "PY": {
+    "name": "Paraguay",
+    "nativeName": "Paraguay",
+    "currency": "PYG",
+    "flag": "https://restcountries.eu/data/pry.svg"
+  },
+  "PE": {
+    "name": "Peru",
+    "nativeName": "Perú",
+    "currency": "PEN",
+    "flag": "https://restcountries.eu/data/per.svg"
+  },
+  "PH": {
+    "name": "Philippines",
+    "nativeName": "Pilipinas",
+    "currency": "PHP",
+    "flag": "https://restcountries.eu/data/phl.svg"
+  },
+  "PN": {
+    "name": "Pitcairn",
+    "nativeName": "Pitcairn Islands",
+    "currency": "NZD",
+    "flag": "https://restcountries.eu/data/pcn.svg"
+  },
+  "PL": {
+    "name": "Poland",
+    "nativeName": "Polska",
+    "currency": "PLN",
+    "flag": "https://restcountries.eu/data/pol.svg"
+  },
+  "PT": {
+    "name": "Portugal",
+    "nativeName": "Portugal",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/prt.svg"
+  },
+  "PR": {
+    "name": "Puerto Rico",
+    "nativeName": "Puerto Rico",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/pri.svg"
+  },
+  "QA": {
+    "name": "Qatar",
+    "nativeName": "قطر",
+    "currency": "QAR",
+    "flag": "https://restcountries.eu/data/qat.svg"
+  },
+  "XK": {
+    "name": "Republic of Kosovo",
+    "nativeName": "Republika e Kosovës",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/kos.svg"
+  },
+  "RE": {
+    "name": "Réunion",
+    "nativeName": "La Réunion",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/reu.svg"
+  },
+  "RO": {
+    "name": "Romania",
+    "nativeName": "România",
+    "currency": "RON",
+    "flag": "https://restcountries.eu/data/rou.svg"
+  },
+  "RU": {
+    "name": "Russian Federation",
+    "nativeName": "Россия",
+    "currency": "RUB",
+    "flag": "https://restcountries.eu/data/rus.svg"
+  },
+  "RW": {
+    "name": "Rwanda",
+    "nativeName": "Rwanda",
+    "currency": "RWF",
+    "flag": "https://restcountries.eu/data/rwa.svg"
+  },
+  "BL": {
+    "name": "Saint Barthélemy",
+    "nativeName": "Saint-Barthélemy",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/blm.svg"
+  },
+  "SH": {
+    "name": "Saint Helena, Ascension and Tristan da Cunha",
+    "nativeName": "Saint Helena",
+    "currency": "SHP",
+    "flag": "https://restcountries.eu/data/shn.svg"
+  },
+  "KN": {
+    "name": "Saint Kitts and Nevis",
+    "nativeName": "Saint Kitts and Nevis",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/kna.svg"
+  },
+  "LC": {
+    "name": "Saint Lucia",
+    "nativeName": "Saint Lucia",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/lca.svg"
+  },
+  "MF": {
+    "name": "Saint Martin (French part)",
+    "nativeName": "Saint-Martin",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/maf.svg"
+  },
+  "PM": {
+    "name": "Saint Pierre and Miquelon",
+    "nativeName": "Saint-Pierre-et-Miquelon",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/spm.svg"
+  },
+  "VC": {
+    "name": "Saint Vincent and the Grenadines",
+    "nativeName": "Saint Vincent and the Grenadines",
+    "currency": "XCD",
+    "flag": "https://restcountries.eu/data/vct.svg"
+  },
+  "WS": {
+    "name": "Samoa",
+    "nativeName": "Samoa",
+    "currency": "WST",
+    "flag": "https://restcountries.eu/data/wsm.svg"
+  },
+  "SM": {
+    "name": "San Marino",
+    "nativeName": "San Marino",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/smr.svg"
+  },
+  "ST": {
+    "name": "Sao Tome and Principe",
+    "nativeName": "São Tomé e Príncipe",
+    "currency": "STD",
+    "flag": "https://restcountries.eu/data/stp.svg"
+  },
+  "SA": {
+    "name": "Saudi Arabia",
+    "nativeName": "العربية السعودية",
+    "currency": "SAR",
+    "flag": "https://restcountries.eu/data/sau.svg"
+  },
+  "SN": {
+    "name": "Senegal",
+    "nativeName": "Sénégal",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/sen.svg"
+  },
+  "RS": {
+    "name": "Serbia",
+    "nativeName": "Србија",
+    "currency": "RSD",
+    "flag": "https://restcountries.eu/data/srb.svg"
+  },
+  "SC": {
+    "name": "Seychelles",
+    "nativeName": "Seychelles",
+    "currency": "SCR",
+    "flag": "https://restcountries.eu/data/syc.svg"
+  },
+  "SL": {
+    "name": "Sierra Leone",
+    "nativeName": "Sierra Leone",
+    "currency": "SLL",
+    "flag": "https://restcountries.eu/data/sle.svg"
+  },
+  "SG": {
+    "name": "Singapore",
+    "nativeName": "Singapore",
+    "currency": "BND",
+    "flag": "https://restcountries.eu/data/sgp.svg"
+  },
+  "SX": {
+    "name": "Sint Maarten (Dutch part)",
+    "nativeName": "Sint Maarten",
+    "currency": "ANG",
+    "flag": "https://restcountries.eu/data/sxm.svg"
+  },
+  "SK": {
+    "name": "Slovakia",
+    "nativeName": "Slovensko",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/svk.svg"
+  },
+  "SI": {
+    "name": "Slovenia",
+    "nativeName": "Slovenija",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/svn.svg"
+  },
+  "SB": {
+    "name": "Solomon Islands",
+    "nativeName": "Solomon Islands",
+    "currency": "SBD",
+    "flag": "https://restcountries.eu/data/slb.svg"
+  },
+  "SO": {
+    "name": "Somalia",
+    "nativeName": "Soomaaliya",
+    "currency": "SOS",
+    "flag": "https://restcountries.eu/data/som.svg"
+  },
+  "ZA": {
+    "name": "South Africa",
+    "nativeName": "South Africa",
+    "currency": "ZAR",
+    "flag": "https://restcountries.eu/data/zaf.svg"
+  },
+  "GS": {
+    "name": "South Georgia and the South Sandwich Islands",
+    "nativeName": "South Georgia",
+    "currency": "GBP",
+    "flag": "https://restcountries.eu/data/sgs.svg"
+  },
+  "KR": {
+    "name": "Korea (Republic of)",
+    "nativeName": "대한민국",
+    "currency": "KRW",
+    "flag": "https://restcountries.eu/data/kor.svg"
+  },
+  "SS": {
+    "name": "South Sudan",
+    "nativeName": "South Sudan",
+    "currency": "SSP",
+    "flag": "https://restcountries.eu/data/ssd.svg"
+  },
+  "ES": {
+    "name": "Spain",
+    "nativeName": "España",
+    "currency": "EUR",
+    "flag": "https://restcountries.eu/data/esp.svg"
+  },
+  "LK": {
+    "name": "Sri Lanka",
+    "nativeName": "śrī laṃkāva",
+    "currency": "LKR",
+    "flag": "https://restcountries.eu/data/lka.svg"
+  },
+  "SD": {
+    "name": "Sudan",
+    "nativeName": "السودان",
+    "currency": "SDG",
+    "flag": "https://restcountries.eu/data/sdn.svg"
+  },
+  "SR": {
+    "name": "Suriname",
+    "nativeName": "Suriname",
+    "currency": "SRD",
+    "flag": "https://restcountries.eu/data/sur.svg"
+  },
+  "SJ": {
+    "name": "Svalbard and Jan Mayen",
+    "nativeName": "Svalbard og Jan Mayen",
+    "currency": "NOK",
+    "flag": "https://restcountries.eu/data/sjm.svg"
+  },
+  "SZ": {
+    "name": "Swaziland",
+    "nativeName": "Swaziland",
+    "currency": "SZL",
+    "flag": "https://restcountries.eu/data/swz.svg"
+  },
+  "SE": {
+    "name": "Sweden",
+    "nativeName": "Sverige",
+    "currency": "SEK",
+    "flag": "https://restcountries.eu/data/swe.svg"
+  },
+  "CH": {
+    "name": "Switzerland",
+    "nativeName": "Schweiz",
+    "currency": "CHF",
+    "flag": "https://restcountries.eu/data/che.svg"
+  },
+  "SY": {
+    "name": "Syrian Arab Republic",
+    "nativeName": "سوريا",
+    "currency": "SYP",
+    "flag": "https://restcountries.eu/data/syr.svg"
+  },
+  "TW": {
+    "name": "Taiwan",
+    "nativeName": "臺灣",
+    "currency": "TWD",
+    "flag": "https://restcountries.eu/data/twn.svg"
+  },
+  "TJ": {
+    "name": "Tajikistan",
+    "nativeName": "Тоҷикистон",
+    "currency": "TJS",
+    "flag": "https://restcountries.eu/data/tjk.svg"
+  },
+  "TZ": {
+    "name": "Tanzania, United Republic of",
+    "nativeName": "Tanzania",
+    "currency": "TZS",
+    "flag": "https://restcountries.eu/data/tza.svg"
+  },
+  "TH": {
+    "name": "Thailand",
+    "nativeName": "ประเทศไทย",
+    "currency": "THB",
+    "flag": "https://restcountries.eu/data/tha.svg"
+  },
+  "TL": {
+    "name": "Timor-Leste",
+    "nativeName": "Timor-Leste",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/tls.svg"
+  },
+  "TG": {
+    "name": "Togo",
+    "nativeName": "Togo",
+    "currency": "XOF",
+    "flag": "https://restcountries.eu/data/tgo.svg"
+  },
+  "TK": {
+    "name": "Tokelau",
+    "nativeName": "Tokelau",
+    "currency": "NZD",
+    "flag": "https://restcountries.eu/data/tkl.svg"
+  },
+  "TO": {
+    "name": "Tonga",
+    "nativeName": "Tonga",
+    "currency": "TOP",
+    "flag": "https://restcountries.eu/data/ton.svg"
+  },
+  "TT": {
+    "name": "Trinidad and Tobago",
+    "nativeName": "Trinidad and Tobago",
+    "currency": "TTD",
+    "flag": "https://restcountries.eu/data/tto.svg"
+  },
+  "TN": {
+    "name": "Tunisia",
+    "nativeName": "تونس",
+    "currency": "TND",
+    "flag": "https://restcountries.eu/data/tun.svg"
+  },
+  "TR": {
+    "name": "Turkey",
+    "nativeName": "Türkiye",
+    "currency": "TRY",
+    "flag": "https://restcountries.eu/data/tur.svg"
+  },
+  "TM": {
+    "name": "Turkmenistan",
+    "nativeName": "Türkmenistan",
+    "currency": "TMT",
+    "flag": "https://restcountries.eu/data/tkm.svg"
+  },
+  "TC": {
+    "name": "Turks and Caicos Islands",
+    "nativeName": "Turks and Caicos Islands",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/tca.svg"
+  },
+  "TV": {
+    "name": "Tuvalu",
+    "nativeName": "Tuvalu",
+    "currency": "AUD",
+    "flag": "https://restcountries.eu/data/tuv.svg"
+  },
+  "UG": {
+    "name": "Uganda",
+    "nativeName": "Uganda",
+    "currency": "UGX",
+    "flag": "https://restcountries.eu/data/uga.svg"
+  },
+  "UA": {
+    "name": "Ukraine",
+    "nativeName": "Україна",
+    "currency": "UAH",
+    "flag": "https://restcountries.eu/data/ukr.svg"
+  },
+  "AE": {
+    "name": "United Arab Emirates",
+    "nativeName": "دولة الإمارات العربية المتحدة",
+    "currency": "AED",
+    "flag": "https://restcountries.eu/data/are.svg"
+  },
+  "GB": {
+    "name": "United Kingdom of Great Britain and Northern Ireland",
+    "nativeName": "United Kingdom",
+    "currency": "GBP",
+    "flag": "https://restcountries.eu/data/gbr.svg"
+  },
+  "US": {
+    "name": "United States of America",
+    "nativeName": "United States",
+    "currency": "USD",
+    "flag": "https://restcountries.eu/data/usa.svg"
+  },
+  "UY": {
+    "name": "Uruguay",
+    "nativeName": "Uruguay",
+    "currency": "UYU",
+    "flag": "https://restcountries.eu/data/ury.svg"
+  },
+  "UZ": {
+    "name": "Uzbekistan",
+    "nativeName": "O‘zbekiston",
+    "currency": "UZS",
+    "flag": "https://restcountries.eu/data/uzb.svg"
+  },
+  "VU": {
+    "name": "Vanuatu",
+    "nativeName": "Vanuatu",
+    "currency": "VUV",
+    "flag": "https://restcountries.eu/data/vut.svg"
+  },
+  "VE": {
+    "name": "Venezuela (Bolivarian Republic of)",
+    "nativeName": "Venezuela",
+    "currency": "VEF",
+    "flag": "https://restcountries.eu/data/ven.svg"
+  },
+  "VN": {
+    "name": "Viet Nam",
+    "nativeName": "Việt Nam",
+    "currency": "VND",
+    "flag": "https://restcountries.eu/data/vnm.svg"
+  },
+  "WF": {
+    "name": "Wallis and Futuna",
+    "nativeName": "Wallis et Futuna",
+    "currency": "XPF",
+    "flag": "https://restcountries.eu/data/wlf.svg"
+  },
+  "EH": {
+    "name": "Western Sahara",
+    "nativeName": "الصحراء الغربية",
+    "currency": "MAD",
+    "flag": "https://restcountries.eu/data/esh.svg"
+  },
+  "YE": {
+    "name": "Yemen",
+    "nativeName": "اليَمَن",
+    "currency": "YER",
+    "flag": "https://restcountries.eu/data/yem.svg"
+  },
+  "ZM": {
+    "name": "Zambia",
+    "nativeName": "Zambia",
+    "currency": "ZMW",
+    "flag": "https://restcountries.eu/data/zmb.svg"
+  },
+  "ZW": {
+    "name": "Zimbabwe",
+    "nativeName": "Zimbabwe",
+    "currency": "BWP",
+    "flag": "https://restcountries.eu/data/zwe.svg"
+  }
+}

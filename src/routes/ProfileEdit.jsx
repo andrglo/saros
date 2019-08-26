@@ -9,13 +9,24 @@ import SmartInput from '../components/SmartInput'
 import {getUid} from '../selectors/app'
 import {getFormValues, getForm} from '../selectors/forms'
 import {Check} from '../assets/icons'
-import {getCountries, getStates, getCities} from '../selectors/atlas'
+import {
+  getStatesAsOptions,
+  getCitiesAsOptions,
+  getCountriesAsOptions
+} from '../selectors/atlas'
 
 const log = debug('profile')
 
 const ProfileEdit = props => {
   log('render', props)
-  const {dispatch, formName, uid, states = [], cities = []} = props
+  const {
+    dispatch,
+    formName,
+    uid,
+    countries = [],
+    states = [],
+    cities = []
+  } = props
 
   return (
     <Form
@@ -49,7 +60,7 @@ const ProfileEdit = props => {
         <SmartInput
           id="country"
           label={t`Country`}
-          options={getCountries}
+          options={countries}
           allowAnyValue
         />
         <SmartInput
@@ -72,6 +83,7 @@ const ProfileEdit = props => {
 ProfileEdit.propTypes = {
   dispatch: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
+  countries: PropTypes.array,
   states: PropTypes.array,
   cities: PropTypes.array,
   uid: PropTypes.string.isRequired
@@ -83,8 +95,9 @@ export default connect(state => {
   const values = (form && getFormValues(form)) || {}
   return {
     formName,
-    states: getStates(values.country),
-    cities: getCities(values.country, values.state),
+    countries: getCountriesAsOptions(state),
+    states: getStatesAsOptions(state, values),
+    cities: getCitiesAsOptions(state, values),
     uid: getUid(state)
   }
 })(ProfileEdit)

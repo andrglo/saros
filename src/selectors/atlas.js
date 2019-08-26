@@ -1,59 +1,105 @@
-import {defaultMemoize as memoize} from 'reselect'
-import {setCountries} from '../reducers/atlas'
+import {createSelector} from 'reselect'
+import get from 'lodash/get'
+import {setCountries, setCountry} from '../reducers/atlas'
 import {getStore} from '../controller'
 // import {LocalDate} from 'js-joda'
 // import calc from 'date-easter'
 
 export const getAtlasIsLoading = state => state.atlas.isLoading
 
-let isLoading
+const isLoading = {}
 
-export const getCountries = state => {
-  const countries = state.atlas.countries
-  if (!countries && !isLoading) {
-    isLoading = true
-    import('../loaders/atlas!').then(({default: atlas}) => {
-      const data = atlas.countries
-      const countries = []
-      for (const key of Object.keys(data)) {
-        countries.push({
-          label: data[key].nativeName,
-          value: key
+export const getCountries = createSelector(
+  state => state.atlas.countries,
+  countries => {
+    if (!countries && !isLoading.countries) {
+      isLoading.countries = true
+      import('../assets/atlas/countries.json')
+        .then(({default: data}) => {
+          getStore().dispatch(setCountries({countries: data}))
         })
-      }
-      isLoading = false
-      getStore().dispatch(setCountries({countries}))
-    }) // if error do not retry => require page refresh
+        .catch(err => {
+          console.error(err)
+        })
+    }
+    return countries
   }
-  return countries
+)
+
+export const getCountriesAsOptions = createSelector(
+  getCountries,
+  countries => {
+    const options = []
+    for (const key of Object.keys(countries || {})) {
+      options.push({
+        label: countries[key].nativeName,
+        value: key
+      })
+    }
+    return options
+  }
+)
+
+const loadCountryData = code => {
+  if (code && !isLoading[code]) {
+    isLoading[code] = true
+    import(`../assets/atlas/${code}.json`)
+      .then(({default: data}) => {
+        getStore().dispatch(setCountry({code, data}))
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 }
 
-export const getStates = memoize(country => {
-  const states = []
-  // const data = hd.getStates(country)
-  // if (!data) {
-  //   return states
-  // }
-  // for (const key of Object.keys(data)) {
-  //   states.push({
-  //     label: data[key],
-  //     value: key
-  //   })
-  // }
-  return states
-})
+export const getStates = createSelector(
+  (state, {country}) => get(state, `atlas.${country}.states`),
+  (state, {country}) => country,
+  (data, code) => {
+    if (!data) {
+      loadCountryData(code)
+    }
+    return data
+  }
+)
 
-export const getCities = memoize((country, state) => {
-  const cities = []
-  // const data = hd.getRegions(country, state)
-  // if (!data) {
-  //   return cities
-  // }
-  // for (const key of Object.keys(data)) {
-  //   cities.push({
-  //     label: data[key],
-  //     value: key
-  //   })
-  // }
-  return cities
-})
+export const getStatesAsOptions = createSelector(
+  getStates,
+  states => {
+    const options = []
+    for (const key of Object.keys(states || {})) {
+      options.push({
+        label: states[key].name,
+        value: key
+      })
+    }
+    return options
+  }
+)
+
+export const getCities = createSelector(
+  (state, {country, state: code}) =>
+    get(state, `atlas.${country}.states[${code}].regions`),
+  (state, {country}) => country,
+  (data, code) => {
+    if (!data) {
+      loadCountryData(code)
+    }
+    return data
+  }
+)
+
+export const getCitiesAsOptions = createSelector(
+  getCities,
+  cities => {
+    const options = []
+    for (const key of Object.keys(cities || {})) {
+      options.push({
+        label: key,
+        value: key
+      })
+    }
+    return options
+  }
+)
