@@ -57,7 +57,7 @@ const Dropdown = props => {
   const previousFocusedIndex = usePreviousValue(focusedIndex)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (focusedRef.current) {
+    if (focusedRef.current && focusedRef.current.scrollIntoView) {
       focusedRef.current.scrollIntoView({
         behavior:
           focusedIndex === previousFocusedIndex + 1 ||
@@ -111,8 +111,6 @@ const Dropdown = props => {
       className="text-default"
       ref={dropdownRef}
       tabIndex="-1"
-      aria-expanded="true"
-      role="list"
     >
       {topExpanded && caption && (
         <div
@@ -122,12 +120,12 @@ const Dropdown = props => {
           {caption}
         </div>
       )}
-      <div className={cn(classes.dropdown, 'overflow-auto')}>
+      <ul className={cn(classes.dropdown, 'overflow-auto')}>
         {options.map((option, index) => {
           const isSelected = option.value === selectedOption.value
           const isFocused = index === focusedIndex
           return (
-            <div
+            <li
               key={option.value}
               className={cn('bg-menu outline-none', {
                 'border-b': index !== lastIndex
@@ -142,12 +140,10 @@ const Dropdown = props => {
                 className={cn(
                   'p-1 hover:bg-highlight overflow-x-hidden',
                   {
-                    [`bg-menu-selected  ${
-                      classes['option-selected']
-                    }`]: isSelected && !isFocused,
-                    [`bg-menu-focused ${
-                      classes['option-focused']
-                    }`]: isFocused
+                    [`bg-menu-selected ${classes['option-selected'] ||
+                      ''}`]: isSelected && !isFocused,
+                    [`bg-menu-focused ${classes['option-focused'] ||
+                      ''}`]: isFocused
                   },
                   classes.option
                 )}
@@ -165,15 +161,15 @@ const Dropdown = props => {
                   {t`There are options not showed, please, type more text`}
                 </div>
               )}
-            </div>
+            </li>
           )
         })}
         {options.length === 0 && (
-          <div className="text-sm bg-menu italic p-1 overflow-hidden tracking-tighter text-center text-warning">
+          <li className="text-sm bg-menu italic p-1 overflow-hidden tracking-tighter text-center text-warning">
             {t`No options available`}
-          </div>
+          </li>
         )}
-      </div>
+      </ul>
     </div>
   )
 }
@@ -224,8 +220,8 @@ const Select = props => {
 
   options = useMemo(() => {
     let result = options
-    if (searchText && searchText !== value) {
-      const slug = normalize(searchText)
+    if (searchText) {
+      const slug = normalize(String(searchText))
       const betterMatches = []
       const matches = []
       setOptionsNotShowed(false)
@@ -240,9 +236,15 @@ const Select = props => {
             }
           : () => false
       let length = 0
+      const normalizedValue = normalize(String(value))
       for (const option of options) {
         const label = normalize(option.label)
-        if (label.startsWith(slug)) {
+        if (normalize(String(option.value)) === normalizedValue) {
+          betterMatches.push(option)
+          if (maxLengthWasHit(++length)) {
+            break
+          }
+        } else if (label.startsWith(slug)) {
           betterMatches.push(option)
           if (maxLengthWasHit(++length)) {
             break
@@ -268,7 +270,7 @@ const Select = props => {
   let selectedIndex = -1
   if (!multi) {
     selectedIndex = options.findIndex(
-      option => option.value === value
+      option => String(option.value) === String(value)
     )
     if (
       showfirstOptionAsDefault &&
@@ -297,10 +299,8 @@ const Select = props => {
     document.body.removeChild(dropdownRootRef.current)
     dropdownRootRef.current = null
     setDropdownOpen(false)
-    if (allowAnyValue !== true) {
-      setSearchText('')
-    }
-  }, [allowAnyValue, isDropdownOpen])
+    setSearchText('')
+  }, [isDropdownOpen])
 
   useEffect(() => {
     if (shouldCloseDropdown) {
@@ -360,12 +360,8 @@ const Select = props => {
             }
             if (nextValue !== undefined) {
               onChange(nextValue)
-              setSearchText('')
-            } else if (allowAnyValue === true) {
-              onChange(searchText)
-            } else {
-              setSearchText('')
             }
+            setSearchText('')
             if (event.key === Enter) {
               event.preventDefault()
               closeDropdown()
@@ -397,15 +393,13 @@ const Select = props => {
       }
     },
     [
-      allowAnyValue,
       closeDropdown,
       focusedIndex,
       isDropdownOpen,
       multi,
       onChange,
       openDropdown,
-      options,
-      searchText
+      options
     ]
   )
 
@@ -432,17 +426,6 @@ const Select = props => {
       )
     }
   }
-  const previousValue = usePreviousValue(value)
-  if (value !== previousValue) {
-    if (selectedIndex === -1 && isValueEmpty(searchText)) {
-      if (!Object.is(value, searchText)) {
-        // Why this test is required?
-        setSearchText(value)
-      }
-    }
-  } else if (selectedIndex > 0 && searchText) {
-    setSearchText('')
-  }
 
   // log('render', props)
   return (
@@ -457,9 +440,6 @@ const Select = props => {
       )}
       ref={containerRef}
       onKeyDown={handleEvent}
-      role="combobox"
-      aria-expanded="true"
-      aria-controls=""
     >
       <div
         className={cn(classes.value, 'flex flex-1 cursor-text', {
@@ -477,7 +457,7 @@ const Select = props => {
           onBlur={onBlur}
           className={cn(classes.input, 'flex-1 focus:outline-none')}
           onFocus={openDropdown}
-          value={searchText}
+          value={searchText || (display ? '' : value)}
           onChange={event => {
             const searchText = sanitize(event.target.value)
             openDropdown()
@@ -488,6 +468,9 @@ const Select = props => {
             }
           }}
           placeholder={display ? '' : placeholder}
+          role="combobox"
+          aria-expanded={isDropdownOpen ? 'true' : 'false'}
+          aria-controls=""
         />
       </div>
       {isLoading ? (
