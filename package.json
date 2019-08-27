@@ -7,7 +7,8 @@
     "start": "webpack-dev-server --inline --history-api-fallback --host 0.0.0.0",
     "start:pwa": "http-server",
     "build": "NODE_ENV=production webpack",
-    "test": "ava"
+    "test": "ava",
+    "test:coverage": "nyc ava"
   },
   "repository": "git@github.com:andrglo/saros.git",
   "author": "Andre Gloria <andredagloria@gmail.com>",
@@ -41,10 +42,10 @@
     "glob": "^7.1.4",
     "http-server": "^0.11.1",
     "marked": "^0.7.0",
+    "nyc": "^14.1.1",
     "postcss-loader": "^3.0.0",
     "prettier": "^1.18.2",
     "react-hot-loader": "^4.12.11",
-    "react-test-renderer": "^16.9.0",
     "redux-logger": "^3.0.6",
     "style-loader": "^1.0.0",
     "svg-url-loader": "^3.0.0",
