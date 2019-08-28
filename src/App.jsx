@@ -16,7 +16,7 @@ import {
 } from './selectors/app'
 import {updateApp} from './controller'
 import Alert from './components/Alert'
-import t from './lib/translate'
+import t, {fetchLocale} from './lib/translate'
 
 import getView from './loaders/router!'
 import {getQuery} from './lib/history'
@@ -38,7 +38,8 @@ class App extends Component {
     super(props)
     this.setColorScheme = this.setColorScheme.bind(this)
     this.state = {
-      colorScheme: LIGHT
+      colorScheme: LIGHT,
+      locale: props.locale
     }
   }
 
@@ -53,12 +54,17 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {theme} = this.props
+    const {theme, locale} = this.props
     if (
       theme !== prevProps.theme ||
       process.env.NODE_ENV === 'development'
     ) {
       App.setTheme(theme, this.state.colorScheme)
+    }
+    if (locale !== prevProps.locale) {
+      fetchLocale(locale).then(() => {
+        this.setState({locale})
+      })
     }
   }
 
@@ -131,7 +137,8 @@ class App extends Component {
 
   render() {
     log('render', this.props)
-    const {updateAvailable, locale} = this.props
+    const {updateAvailable} = this.props
+    const {locale} = this.state
     return (
       <React.StrictMode key={locale}>
         <Suspense

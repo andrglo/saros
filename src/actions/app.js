@@ -1,15 +1,5 @@
 import history from '../lib/history'
-import {setLocale, setBrowserLocation} from '../reducers/app'
-import {fetchLocale} from '../lib/translate'
-
-export const updateLocale = ({locale}) => {
-  return dispatch =>
-    fetchLocale(locale).then(changed => {
-      if (changed) {
-        dispatch(setLocale({locale}))
-      }
-    })
-}
+import {setBrowserLocation} from '../reducers/app'
 
 const makeLocationObject = location => {
   if (typeof location === 'string') {

@@ -31,6 +31,7 @@ import {
 } from './reducers/app'
 import {fetchLocale} from './lib/translate'
 import {pushBrowserLocation} from './actions/app'
+import {getLocale} from './selectors/app'
 
 axios.defaults.baseURL = functionsURL
 
@@ -344,7 +345,7 @@ export const createStore = async () => {
   if (app.timestamp) {
     timestamps.set(APP_REDUCER_NAME, app.timestamp)
   }
-  await fetchLocale(app.locale || navigator.language)
+  await fetchLocale(getLocale({app}))
   initialState[APP_REDUCER_NAME] = app
   store = createReduxStore(
     rootReducer,

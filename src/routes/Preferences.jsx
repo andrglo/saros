@@ -6,10 +6,9 @@ import debug from 'debug'
 import t from '../lib/translate'
 import SmartInput from '../components/SmartInput'
 import {getTheme, getLocale} from '../selectors/app'
-import {setTheme} from '../reducers/app'
+import {setTheme, setLocale} from '../reducers/app'
 import {locales} from '../../saros.config'
 import themes from '../loaders/themes!'
-import {updateLocale} from '../actions/app'
 
 const log = debug('preferences')
 
@@ -45,7 +44,7 @@ const Preferences = props => {
           value={locale}
           showfirstOptionAsDefault
           onChange={locale => {
-            dispatch(updateLocale({locale}))
+            dispatch(setLocale({locale}))
           }}
         />
       </div>

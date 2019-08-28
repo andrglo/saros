@@ -3,22 +3,10 @@ import axios from 'axios'
 import normalize from './normalize'
 
 let translations = {}
-let currentLocale
 
-export const fetchLocale = locale => {
-  if (process.env.NODE_ENV === 'production') {
-    if (currentLocale === locale) {
-      return Promise.resolve(false) // did not change
-    }
-  }
-  currentLocale = locale || ''
-  if (currentLocale.startsWith('pt')) {
-    currentLocale = 'pt-BR'
-  } else {
-    currentLocale = 'en'
-  }
-  return axios
-    .get(`/locale/${currentLocale}.json`, {
+export const fetchLocale = locale =>
+  axios
+    .get(`/locale/${locale}.json`, {
       baseURL: null
     })
     .then(result => {
@@ -26,10 +14,9 @@ export const fetchLocale = locale => {
       return true // changed
     })
     .catch(err => {
-      currentLocale = null
+      locale = null
       console.error(err)
     })
-}
 
 export const setTranlations = newTranslations => {
   translations = newTranslations
