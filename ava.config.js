@@ -1,5 +1,5 @@
 const config = {
-  require: ['@babel/register', './_setup-browser-env.js'],
+  require: ['@babel/register', './ava.browser.config.js'],
   babel: {
     extensions: ['js', 'jsx']
   }
