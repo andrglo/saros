@@ -131,6 +131,34 @@ class App extends Component {
           </div>
         )
       }
+      const {component} = query
+      if (component) {
+        const Component = React.lazy(() =>
+          import(
+            /* webpackExclude: /test\/.+\.jsx?$/ */
+            `./components/${component}.jsx`
+          )
+        )
+        const compProps =
+          this.state.compProps || `{\n  "className": "m-12"\n}`
+        return (
+          <React.Fragment>
+            <Component {...JSON.parse(compProps)} />
+            <div className="w-screen p-4">
+              <textarea
+                className="w-full h-40 text-default bg-default border border-b"
+                value={
+                  this.state.compProps ||
+                  `{\n  "className": "m-12"\n}`
+                }
+                onChange={event => {
+                  this.setState({compProps: event.target.value})
+                }}
+              />
+            </div>
+          </React.Fragment>
+        )
+      }
     }
     return <Dashboard>{getView(pathname)}</Dashboard>
   }

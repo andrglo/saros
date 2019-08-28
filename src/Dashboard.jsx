@@ -52,7 +52,7 @@ const Dashboard = props => {
   const drawer = <Drawer />
   return (
     <React.Fragment>
-      <div className="dashboard bg-default text-default h-screen">
+      <div className="dashboard h-screen">
         <div className="toolbar flex shadow-lg bg-toolbar text-toolbar p-2 sm:p-4">
           <button
             type="button"
