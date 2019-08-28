@@ -75,83 +75,81 @@ const Signin = props => {
 
   const linkSignInDisabled = signingIn || !isEmailValid(email)
   return (
-    <div>
-      <div className="relative m-2 sm:items-center sm:flex h-screen">
-        <div className="bg-teal-300 m-auto text-white font-bold rounded-lg border shadow-lg p-10 pt-5">
-          <p className="mb-3 mx-auto text-xl text-teal-800 text-center">
-            {`${manifest.appName},  ${t`lets go budgeting`}`}
+    <div className="relative p-2 sm:items-center sm:flex mt-0 sm:mt-12 w-screen overflow-hidden">
+      <div className="bg-teal-300 m-auto text-white font-bold rounded-lg border shadow-lg p-10 pt-5">
+        <p className="mb-3 mx-auto text-xl text-teal-800 text-center">
+          {`${manifest.appName},  ${t`lets go budgeting`}`}
+        </p>
+        {error && (
+          <p className="m-3 mx-auto max-w-xs text-red-600 text-center">
+            {error}
           </p>
-          {error && (
-            <p className="m-3 mx-auto max-w-xs text-red-600 text-center">
-              {error}
-            </p>
+        )}
+        {sent && (
+          <p className="m-3 mx-auto max-w-xs text-orange-500 text-center">
+            {t`email has been sent`}
+          </p>
+        )}
+        <input
+          className="bg-gray-100 mb-2 border-teal-900 border text-teal-800  rounded-sm h-8 w-full pl-2"
+          type="email"
+          autoFocus
+          placeholder="Email"
+          disabled={sent}
+          value={email}
+          onChange={event => setEmail(event.target.value)}
+        />
+        <button
+          className={cn(
+            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg',
+            {
+              'cursor-default text-teal-400': linkSignInDisabled,
+              'hover:underline text-teal-800': !linkSignInDisabled
+            }
           )}
-          {sent && (
-            <p className="m-3 mx-auto max-w-xs text-orange-500 text-center">
-              {t`email has been sent`}
-            </p>
-          )}
-          <input
-            className="bg-gray-100 mb-2 border-teal-900 border text-teal-800  rounded-sm h-8 w-full pl-2"
-            type="email"
-            autoFocus
-            placeholder="Email"
-            disabled={sent}
-            value={email}
-            onChange={event => setEmail(event.target.value)}
+          type="button"
+          disabled={linkSignInDisabled}
+          onClick={signIn}
+        >
+          {t`signin link`}
+        </button>
+        <p className="m-2 mx-auto text-lg text-teal-800 text-center">
+          {t`or`}
+        </p>
+        <button
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg"
+          type="button"
+          disabled={signingIn}
+          onClick={signInUsingGoogle}
+        >
+          {t`signin google`}
+          <img
+            className="h-6 ml-4 self-center"
+            src={require('./assets/google.svg')}
+            alt="google logo"
           />
-          <button
-            className={cn(
-              'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg',
-              {
-                'cursor-default text-teal-400': linkSignInDisabled,
-                'hover:underline text-teal-800': !linkSignInDisabled
-              }
-            )}
-            type="button"
-            disabled={linkSignInDisabled}
-            onClick={signIn}
-          >
-            {t`signin link`}
-          </button>
-          <p className="m-2 mx-auto text-lg text-teal-800 text-center">
-            {t`or`}
+        </button>
+        <button
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg"
+          type="button"
+          disabled={signingIn}
+          onClick={signInAnonymously}
+        >
+          {t`signin anonymously`}
+        </button>
+        <div className="max-w-xs mx-auto">
+          <p className="mt-6 mx-auto text-xs text-teal-800 text-center">
+            {`${t`By using`} ${
+              manifest.appShortName
+            } ${t`you agree to our`} `}
+            <Link className="italic" to="/privacy">
+              {t`Privacy Policy`}
+            </Link>
+            {` ${t`and`} `}
+            <Link className="italic" to="/agreement">
+              {t`Terms of Service`}
+            </Link>
           </p>
-          <button
-            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg"
-            type="button"
-            disabled={signingIn}
-            onClick={signInUsingGoogle}
-          >
-            {t`signin google`}
-            <img
-              className="h-6 ml-4"
-              src={require('./assets/google.svg')}
-              alt="google logo"
-            />
-          </button>
-          <button
-            className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg"
-            type="button"
-            disabled={signingIn}
-            onClick={signInAnonymously}
-          >
-            {t`signin anonymously`}
-          </button>
-          <div className="max-w-xs mx-auto">
-            <p className="mt-6 mx-auto text-xs text-teal-800 text-center">
-              {`${t`By using`} ${
-                manifest.appShortName
-              } ${t`you agree to our`} `}
-              <Link className="italic" to="/privacy">
-                {t`Privacy Policy`}
-              </Link>
-              {` ${t`and`} `}
-              <Link className="italic" to="/agreement">
-                {t`Terms of Service`}
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>

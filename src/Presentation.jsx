@@ -35,10 +35,10 @@ const Presentation = props => {
             <p className="uppercase tracking-loose w-full">
               {t`This is a work in progress!`}
             </p>
-            <h1 className="my-4 text-5xl font-bold leading-tight">
+            <h1 className="my-4 text-5xl font-bold leading-tight w-full">
               Saros
             </h1>
-            <p className="leading-normal text-2xl mb-4">
+            <p className="leading-normal text-lg mb-4">
               {t`Saros is a side project of mine which aims to provide a cloud based full budgeting web app`}
             </p>
             <a
@@ -49,11 +49,11 @@ const Presentation = props => {
               <LaunchIcon className="m-2" />
             </a>
             <button
-              className="mx-auto flex lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg"
+              className="mx-auto flex lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 shadow-lg"
               type="button"
-              onClick={() =>
+              onClick={() => {
                 dispatch(pushBrowserLocation({pathname: '/signin'}))
-              }
+              }}
             >
               {t`Sign in`}
             </button>
