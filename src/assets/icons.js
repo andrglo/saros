@@ -16,3 +16,5 @@ export {
   MdWarning as WarningIcon,
   MdError as ErrorIcon
 } from 'react-icons/md'
+
+export {TiDocumentText as FormIcon} from 'react-icons/ti'
