@@ -468,6 +468,7 @@ const Select = props => {
             }
           }}
           placeholder={display ? '' : placeholder}
+          autoComplete="off"
           role="combobox"
           aria-expanded={isDropdownOpen ? 'true' : 'false'}
           aria-controls=""
