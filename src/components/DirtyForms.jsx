@@ -6,30 +6,35 @@ import {connect} from 'react-redux'
 import {FormIcon} from '../assets/icons'
 import {getDirtyForms} from '../selectors/forms'
 
-const DirtyForms = props => {
-  const {dispatch, className, dirtyForms = [], ...rest} = props
+const DirtyFormsButton = props => {
+  const {dispatch, className, dirtyFormsCounter, ...rest} = props
   return (
-    <div
-      className={cn(
-        className,
-        'w-10 h-10 rounded-full hover:bg-highlight relative'
-      )}
-      {...rest}
-    >
-      <FormIcon className="w-6 h-10 m-auto" />
-      <p>{dirtyForms.length}</p>
-    </div>
+    dirtyFormsCounter > 0 && (
+      <button
+        type="button"
+        className={cn(
+          className,
+          'w-10 h-10 rounded-full hover:bg-highlight cursor-pointer relative focus:outline-none focus:shadow-outline'
+        )}
+        {...rest}
+      >
+        <FormIcon className="w-6 h-10 m-auto" />
+        <span className="absolute top-0 pl-2 pr-2 bg-contrast text-contrast text-center align-middle leading-loose rounded-full h-6 text-xs">
+          {dirtyFormsCounter}
+        </span>
+      </button>
+    )
   )
 }
 
-DirtyForms.propTypes = {
+DirtyFormsButton.propTypes = {
   dispatch: PropTypes.func.isRequired,
   className: PropTypes.string,
-  dirtyForms: PropTypes.arrayOf(PropTypes.string.isRequired)
+  dirtyFormsCounter: PropTypes.number.isRequired
 }
 
 export default connect(state => {
   return {
-    dirtyForms: getDirtyForms(state)
+    dirtyFormsCounter: getDirtyForms(state).length
   }
-})(DirtyForms)
+})(DirtyFormsButton)

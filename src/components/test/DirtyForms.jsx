@@ -8,13 +8,13 @@ import {
 import test from 'ava'
 
 import render from '../../../utils/renderWithRedux'
-import DirtyForms from '../DirtyForms'
+import DirtyFormsButton from '../DirtyForms'
 
 test.afterEach(cleanup)
 
 test('Select in a form', t => {
   // eslint-disable-next-line no-unused-vars
-  const {container, debug, rerender} = render(<DirtyForms />, {
+  const {container, debug, rerender} = render(<DirtyFormsButton />, {
     initialState: {
       forms: {
         f1: {
@@ -26,6 +26,6 @@ test('Select in a form', t => {
     }
   })
   t.is(document.body.childNodes.length, 1)
-  const badge = container.querySelector('p')
+  const badge = container.querySelector('span')
   t.is(badge.textContent, '1')
 })

@@ -18,6 +18,7 @@ import {
   FaceIcon
 } from './assets/icons'
 import useOnClickOutside from './hooks/useOnClickOutside'
+import DirtyForms from './components/DirtyForms'
 
 const log = debug('dashboard')
 
@@ -64,9 +65,10 @@ const Dashboard = props => {
           <p className="ml-4 sm:ml-0 flex-1 text-3xl self-center">
             Saros
           </p>
+          <DirtyForms className="mr-2" />
           {!isHome && (
             <button
-              className=" hover:bg-menuHover rounded-full focus:outline-none focus:shadow-outline"
+              className=" hover:bg-menuHover w-10 h-10 rounded-full focus:outline-none focus:shadow-outline hover:bg-highlight"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation('/'))

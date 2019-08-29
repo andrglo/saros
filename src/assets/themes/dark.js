@@ -32,8 +32,8 @@ module.exports = {
     'text-tertiary': colors.purple[200],
     'bg-tertiary': colors.purple[600],
 
-    'text-contrast': colors.red[300],
-    'bg-contrast': colors.orange[600],
+    'text-contrast': colors.red[100],
+    'bg-contrast': colors.orange[800],
 
     'border-default': colors.gray[700],
     'border-highlight': colors.gray[400],
