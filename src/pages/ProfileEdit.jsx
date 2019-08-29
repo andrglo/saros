@@ -14,6 +14,7 @@ import {
   getCitiesAsOptions,
   getCountriesAsOptions
 } from '../selectors/atlas'
+import ButtonsPanel from '../components/ButtonsPanel'
 
 const log = debug('profile')
 
@@ -76,6 +77,7 @@ const ProfileEdit = props => {
         options={cities}
         allowAnyValue
       />
+      <ButtonsPanel />
     </Form>
   )
 }

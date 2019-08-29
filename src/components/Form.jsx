@@ -1,4 +1,4 @@
-import React, {useLayoutEffect} from 'react'
+import React, {useLayoutEffect, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 import {connect} from 'react-redux'
@@ -61,9 +61,21 @@ const Form = props => {
     doc
   ])
 
+  const onSubmit = useCallback(
+    event => {
+      event.preventDefault()
+      console.log('todo', formName)
+    },
+    [formName]
+  )
+
   return (
     <FormContext.Provider value={formName}>
-      <form {...rest} className={cn('', className)}>
+      <form
+        onSubmit={onSubmit}
+        {...rest}
+        className={cn('', className)}
+      >
         {children}
       </form>
     </FormContext.Provider>

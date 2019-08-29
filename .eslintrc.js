@@ -67,5 +67,13 @@ module.exports = {
     'react/jsx-fragments': 0,
     'react/state-in-constructor': 0,
     'react/no-array-index-key': 0,
+    'react/button-has-type': [
+      true,
+      {
+        button: true,
+        submit: true,
+        reset: true
+      }
+    ]
   }
 }

@@ -15,6 +15,10 @@
     "en": "Country",
     "pt-BR": "País"
   },
+  "delete": {
+    "en": "Delete",
+    "pt-BR": "Excluir"
+  },
   "email": {
     "en": "email",
     "pt-BR": "email"
@@ -79,9 +83,17 @@
     "en": "Privacy Policy",
     "pt-BR": "Política de privacidade"
   },
+  "restore": {
+    "en": "Restore",
+    "pt-BR": "Restaurar"
+  },
   "saros_is_a_side_project_of_mine_which_aims_to_provide_a_cloud_based_full_budgeting_web_app": {
     "en": "Saros is a side project of mine which aims to provide a cloud based full budgeting web app",
     "pt-BR": "Saros é um projeto pessoal cujo objetivo é desenvolver um aplicativo financeiro completo para a web"
+  },
+  "save": {
+    "en": "Save",
+    "pt-BR": "Salvar"
   },
   "sign_in": {
     "en": "Sign in",
