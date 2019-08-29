@@ -11,9 +11,9 @@ module.exports = function routesLoader() {
     process.exit(1)
   }
 
-  const root = path.resolve(__dirname, '../routes')
+  const root = path.resolve(__dirname, '../pages')
   const routesFiles = glob
-    .sync(path.join(__dirname, '../routes/**/*.jsx'))
+    .sync(path.join(__dirname, '../pages/**/*.jsx'))
     .filter(dir => !dir.includes('test'))
 
   const imports = []
@@ -22,7 +22,7 @@ module.exports = function routesLoader() {
     const name = path.basename(fullName, '.jsx')
     imports.push(
       `const ${name} = React.lazy(() => import('${path.resolve(
-        '../routes/',
+        '../pages/',
         fullName
       )}'))`
     )
