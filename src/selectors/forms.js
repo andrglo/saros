@@ -13,7 +13,9 @@ export const getDirtyForms = createSelector(
     const dirtyForms = []
     for (const formName of Object.keys(forms)) {
       const form = forms[formName]
-      if (form.dirty && form.pathname !== pathname) {
+      const formPathname =
+        form.pathname && form.pathname.split('?')[0]
+      if (form.dirty && formPathname !== pathname) {
         dirtyForms.push(formName)
       }
     }

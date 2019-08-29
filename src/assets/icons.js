@@ -14,7 +14,6 @@ export {
   MdLaunch as LaunchIcon,
   MdClose as CloseIcon,
   MdWarning as WarningIcon,
-  MdError as ErrorIcon
+  MdError as ErrorIcon,
+  MdWeb as FormIcon
 } from 'react-icons/md'
-
-export {TiDocumentText as FormIcon} from 'react-icons/ti'

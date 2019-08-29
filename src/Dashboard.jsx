@@ -46,9 +46,6 @@ const Dashboard = props => {
     }, [openDrawer])
   )
 
-  const [focusItemInUserMenu, setFocusItemInUserMenu] = useState(
-    false
-  )
   const [showUserMenu, setShowUserMenu] = useState(false)
   const drawer = <Drawer />
   return (
@@ -65,10 +62,10 @@ const Dashboard = props => {
           <p className="ml-4 sm:ml-0 flex-1 text-3xl self-center">
             Saros
           </p>
-          <DirtyForms className="mr-2" />
+          <DirtyForms className="mt-1 mr-2" />
           {!isHome && (
             <button
-              className=" hover:bg-menuHover w-10 h-10 rounded-full focus:outline-none focus:shadow-outline hover:bg-highlight"
+              className=" hover:bg-menuHover mt-1 w-10 h-10 rounded-full focus:outline-none focus:shadow-outline hover:bg-highlight"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation('/'))
@@ -82,15 +79,7 @@ const Dashboard = props => {
             ref={menuButtonRef}
             className="self-center ml-4 rounded-sm sm:rounded-full w-8 h-8 overflow-hidden focus:outline-none focus:shadow-outline"
             onClick={() => {
-              setFocusItemInUserMenu(false)
               setShowUserMenu(!showUserMenu)
-            }}
-            onKeyDown={event => {
-              if (!showUserMenu) {
-                event.preventDefault()
-                setFocusItemInUserMenu(true)
-                setShowUserMenu(true)
-              }
             }}
           >
             {user.photoURL ? (
@@ -109,7 +98,6 @@ const Dashboard = props => {
                 setShowUserMenu(false)
               }}
               menuButtonRef={menuButtonRef}
-              focus={focusItemInUserMenu}
               options={[
                 {
                   icon: <ProfileIcon />,

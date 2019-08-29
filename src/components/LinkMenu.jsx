@@ -15,7 +15,7 @@ const getItemId = i => `link_${i}`
 const GAP = 4
 
 const Menu = props => {
-  const {className, options, onClose, focus, menuButtonRef} = props
+  const {className, options, onClose, menuButtonRef} = props
   // log('render', props)
 
   const [menuNode, setMenuNode] = useState()
@@ -30,7 +30,7 @@ const Menu = props => {
   const style = {top: -9999}
   const menuBounds = useBounds(menuNode)
   const buttonBounds = useBounds(menuButtonRef)
-  if (buttonBounds && menuBounds) {
+  if (buttonBounds && menuBounds && menuBounds.width) {
     style.top = buttonBounds.bottom + GAP
     if (
       buttonBounds.left + menuBounds.width + GAP <
@@ -44,69 +44,92 @@ const Menu = props => {
 
   useKeyPress('Escape', onClose)
 
-  const [focused, setFocus] = useState(focus ? 0 : -1)
+  const [focused, setFocus] = useState(0)
   useEffect(() => {
     const item = document.getElementById(getItemId(focused))
     if (item) {
       item.focus()
     }
   }, [focused])
-  let i = -1
+  let lastIndex = -1
   return (
-    <div
+    <ul
       ref={setMenuNode}
       style={style}
       className={cn(
-        'fixed bg-menu rounded shadow-md z-30 text-default',
+        'fixed bg-menu rounded shadow-md z-30 text-default max-w-2xl overflow-x-hidden',
         className
       )}
       role="menu"
       onClick={onClose}
       onKeyDown={event => {
         if (event.key === 'ArrowDown') {
-          if (focused < i) {
+          if (focused < lastIndex) {
             setFocus(focused + 1)
           }
         } else if (event.key === 'ArrowUp') {
           if (focused > 0) {
             setFocus(focused - 1)
           }
+        } else if (event.key === 'Tab') {
+          if (event.shiftKey) {
+            if (focused === 0) {
+              onClose()
+            } else {
+              setFocus(focused - 1)
+            }
+          } else if (focused === lastIndex) {
+            onClose()
+          } else {
+            setFocus(focused + 1)
+          }
         }
       }}
     >
-      {options.map(option => {
+      {options.map((option, index) => {
         const {label, link, icon, divider} = option
+        const labelIsString = typeof label === 'string'
         return (
           divider || (
-            <Link
-              key={label}
-              id={getItemId(++i)}
-              to={link}
-              onFocus={() => {
-                if (focused < 0) {
-                  setFocus(0)
-                }
-              }}
-              className="hover:bg-highlight p-2 w-full text-left block hover:no-underline flex justify-start items-center rounded-sm"
+            <li
+              className="p-1"
+              key={option.key || (labelIsString ? label : index)}
             >
-              {icon}
-              <span className="pl-2">{label}</span>
-            </Link>
+              <Link
+                id={getItemId(++lastIndex)}
+                to={link}
+                onFocus={() => {
+                  if (focused < 0) {
+                    setFocus(0)
+                  }
+                }}
+                className="hover:bg-highlight p-2 w-full text-left block hover:no-underline flex justify-start items-center rounded-sm"
+              >
+                {icon}
+                {labelIsString ? (
+                  <span className="pl-2">{label}</span>
+                ) : (
+                  label
+                )}
+              </Link>
+            </li>
           )
         )
       })}
-    </div>
+    </ul>
   )
 }
 
 Menu.propTypes = {
   className: PropTypes.string,
   onClose: PropTypes.func.isRequired,
-  focus: PropTypes.bool,
   menuButtonRef: PropTypes.object,
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string,
+      label: PropTypes.oneOfType([
+        PropTypes.string.isRequired,
+        PropTypes.element.isRequired
+      ]),
       link: PropTypes.oneOfType([
         PropTypes.string.isRequired,
         PropTypes.func.isRequired
