@@ -2,7 +2,7 @@ import {createSelector} from 'reselect'
 import get from 'lodash/get'
 import {setCountries, setCountry} from '../reducers/atlas'
 import {getStore} from '../controller'
-// import {LocalDate} from 'js-joda'
+// import {LocalDate} from '@js-joda/core'
 // import calc from 'date-easter'
 
 export const getAtlasIsLoading = state => state.atlas.isLoading
