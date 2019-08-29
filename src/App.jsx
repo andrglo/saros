@@ -208,7 +208,11 @@ App.propTypes = {
 export default connect(state => {
   const browserLocation = getBrowserLocation(state)
   if (process.env.NODE_ENV === 'development') {
-    if (browserLocation.pathname !== window.location.pathname) {
+    if (
+      browserLocation !== window.location &&
+      browserLocation.pathname !==
+        window.location.pathname + window.location.search
+    ) {
       console.error(
         'browserLocation pathname mismatch',
         browserLocation,

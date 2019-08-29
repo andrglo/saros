@@ -31,7 +31,7 @@ module.exports = function routesLoader() {
       normalize(kebabCase(name))
     routes.push(
       `case '${route}': {
-        return React.createElement(${name})
+        return React.createElement(${name}, {pathname: url.pathname, search: url.search})
       }`
     )
   }
@@ -40,9 +40,9 @@ module.exports = function routesLoader() {
     import React from 'react'
     const PageNotFound = React.lazy(() => import('${__dirname}/../PageNotFound.jsx'))
     ${imports.join('\n')}
-
     export default pathname => {
-      switch (pathname) {
+      const url = new URL(pathname, window.location.origin)
+      switch (url.pathname) {
         case '/':
         case '/index.html':
           return null
