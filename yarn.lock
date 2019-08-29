@@ -841,6 +841,11 @@
   dependencies:
     core-js "^2.5.7"
 
+"@js-joda/core@^1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@js-joda/core/-/core-1.11.0.tgz#587e3b1a9496f5093526f7195d176c1289406fe5"
+  integrity sha512-GsqC3c/z21VjsfqXChWkwXxVaPbVZ4pRzXTJTomrITo8snEWN05Mv4CwCXjabA9j9CS7T+yxBv3vXpp/DabGEw==
+
 "@nodelib/fs.scandir@2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.1.tgz#7fa8fed654939e1a39753d286b48b4836d00e0eb"
@@ -5644,11 +5649,6 @@ jpeg-js@^0.3.4:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.3.6.tgz#c40382aac9506e7d1f2d856eb02f6c7b2a98b37c"
   integrity sha512-MUj2XlMB8kpe+8DJUGH/3UJm4XpI8XEgZQ+CiHDeyrGoKPdW/8FJv6ku+3UiYm5Fz3CWaL+iXmD8Q4Ap6aC1Jw==
-
-js-joda@^1.11.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/js-joda/-/js-joda-1.11.0.tgz#e0e424b049cf7a9db3ed7729a6ca1f7d96b2486e"
-  integrity sha512-/HJpRhwP2fPyuSsCaZuoVJuaSIt8tUXykV4wOMRXrFk7RP9h9VWaFdS9YHKdMepxb/3TdXpL6IhfC9L0sqYVBw==
 
 js-string-escape@^1.0.1:
   version "1.0.1"
