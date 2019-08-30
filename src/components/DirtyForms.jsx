@@ -28,10 +28,10 @@ const toHuman = elapsed => {
 }
 
 const DirtyForm = props => {
-  const {createdAt, formName} = props
+  const {editStartTime, formName} = props
   log('DirtyForm', props)
   const title = props.title || startCase(formName)
-  const elapsed = createdAt ? Date.now() - createdAt : 0
+  const elapsed = editStartTime ? Date.now() - editStartTime : 0
   return (
     <div>
       <div className="px-2">{title}</div>
@@ -47,7 +47,7 @@ const DirtyForm = props => {
 DirtyForm.propTypes = {
   title: PropTypes.string,
   formName: PropTypes.string,
-  createdAt: PropTypes.number
+  editStartTime: PropTypes.number
 }
 
 let DirtyFormsList = props => {
