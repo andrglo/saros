@@ -4,8 +4,9 @@ module.exports = utils => {
   const {colors = []} = theme('buttons', {})
   const buttons = {
     '.btn': {
-      padding: '.5rem 1rem',
+      padding: '.25rem .75rem',
       borderRadius: '.25rem',
+      fontSize: '.875rem',
       borderWidth: 1,
       fontWeight: '500',
       textTransform: 'uppercase',
@@ -23,6 +24,11 @@ module.exports = utils => {
       '&:hover': {
         backgroundColor: `var(--color-bg-${color}-hover)`,
         color: `var(--color-text-${color}-hover)`,
+      },
+      '&:disabled': {
+        backgroundColor: `var(--color-highlight)`,
+        filter: 'invert(50%)',
+        cursor: 'default'
       },
       '&:active': {
         backgroundColor: `var(--color-bg-${color}-active)`,
