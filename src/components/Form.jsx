@@ -1,4 +1,9 @@
-import React, {useLayoutEffect, useCallback} from 'react'
+import React, {
+  useLayoutEffect,
+  useCallback,
+  useState,
+  useEffect
+} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 import {connect} from 'react-redux'
@@ -19,6 +24,7 @@ import {
 import {saveForm} from '../actions/forms'
 import Alert from './Alert'
 import t from '../lib/translate'
+import {goBackBrowserLocation} from '../actions/app'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('form')
@@ -82,12 +88,18 @@ const Form = props => {
     descriptionFields
   ])
 
+  const [unmounted, unmount] = useState(false)
+  useEffect(() => () => unmount(true), [])
   const onSubmit = useCallback(
     event => {
       event.preventDefault()
-      dispatch(saveForm({formName}))
+      dispatch(saveForm({formName})).then(() => {
+        if (!unmounted) {
+          dispatch(goBackBrowserLocation())
+        }
+      })
     },
-    [dispatch, formName]
+    [dispatch, formName, unmounted]
   )
 
   return (

@@ -25,3 +25,10 @@ export const replaceBrowserLocation = location => {
     dispatch(setBrowserLocation(location))
   }
 }
+
+export const goBackBrowserLocation = () => {
+  return dispatch => {
+    history.back()
+    dispatch(setBrowserLocation(window.location))
+  }
+}

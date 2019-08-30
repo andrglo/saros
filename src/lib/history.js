@@ -26,4 +26,4 @@ const replace = location =>
     getPathname(location)
   )
 
-export default {push, replace}
+export default {push, replace, back: history.back}
