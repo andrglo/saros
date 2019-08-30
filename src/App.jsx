@@ -73,10 +73,23 @@ class App extends Component {
     import(`./assets/themes/${file}`)
       .then(({colors}) => {
         for (const key of Object.keys(colors)) {
-          document.documentElement.style.setProperty(
-            `--color-${key}`,
-            colors[key]
-          )
+          if (Array.isArray(colors[key])) {
+            let [color, ...shades] = colors[key]
+            const variants = ['hover', 'active']
+            shades.forEach((shade, i) => {
+              document.documentElement.style.setProperty(
+                `--color-${key}${
+                  i === 0 ? '' : `-${variants[i - 1] || i}`
+                }`,
+                color[shade]
+              )
+            })
+          } else {
+            document.documentElement.style.setProperty(
+              `--color-${key}`,
+              colors[key]
+            )
+          }
         }
       })
       .catch(err => {

@@ -6,7 +6,7 @@ const SYSTEM = 'system'
 module.exports = function themesLoader() {
   const callback = this.async()
   if (!callback) {
-    console.error('Loader for routes is async')
+    console.error('Loader for themes is async')
     process.exit(1)
   }
 

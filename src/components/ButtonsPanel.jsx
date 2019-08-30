@@ -8,10 +8,10 @@ const ButtonsPanel = props => {
   const {dispatch, className, ...rest} = props
   return (
     <div className="w-full flex">
-      <button type="button">{t`Delete`}</button>
+      <button className="btn btn-tertiary" type="button">{t`Delete`}</button>
       <span className="flex-1" />
-      <button type="reset">{t`Restore`}</button>
-      <button type="submit">{t`Save`}</button>
+      <button className="btn btn-secondary mr-1" type="reset">{t`Restore`}</button>
+      <button className="btn btn-default" type="submit">{t`Save`}</button>
     </div>
   )
 }

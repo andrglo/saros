@@ -5,8 +5,9 @@ module.exports = {
   colors: {
     highlight: 'rgba(0,0,0,.1)',
 
-    'text-default': colors.gray[900],
-    'bg-default': colors.gray[100],
+    // shades: default hover active
+    'text-default': [colors.gray, 900, 100, 800],
+    'bg-default': [colors.gray, 100, 500, 300],
 
     'text-error': colors.red[600],
     'bg-error': colors.red[200],
@@ -23,14 +24,14 @@ module.exports = {
     'text-drawer': colors.teal[900],
     'bg-drawer': '#c7e3f1',
 
-    'text-primary': colors.blue[200],
-    'bg-primary': colors.blue[600],
+    'text-primary': [colors.blue, 100, 900, 800],
+    'bg-primary': [colors.blue, 600, 400, 200],
 
-    'text-secondary': colors.pink[200],
-    'bg-secondary': colors.pink[600],
+    'text-secondary': [colors.pink, 100, 900, 800],
+    'bg-secondary': [colors.pink, 600, 400, 200],
 
-    'text-tertiary': colors.purple[200],
-    'bg-tertiary': colors.purple[600],
+    'text-tertiary': [colors.purple, 100, 900, 800],
+    'bg-tertiary': [colors.purple, 600, 400, 200],
 
     'text-contrast': colors.yellow[900],
     'bg-contrast': colors.yellow[400],

@@ -53,6 +53,7 @@ module.exports = {
   },
   plugins: [
     require('./plugins/tailwind-grid-plugin'),
-    require('./plugins/tailwind-spinner-plugin')
+    require('./plugins/tailwind-spinner-plugin'),
+    require('./plugins/tailwind-buttons-plugin')
   ]
 }
