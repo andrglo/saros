@@ -10,6 +10,7 @@ import {
 } from '../selectors/forms'
 import {getDoc} from '../selectors/docs'
 import {setForm, mergeDocInFormValues} from '../reducers/forms'
+import {saveForm} from '../actions/forms'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('form')
@@ -23,11 +24,14 @@ const Form = props => {
     formName,
     className,
     descriptionFields,
+    title,
     formHasValues,
     dispatch,
     onGetInitialValues,
     initialValues,
     doc,
+    collection,
+    id,
     ...rest
   } = props
 
@@ -41,6 +45,10 @@ const Form = props => {
         setForm({
           formName,
           values,
+          title,
+          descriptionFields,
+          collection,
+          id,
           pathname: `${window.location.pathname}${window.location.search}`
         })
       )
@@ -58,15 +66,19 @@ const Form = props => {
     formName,
     onGetInitialValues,
     initialValues,
-    doc
+    doc,
+    collection,
+    id,
+    title,
+    descriptionFields
   ])
 
   const onSubmit = useCallback(
     event => {
       event.preventDefault()
-      console.log('todo', formName)
+      dispatch(saveForm({formName}))
     },
-    [formName]
+    [dispatch, formName]
   )
 
   return (
@@ -91,7 +103,10 @@ Form.propTypes = {
   doc: PropTypes.object,
   onGetInitialValues: PropTypes.func,
   dispatch: PropTypes.func.isRequired,
-  initialValues: PropTypes.object
+  initialValues: PropTypes.object,
+  title: PropTypes.string,
+  collection: PropTypes.string,
+  id: PropTypes.string
 }
 
 export default connect((state, props) => {

@@ -14,7 +14,7 @@ import {
   getCitiesAsOptions,
   getCountriesAsOptions
 } from '../selectors/atlas'
-import ButtonsPanel from '../components/ButtonsPanel'
+import FormButtons from '../components/FormButtons'
 
 const log = debug('profile')
 
@@ -33,8 +33,7 @@ const ProfileEdit = props => {
     <Form
       className="mx-auto max-w-lg grid grid-gap-1 p-1 grid-columns-1 sm:grid-columns-3 border-yellow-700 border"
       formName={formName}
-      title={t`User account`}
-      descriptionFields="firstName"
+      title={t`My account`}
       collection={`users/${uid}`}
     >
       <SmartInput id="firstName" label={t`Name`} />
@@ -77,7 +76,7 @@ const ProfileEdit = props => {
         options={cities}
         allowAnyValue
       />
-      <ButtonsPanel />
+      <FormButtons className="deleteButton { hidden }" />
     </Form>
   )
 }

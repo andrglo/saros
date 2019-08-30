@@ -14,6 +14,7 @@ export const mergeDocInFormValues = createAction(
   'MERGE_DOC_IN_FORM_VALUES'
 )
 export const setFormFieldError = createAction('SET_FORM_FIELD_ERROR')
+export const resetForm = createAction('RESET_FORM')
 
 const initialState = {}
 
@@ -25,16 +26,25 @@ const setValues = (source, target = {}) => {
 }
 
 const createForm = action => {
-  let {title, descriptionFields = '', pathname, values = {}} = action
+  let {type, descriptionFields = '', values = {}, ...rest} = action
   values = setValues(values)
   return {
+    ...rest,
     initialValues: values,
     values,
-    title,
     descriptionFields: descriptionFields.split(','),
-    pathname,
     dirty: false
   }
+}
+
+const clearForms = state => {
+  for (const formName of Object.keys(state)) {
+    if (state[formName].dirty !== true) {
+      state = {...state}
+      delete state[formName]
+    }
+  }
+  return state
 }
 
 const extractForm = (state, action) => {
@@ -156,6 +166,7 @@ const mergeValues = (form, refreshedValues) => {
 
 const actionHandlers = {
   [setForm]: (state, action) => {
+    state = clearForms(state)
     const {formName} = action
     return {
       ...state,
@@ -171,6 +182,9 @@ const actionHandlers = {
     const form = extractForm(state, action)
     const {id, value} = action
     form.values = set(id, value, form.values)
+    if (!form.dirty) {
+      form.editStartTime = Date.now()
+    }
     form.dirty = true
     form.changedByUser = (form.changedByUser || []).includes(id)
       ? form.changedByUser
@@ -197,6 +211,27 @@ const actionHandlers = {
       delete (form.fieldErrors || {})[action.id]
     }
     return replaceForm(state, action, form)
+  },
+  [resetForm]: (state, action) => {
+    const form = extractForm(state, action)
+    const nextForm = {
+      ...form,
+      values: clone(form.initialValues),
+      dirty: false,
+      editStartTime: undefined,
+      errors: undefined,
+      fieldErrors: undefined,
+      refreshedValues: undefined,
+      undo: {
+        message: t`Changes canceled`,
+        state: form
+      },
+      changedByUser: [],
+      cache: form.cacheInitialValues
+        ? clone(form.cacheInitialValues)
+        : {}
+    }
+    return replaceForm(state, action, nextForm)
   }
 }
 

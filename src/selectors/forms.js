@@ -5,6 +5,7 @@ export const getForm = (state, {formName}) => state.forms[formName]
 export const getFormValues = form => form.values
 export const getFormInitialValues = form => form.initialValues
 export const getFieldErrors = form => form.fieldErrors
+export const getFormIsDirty = form => form.dirty
 
 export const getDirtyForms = createSelector(
   getForms,
@@ -15,7 +16,7 @@ export const getDirtyForms = createSelector(
       const form = forms[formName]
       const formPathname =
         form.pathname && form.pathname.split('?')[0]
-      if (form.dirty && formPathname !== pathname) {
+      if (getFormIsDirty(form) && formPathname !== pathname) {
         dirtyForms.push(formName)
       }
     }

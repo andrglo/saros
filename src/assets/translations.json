@@ -7,6 +7,10 @@
     "en": "By using",
     "pt-BR": "Ao usar"
   },
+  "changes_canceled": {
+    "en": "Changes canceled!",
+    "pt-BR": "Modificações canceladas!"
+  },
   "city": {
     "en": "City",
     "pt-BR": "Cidade"
@@ -154,10 +158,6 @@
   "update_now": {
     "en": "Update now?",
     "pt-BR": "Atualizar agora?"
-  },
-  "user_account": {
-    "en": "User account",
-    "pt-BR": "Minha conta"
   },
   "yes": {
     "en": "Yes",
