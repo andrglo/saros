@@ -1,5 +1,3 @@
-const {lighten} = require('polished')
-
 module.exports = utils => {
   const {theme, addComponents} = utils
   const baseColors = ['default', 'primary', 'secondary', 'tertiary']
