@@ -61,7 +61,7 @@
     "classnames": "^2.2.6",
     "date-easter": "^0.2.4",
     "debug": "^4.1.1",
-    "firebase": "^6.4.2",
+    "firebase": "^6.5.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
     "query-string": "^6.8.2",
