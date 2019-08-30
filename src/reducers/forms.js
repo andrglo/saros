@@ -15,6 +15,8 @@ export const mergeDocInFormValues = createAction(
 )
 export const setFormFieldError = createAction('SET_FORM_FIELD_ERROR')
 export const resetForm = createAction('RESET_FORM')
+export const clearFormUndo = createAction('CLEAR_FORM_UNDO')
+export const restoreFormUndo = createAction('RESTORE_FORM_UNDO')
 
 const initialState = {}
 
@@ -222,15 +224,25 @@ const actionHandlers = {
       errors: undefined,
       fieldErrors: undefined,
       refreshedValues: undefined,
-      undo: {
-        message: t`Changes canceled`,
-        state: form
-      },
+      undo: form,
       changedByUser: [],
       cache: form.cacheInitialValues
         ? clone(form.cacheInitialValues)
         : {}
     }
+    return replaceForm(state, action, nextForm)
+  },
+  [clearFormUndo]: (state, action) => {
+    const form = extractForm(state, action)
+    const nextForm = {
+      ...form,
+      undo: undefined
+    }
+    return replaceForm(state, action, nextForm)
+  },
+  [restoreFormUndo]: (state, action) => {
+    const form = extractForm(state, action)
+    const nextForm = form.undo
     return replaceForm(state, action, nextForm)
   }
 }

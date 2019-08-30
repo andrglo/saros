@@ -87,6 +87,10 @@
     "en": "Privacy Policy",
     "pt-BR": "Política de privacidade"
   },
+  "redo": {
+    "en": "Redo?",
+    "pt-BR": "Recuperar?"
+  },
   "restore": {
     "en": "Restore",
     "pt-BR": "Restaurar"

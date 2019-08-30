@@ -6,6 +6,7 @@ export const getFormValues = form => form.values
 export const getFormInitialValues = form => form.initialValues
 export const getFieldErrors = form => form.fieldErrors
 export const getFormIsDirty = form => form.dirty
+export const getFormUndo = form => form.undo
 
 export const getDirtyForms = createSelector(
   getForms,

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 // Inspired by https://www.tailwindtoolbox.com/components/alerts
-import React, {useState} from 'react'
+import React, {useState, useRef, useCallback, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 
@@ -10,6 +10,7 @@ import {
   ErrorIcon,
   CloseIcon
 } from '../assets/icons'
+import useOnClickOutside from '../hooks/useOnClickOutside'
 
 const SLIDE_LEFT_TIMESPAN = 300 // --slide-left-timespan: 0.3s
 
@@ -20,24 +21,53 @@ const Alert = props => {
     buttonCaption,
     onClick,
     onClose,
+    autoClose,
     type
   } = props
 
   const [isOpen, setIsOpen] = useState(true)
-  const onAction = event => {
-    setIsOpen(false)
-    const isFromButton = event.target.nodeName === 'BUTTON'
-    event.persist()
-    setTimeout(() => {
-      if (isFromButton) {
-        onClick(event)
-        return
+  const onAction = useCallback(
+    event => {
+      setIsOpen(false)
+      let isFromButton
+      if (event) {
+        isFromButton = event.target.nodeName === 'BUTTON'
+        event.persist()
       }
-      if (onClose) {
-        onClose(event)
+      setTimeout(() => {
+        if (isFromButton) {
+          onClick(event)
+          return
+        }
+        if (onClose) {
+          onClose(event)
+        }
+      }, SLIDE_LEFT_TIMESPAN)
+    },
+    [onClick, onClose]
+  )
+
+  const containerRef = useRef(null)
+  useOnClickOutside(
+    containerRef,
+    useCallback(() => {
+      if (autoClose) {
+        onAction()
       }
-    }, SLIDE_LEFT_TIMESPAN)
-  }
+    }, [autoClose, onAction])
+  )
+
+  useEffect(() => {
+    let timeout
+    if (autoClose) {
+      timeout = setTimeout(onAction, autoClose)
+    }
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
+  }, [autoClose, onAction])
 
   let color
   let Icon
@@ -57,6 +87,7 @@ const Alert = props => {
   const hasButton = Boolean(onClick)
   return (
     <div
+      ref={containerRef}
       className={cn(
         color,
         'fixed bottom-0 left-0 m-4',
@@ -104,6 +135,7 @@ Alert.propTypes = {
   type: PropTypes.oneOf(['warning', 'error', 'info']),
   onClick: PropTypes.func,
   onClose: PropTypes.func,
+  autoClose: PropTypes.number,
   buttonCaption: PropTypes.string
 }
 

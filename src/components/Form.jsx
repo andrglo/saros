@@ -6,11 +6,19 @@ import debug from 'debug'
 import {
   getForm,
   getFormValues,
-  getFormInitialValues
+  getFormInitialValues,
+  getFormUndo
 } from '../selectors/forms'
 import {getDoc} from '../selectors/docs'
-import {setForm, mergeDocInFormValues} from '../reducers/forms'
+import {
+  setForm,
+  mergeDocInFormValues,
+  clearFormUndo,
+  restoreFormUndo
+} from '../reducers/forms'
 import {saveForm} from '../actions/forms'
+import Alert from './Alert'
+import t from '../lib/translate'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('form')
@@ -32,6 +40,7 @@ const Form = props => {
     doc,
     collection,
     id,
+    undo,
     ...rest
   } = props
 
@@ -90,6 +99,21 @@ const Form = props => {
       >
         {children}
       </form>
+      {undo && (
+        <Alert
+          type="warning"
+          autoClose={10000}
+          title={t`Changes canceled`}
+          message={t`Redo?`}
+          buttonCaption={t`Yes`}
+          onClick={() => {
+            dispatch(restoreFormUndo({formName}))
+          }}
+          onClose={() => {
+            dispatch(clearFormUndo({formName}))
+          }}
+        />
+      )}
     </FormContext.Provider>
   )
 }
@@ -106,7 +130,8 @@ Form.propTypes = {
   initialValues: PropTypes.object,
   title: PropTypes.string,
   collection: PropTypes.string,
-  id: PropTypes.string
+  id: PropTypes.string,
+  undo: PropTypes.object
 }
 
 export default connect((state, props) => {
@@ -123,6 +148,7 @@ export default connect((state, props) => {
   return {
     initialValues: form && getFormInitialValues(form),
     formHasValues: Boolean(form && getFormValues(form)),
+    undo: form && getFormUndo(form),
     doc
   }
 })(Form)
