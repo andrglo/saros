@@ -161,9 +161,9 @@ class AssetsPlugin {
                 .split('\n')
                 .map(str => str.trim())
                 .join('')
-              const requirePlural = text.match(/\$\{\d+\}/)
+              const requirePlural = text.match(/\$\{.+\}/)
               text = text
-                .replace(/\$\{\d+\}/g, '*')
+                .replace(/\$\{.+\}/g, '*')
                 .replace(/`/g, '')
                 .slice(1)
               const key = snakeCase(
