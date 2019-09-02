@@ -825,7 +825,6 @@ export const subscribeCollection = async (path, options) => {
               return
             }
             const updatedAt = data.updatedAt
-            delete data.updatedAt
             const doc = {
               ...currentDoc,
               data,
