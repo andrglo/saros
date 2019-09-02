@@ -62,10 +62,10 @@ const Dashboard = props => {
           <p className="ml-4 sm:ml-0 flex-1 text-3xl self-center">
             Saros
           </p>
-          <DirtyForms className="mt-1 mr-2" />
+          <DirtyForms className="mr-2" />
           {!isHome && (
             <button
-              className=" hover:bg-menuHover mt-1 w-10 h-10 rounded-full focus:outline-none focus:shadow-outline hover:bg-highlight"
+              className=" hover:bg-menuHover w-10 h-10 rounded-full focus:outline-none focus:shadow-outline hover:bg-highlight"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation('/'))
