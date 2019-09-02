@@ -15,8 +15,21 @@ import {
 } from '../selectors/forms'
 import {setFormValueTyped, setFormFieldError} from '../reducers/forms'
 import extractClassesByComponent from '../lib/extractClassesByComponent'
+import t from '../lib/translate'
 
 const log = debug('input')
+
+const checkMaxLength = (value, maxLength) => {
+  if (value.length > maxLength) {
+    throw new Error(t`Maximum length is ${maxLength}`)
+  }
+}
+
+const checkMinLength = (value, minLength) => {
+  if (value.length < minLength) {
+    throw new Error(t`Minimun length is ${minLength}`)
+  }
+}
 
 const SimpleInput = props => {
   return (
@@ -49,6 +62,8 @@ const Input = props => {
     options,
     style,
     isLoading,
+    maxLength,
+    minLength,
     ...rest
   } = props
 
@@ -59,6 +74,12 @@ const Input = props => {
     }
     try {
       dispatch(setFormValueTyped({formName, id, value}))
+      if (maxLength !== undefined) {
+        checkMaxLength(value, maxLength)
+      }
+      if (minLength !== undefined) {
+        checkMinLength(value, minLength)
+      }
       if (validate) {
         validate(value)
       }
@@ -163,6 +184,8 @@ Input.propTypes = {
     })
   ]),
   validate: PropTypes.func,
+  maxLength: PropTypes.number,
+  minLength: PropTypes.number,
   label: PropTypes.string,
   fieldErrors: PropTypes.object,
   options: PropTypes.oneOfType([
@@ -209,7 +232,12 @@ const ConnectedInput = connect((state, props) => {
 
 const SmartInput = props => (
   <FormContext.Consumer>
-    {context => <ConnectedInput formName={context} {...props} />}
+    {context => (
+      <ConnectedInput
+        formName={context && context.formName}
+        {...props}
+      />
+    )}
   </FormContext.Consumer>
 )
 

@@ -2,7 +2,8 @@ import React, {
   useLayoutEffect,
   useCallback,
   useState,
-  useEffect
+  useEffect,
+  useMemo
 } from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
@@ -19,7 +20,9 @@ import {
   setForm,
   mergeDocInFormValues,
   clearFormUndo,
-  restoreFormUndo
+  restoreFormUndo,
+  resetForm,
+  lockForm
 } from '../reducers/forms'
 import {saveForm} from '../actions/forms'
 import Alert from './Alert'
@@ -93,17 +96,62 @@ const Form = props => {
   const onSubmit = useCallback(
     event => {
       event.preventDefault()
-      dispatch(saveForm({formName})).then(() => {
-        if (!unmounted) {
-          dispatch(goBackBrowserLocation())
-        }
-      })
+      dispatch(lockForm({formName, lock: 'saving'}))
+      dispatch(saveForm({formName}))
+        .then(() => {
+          if (!unmounted) {
+            dispatch(goBackBrowserLocation())
+          }
+          dispatch(resetForm({formName, noUndo: true}))
+        })
+        .catch(err => {
+          console.error(err)
+          dispatch(lockForm({formName, lock: null}))
+        })
     },
     [dispatch, formName, unmounted]
   )
+  const onDelete = useCallback(
+    event => {
+      event.preventDefault()
+      dispatch(
+        lockForm({
+          formName,
+          lock: 'deleting'
+        })
+      )
+      dispatch(saveForm({formName, toBeDeleted: true}))
+        .then(() => {
+          if (!unmounted) {
+            dispatch(goBackBrowserLocation())
+          }
+          dispatch(resetForm({formName, noUndo: true}))
+        })
+        .catch(err => {
+          console.error(err)
+          dispatch(lockForm({formName, lock: null}))
+        })
+    },
+    [dispatch, formName, unmounted]
+  )
+  const onReset = useCallback(
+    event => {
+      event.preventDefault()
+      dispatch(resetForm({formName}))
+    },
+    [dispatch, formName]
+  )
+  const context = useMemo(
+    () => ({
+      formName,
+      onDelete,
+      onReset
+    }),
+    [formName, onDelete, onReset]
+  )
 
   return (
-    <FormContext.Provider value={formName}>
+    <FormContext.Provider value={context}>
       <form
         onSubmit={onSubmit}
         {...rest}

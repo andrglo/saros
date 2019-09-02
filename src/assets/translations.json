@@ -23,6 +23,10 @@
     "en": "Delete",
     "pt-BR": "Excluir"
   },
+  "deleting": {
+    "en": "Deleting",
+    "pt-BR": "Excluindo"
+  },
   "email": {
     "en": "email",
     "pt-BR": "email"
@@ -51,9 +55,29 @@
     "en": "Log out",
     "pt-BR": "Sair"
   },
+  "maximum_length_is_n": {
+    "en": [
+      "Maximum length is *",
+      "Maximum length is *"
+    ],
+    "pt-BR": [
+      "Tamanho máximo é * caractere",
+      "Tamanho máximo são * caracteres"
+    ]
+  },
   "middle_name": {
     "en": "Middle name",
     "pt-BR": "Nome do meio"
+  },
+  "minimun_length_is_n": {
+    "en": [
+      "Minimun length is *",
+      "Minimun length is *"
+    ],
+    "pt-BR": [
+      "Tamanho mínimo é * caractere",
+      "Tamanho mínimo são * caracteres"
+    ]
   },
   "my_account": {
     "en": "My account",
@@ -102,6 +126,10 @@
   "save": {
     "en": "Save",
     "pt-BR": "Salvar"
+  },
+  "saving": {
+    "en": "Saving",
+    "pt-BR": "Salvando"
   },
   "sign_in": {
     "en": "Sign in",

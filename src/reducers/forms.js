@@ -17,6 +17,7 @@ export const setFormFieldError = createAction('SET_FORM_FIELD_ERROR')
 export const resetForm = createAction('RESET_FORM')
 export const clearFormUndo = createAction('CLEAR_FORM_UNDO')
 export const restoreFormUndo = createAction('RESTORE_FORM_UNDO')
+export const lockForm = createAction('LOCK_FORM')
 
 const initialState = {}
 
@@ -220,11 +221,12 @@ const actionHandlers = {
       ...form,
       values: clone(form.initialValues),
       dirty: false,
+      lock: null,
       editStartTime: undefined,
       errors: undefined,
       fieldErrors: undefined,
       refreshedValues: undefined,
-      undo: form,
+      undo: action.noUndo === true ? null : form, // no undo for example after form save
       changedByUser: [],
       cache: form.cacheInitialValues
         ? clone(form.cacheInitialValues)
@@ -243,6 +245,14 @@ const actionHandlers = {
   [restoreFormUndo]: (state, action) => {
     const form = extractForm(state, action)
     const nextForm = form.undo
+    return replaceForm(state, action, nextForm)
+  },
+  [lockForm]: (state, action) => {
+    const form = extractForm(state, action)
+    const nextForm = {
+      ...form,
+      lock: action.lock || null
+    }
     return replaceForm(state, action, nextForm)
   }
 }

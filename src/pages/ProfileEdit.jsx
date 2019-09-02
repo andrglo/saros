@@ -21,7 +21,6 @@ const log = debug('profile')
 const ProfileEdit = props => {
   log('render', props)
   const {
-    dispatch,
     formName,
     uid,
     countries = [],
@@ -40,11 +39,7 @@ const ProfileEdit = props => {
       <SmartInput
         id="middleName"
         label={t`Middle name`}
-        validate={value => {
-          if (value.length > 5) {
-            throw new Error('Maximum length is 5')
-          }
-        }}
+        maxLength={20}
       />
       <SmartInput id="lastName" label={t`Last name`} />
       <div className="flex gy-full">
@@ -82,7 +77,6 @@ const ProfileEdit = props => {
 }
 
 ProfileEdit.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
   countries: PropTypes.array,
   states: PropTypes.array,

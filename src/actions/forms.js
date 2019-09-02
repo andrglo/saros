@@ -8,7 +8,6 @@ export const saveForm = ({formName, toBeDeleted, batch}) => async (
   const state = getState()
   const form = getForm(state, {formName})
   const {collection: path, id} = form
-  // toBeContinued... update initial values
   await saveDocBatch([
     {
       path,
