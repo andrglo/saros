@@ -53,13 +53,15 @@ class App extends Component {
     App.setTheme(theme, this.state.colorScheme)
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const {theme, locale} = this.props
+    const {colorScheme} = this.state
     if (
       theme !== prevProps.theme ||
+      colorScheme !== prevState.colorScheme ||
       process.env.NODE_ENV === 'development'
     ) {
-      App.setTheme(theme, this.state.colorScheme)
+      App.setTheme(theme, colorScheme)
     }
     if (locale !== prevProps.locale) {
       fetchLocale(locale).then(() => {
@@ -74,7 +76,7 @@ class App extends Component {
       .then(({colors}) => {
         for (const key of Object.keys(colors)) {
           if (Array.isArray(colors[key])) {
-            let [color, ...shades] = colors[key]
+            const [color, ...shades] = colors[key]
             const variants = ['hover', 'active']
             shades.forEach((shade, i) => {
               document.documentElement.style.setProperty(
