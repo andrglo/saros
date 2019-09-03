@@ -455,7 +455,10 @@ const Select = props => {
             width: `${searchText.length + 1}ch`
           }}
           onBlur={onBlur}
-          className={cn(classes.input, 'flex-1 focus:outline-none')}
+          className={cn(
+            classes.input,
+            'flex-1 focus:outline-none focus:shadow-none'
+          )}
           onFocus={openDropdown}
           value={searchText || (display ? '' : value)}
           onChange={event => {
