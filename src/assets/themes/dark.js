@@ -9,14 +9,14 @@ module.exports = {
     'text-default': [colors.gray, 300, 900, 200],
     'bg-default': [colors.gray, 900, 600, 700],
 
-    'text-error': colors.red[600],
-    'bg-error': colors.red[200],
+    'text-error': colors.red[900],
+    'bg-error': colors.red[500],
 
-    'text-warning': colors.yellow[400],
-    'bg-warning': colors.yellow[900],
+    'text-warning': colors.yellow[900],
+    'bg-warning': colors.yellow[500],
 
-    'text-info': colors.green[300],
-    'bg-info': colors.green[900],
+    'text-info': colors.green[900],
+    'bg-info': colors.green[500],
 
     'text-toolbar': colors.blue[200],
     'bg-toolbar': colors.blue[900],
@@ -24,8 +24,8 @@ module.exports = {
     'text-drawer': colors.gray[400],
     'bg-drawer': colors.gray[800],
 
-    'text-primary': [colors.indigo, 100, 900, 200],
-    'bg-primary': [colors.indigo, 700, 300, 600],
+    'text-primary': [colors.blue, 100, 900, 200],
+    'bg-primary': [colors.blue, 700, 300, 600],
 
     'text-secondary': [colors.pink, 100, 900, 200],
     'bg-secondary': [colors.pink, 700, 300, 600],

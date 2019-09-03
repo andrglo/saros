@@ -9,14 +9,14 @@ module.exports = {
     'text-default': [colors.gray, 900, 100, 800],
     'bg-default': [colors.gray, 100, 500, 300],
 
-    'text-error': colors.red[600],
-    'bg-error': colors.red[200],
+    'text-error': colors.red[900],
+    'bg-error': colors.red[400],
 
-    'text-warning': colors.orange[800],
-    'bg-warning': colors.yellow[200],
+    'text-warning': colors.yellow[900],
+    'bg-warning': colors.yellow[400],
 
-    'text-info': colors.teal[800],
-    'bg-info': colors.green[200],
+    'text-info': colors.green[900],
+    'bg-info': colors.green[400],
 
     'text-toolbar': colors.teal[100],
     'bg-toolbar': '#2d6987',

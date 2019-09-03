@@ -91,7 +91,7 @@ const Alert = props => {
       className={cn(
         color,
         'fixed bottom-0 left-0 m-4',
-        'rounded-sm shadow border',
+        'rounded shadow border',
         'grid grid-columns-4 items-center p-2',
         {
           'slide-in-left': isOpen,
@@ -111,7 +111,8 @@ const Alert = props => {
       </div>
       <button
         className={cn(
-          'bg-primary hover:bg-highlight text-primary font-semibold mx-3 py-1 px-1 border rounded shadow',
+          'font-semibold mx-3 py-1 px-1 btn btn-primary normal-case hover:bg-highlight',
+          color,
           {
             invisible: !hasButton
           }
