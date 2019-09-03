@@ -195,6 +195,10 @@
     "en": "Update now?",
     "pt-BR": "Atualizar agora?"
   },
+  "version": {
+    "en": "Version",
+    "pt-BR": "Versão"
+  },
   "yes": {
     "en": "Yes",
     "pt-BR": "Sim"

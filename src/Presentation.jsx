@@ -6,6 +6,7 @@ import debug from 'debug'
 import {LaunchIcon} from './assets/icons'
 import t from './lib/translate'
 import {pushBrowserLocation} from './actions/app'
+import Version from './components/Version'
 
 const log = debug('presentation')
 
@@ -42,7 +43,7 @@ const Presentation = props => {
               {t`Saros is a side project of mine which aims to provide a cloud based full budgeting web app`}
             </p>
             <a
-              className="hover:underline leading-normal text-2xl mb-8 flex justify-center md:justify-start w-full"
+              className="hover:underline leading-normal text-2xl mb-8 mx-auto pl-1 flex md:mx-0"
               href="https://github.com/andrglo/saros"
             >
               {t`Learn more`}
@@ -70,6 +71,7 @@ const Presentation = props => {
       <div className="relative" style={gradient}>
         <img src={require('./assets/wave.svg')} alt="wave" />
       </div>
+      <Version className="text-gray-600" />
     </React.Fragment>
   )
 }

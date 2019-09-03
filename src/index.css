@@ -56,6 +56,12 @@ a:focus {
   filter: invert(50%);
 }
 
+.version {
+  font-size: .5rem;
+  letter-spacing: -0.05em;
+  font-style: italic;
+}
+
 .markdown h1 {
   display: block;
   font-size: 2em;

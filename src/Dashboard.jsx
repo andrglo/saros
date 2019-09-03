@@ -19,13 +19,14 @@ import {
 } from './assets/icons'
 import useOnClickOutside from './hooks/useOnClickOutside'
 import DirtyForms from './components/DirtyForms'
+import Version from './components/Version'
 
 const log = debug('dashboard')
 
 const SLIDE_LEFT_TIMESPAN = 300 // --slide-left-timespan: 0.3s
 
 const Drawer = () => {
-  return <div>Todo: Quick links</div>
+  return <Version />
 }
 
 const Dashboard = props => {
