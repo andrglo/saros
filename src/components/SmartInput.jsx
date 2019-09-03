@@ -138,7 +138,6 @@ const Input = props => {
             'border hover:bg-highlight hover:border hover:border-highlight',
             'block w-full text-base rounded-sm',
             'appearance-none py-1 px-1 leading-tight',
-            'focus:outline-none focus:shadow-outline',
             'dropdown { bg-input border rounded-sm }',
             'expand-button { pr-1 sm:pr-0 }',
             'option {}'

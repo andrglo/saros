@@ -17,7 +17,7 @@ const Link = props => {
     <button
       {...rest}
       className={cn(
-        'hover:underline cursor-pointer focus:outline-none focus:shadow-outline',
+        'hover:underline cursor-pointer rounded',
         className
       )}
       type="button"

@@ -4,9 +4,26 @@
 }
 
 @tailwind base;
+
+button:focus {
+  @apply outline-none
+}
+
 /*! purgecss end ignore */
 
 @tailwind components;
+
+* {
+  @apply outline-none
+}
+
+*:focus {
+  @apply shadow-outline
+}
+
+a:focus {
+  @apply rounded
+}
 
 .signin {
   @apply bg-teal-400;

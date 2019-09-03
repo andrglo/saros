@@ -101,7 +101,7 @@ const DirtyFormsButton = props => {
           ref={buttonRef}
           className={cn(
             className,
-            'w-10 h-10 rounded-full hover:bg-highlight cursor-pointer relative focus:outline-none focus:shadow-outline'
+            'w-10 h-10 rounded-full hover:bg-highlight cursor-pointer relative'
           )}
           onClick={onClick}
           {...rest}

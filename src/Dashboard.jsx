@@ -65,7 +65,7 @@ const Dashboard = props => {
           <DirtyForms className="mr-2 pt-1 sm:pt-0" />
           {!isHome && (
             <button
-              className="pt-1 sm:pt-0 hover:bg-menuHover w-10 h-10 rounded-full focus:outline-none focus:shadow-outline hover:bg-highlight"
+              className="pt-1 sm:pt-0 hover:bg-menuHover w-10 h-10 rounded-full hover:bg-highlight"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation('/'))
@@ -77,7 +77,7 @@ const Dashboard = props => {
           <button
             type="button"
             ref={menuButtonRef}
-            className="self-center ml-4 rounded-sm sm:rounded-full w-8 h-8 overflow-hidden focus:outline-none focus:shadow-outline"
+            className="self-center ml-4 rounded-sm sm:rounded-full w-8 h-8 overflow-hidden"
             onClick={() => {
               setShowUserMenu(!showUserMenu)
             }}

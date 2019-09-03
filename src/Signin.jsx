@@ -91,7 +91,7 @@ const Signin = props => {
           </p>
         )}
         <input
-          className="bg-gray-100 mb-2 border-teal-900 border text-teal-800 focus:outline-none focus:shadow-outline rounded-sm h-8 w-full pl-2"
+          className="bg-gray-100 mb-2 border-teal-900 border text-teal-800 rounded-sm h-8 w-full pl-2"
           type="email"
           autoFocus
           placeholder="Email"
@@ -101,7 +101,7 @@ const Signin = props => {
         />
         <button
           className={cn(
-            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg focus:outline-none focus:shadow-outline',
+            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg',
             {
               'cursor-default text-teal-400': linkSignInDisabled,
               'hover:underline text-teal-800': !linkSignInDisabled
@@ -117,7 +117,7 @@ const Signin = props => {
           {t`or`}
         </p>
         <button
-          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg focus:outline-none focus:shadow-outline"
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg"
           type="button"
           disabled={signingIn}
           onClick={signInUsingGoogle}
@@ -130,7 +130,7 @@ const Signin = props => {
           />
         </button>
         <button
-          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg focus:outline-none focus:shadow-outline"
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg"
           type="button"
           disabled={signingIn}
           onClick={signInAnonymously}
