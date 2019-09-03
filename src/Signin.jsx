@@ -75,8 +75,8 @@ const Signin = props => {
 
   const linkSignInDisabled = signingIn || !isEmailValid(email)
   return (
-    <div className="relative p-2 sm:items-center sm:flex mt-0 sm:mt-12 w-screen overflow-hidden">
-      <div className="bg-teal-300 m-auto text-white font-bold rounded-lg border shadow-lg p-10 pt-5">
+    <div className="relative p-2 sm:p-0 sm:items-center sm:flex mt-0 sm:mt-12 w-screen overflow-hidden">
+      <div className="bg-teal-300 m-auto text-white font-bold rounded-lg border shadow-2xl p-10 pt-5">
         <p className="mb-3 mx-auto text-xl text-teal-800 text-center">
           {`${manifest.appName},  ${t`lets go budgeting`}`}
         </p>
@@ -91,7 +91,7 @@ const Signin = props => {
           </p>
         )}
         <input
-          className="bg-gray-100 mb-2 border-teal-900 border text-teal-800  rounded-sm h-8 w-full pl-2"
+          className="bg-gray-100 mb-2 border-teal-900 border text-teal-800 focus:outline-none focus:shadow-outline rounded-sm h-8 w-full pl-2"
           type="email"
           autoFocus
           placeholder="Email"
@@ -101,7 +101,7 @@ const Signin = props => {
         />
         <button
           className={cn(
-            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg',
+            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg focus:outline-none focus:shadow-outline',
             {
               'cursor-default text-teal-400': linkSignInDisabled,
               'hover:underline text-teal-800': !linkSignInDisabled
@@ -117,7 +117,7 @@ const Signin = props => {
           {t`or`}
         </p>
         <button
-          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg"
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg focus:outline-none focus:shadow-outline"
           type="button"
           disabled={signingIn}
           onClick={signInUsingGoogle}
@@ -130,7 +130,7 @@ const Signin = props => {
           />
         </button>
         <button
-          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg"
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg focus:outline-none focus:shadow-outline"
           type="button"
           disabled={signingIn}
           onClick={signInAnonymously}
@@ -142,11 +142,11 @@ const Signin = props => {
             {`${t`By using`} ${
               manifest.appShortName
             } ${t`you agree to our`} `}
-            <Link className="italic" to="/privacy">
+            <Link className="italic px-1" to="/privacy">
               {t`Privacy Policy`}
             </Link>
             {` ${t`and`} `}
-            <Link className="italic" to="/agreement">
+            <Link className="italic px-1" to="/agreement">
               {t`Terms of Service`}
             </Link>
           </p>

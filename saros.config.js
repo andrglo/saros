@@ -1,6 +1,6 @@
 module.exports = {
   manifest: {
-    appName: 'Saros budgeting', // Your application's name. `string`
+    appName: 'Saros finance', // Your application's name. `string`
     appShortName: 'Saros', // Your application's short_name. `string`. Optional. If not set, appName will be used
     appDescription: 'Budgeting web app', // Your application's description. `string`
     background: '#2d6987', // Background colour for flattened icons. `string`
