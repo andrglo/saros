@@ -101,7 +101,7 @@ const Signin = props => {
         />
         <button
           className={cn(
-            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 shadow-lg',
+            'mx-auto flex bg-teal-200 rounded-full py-2 px-8 btn normal-case',
             {
               'cursor-default text-teal-400': linkSignInDisabled,
               'hover:underline text-teal-800': !linkSignInDisabled
@@ -117,7 +117,7 @@ const Signin = props => {
           {t`or`}
         </p>
         <button
-          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 shadow-lg"
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-6 py-2 px-8 btn normal-case"
           type="button"
           disabled={signingIn}
           onClick={signInUsingGoogle}
@@ -130,7 +130,7 @@ const Signin = props => {
           />
         </button>
         <button
-          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 shadow-lg"
+          className="mx-auto flex hover:underline bg-teal-200 text-teal-800 rounded-full mb-0 py-2 px-8 btn normal-case"
           type="button"
           disabled={signingIn}
           onClick={signInAnonymously}

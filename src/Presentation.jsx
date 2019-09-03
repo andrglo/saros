@@ -50,7 +50,7 @@ const Presentation = props => {
               <LaunchIcon className="m-2" />
             </a>
             <button
-              className="mx-auto flex lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 shadow-lg"
+              className="mx-auto flex lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 btn"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation({pathname: '/signin'}))
