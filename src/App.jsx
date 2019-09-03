@@ -1,6 +1,7 @@
 import React, {Component, Suspense} from 'react'
-import {hot} from 'react-hot-loader/root'
 import PropTypes from 'prop-types'
+import {hot} from 'react-hot-loader/root'
+import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
 import serializeError from 'serialize-error'
@@ -23,7 +24,8 @@ import {getQuery} from './lib/history'
 
 const log = debug('app')
 
-const Dashboard = React.lazy(() => import('./Dashboard.jsx'))
+const Workspace = React.lazy(() => import('./Workspace.jsx'))
+const Dashboard = React.lazy(() => import('./Dashboard'))
 const Presentation = React.lazy(() => import('./Presentation'))
 const Agreement = React.lazy(() => import('./Agreement.jsx'))
 const Privacy = React.lazy(() => import('./Privacy.jsx'))
@@ -32,6 +34,26 @@ const Signin = React.lazy(() => import('./Signin.jsx'))
 const LIGHT = 'light'
 const DARK = 'dark'
 const SYSTEM = 'system'
+
+const Fallback = props => (
+  <div
+    className={cn(
+      'h-full grid justify-center items-center',
+      props.className
+    )}
+  >
+    <div
+      className="spinner-4"
+      style={{
+        transform: 'translateX(-1em) translateY(-3em)'
+      }}
+    />
+  </div>
+)
+
+Fallback.propTypes = {
+  className: PropTypes.string
+}
 
 class App extends Component {
   constructor(props) {
@@ -175,7 +197,13 @@ class App extends Component {
         )
       }
     }
-    return <Dashboard>{getView(pathname)}</Dashboard>
+    return (
+      <Workspace>
+        <Suspense fallback={<Fallback />}>
+          {getView(pathname) || <Dashboard />}
+        </Suspense>
+      </Workspace>
+    )
   }
 
   render() {
@@ -185,16 +213,7 @@ class App extends Component {
     return (
       <React.StrictMode key={locale}>
         <Suspense
-          fallback={
-            <div className="bg-default h-screen grid justify-center items-center">
-              <div
-                className="spinner-4"
-                style={{
-                  transform: 'translateX(-1em) translateY(-3em)'
-                }}
-              />
-            </div>
-          }
+          fallback={<Fallback className="bg-default h-screen" />}
         >
           {this.renderView()}
           {updateAvailable && (
