@@ -34,7 +34,8 @@ module.exports = {
       },
       borderColor: () => ({
         default: 'var(--color-border-default)',
-        highlight: 'var(--color-border-highlight)'
+        highlight: 'var(--color-border-highlight)',
+        toolbar: 'var(--color-bg-toolbar)'
       }),
       fontWeight: {
         budget: 100,
