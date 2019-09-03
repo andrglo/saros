@@ -1,5 +1,10 @@
 const shortid = require('shortid')
 
+const MINUTE = 60000
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
+const YEAR = 365 * DAY
+
 // eslint-disable-next-line no-unused-vars
 const throwIfNotOwner = (ctx, db) => {
   const {dbs = {}} = ctx.state.session
@@ -27,7 +32,7 @@ module.exports = ({router, admin}) => {
         .collection('dbs')
         .doc(db)
         .set({
-          expireOn: new Date(Date.now() + 365), // todo handle accordingly
+          expireOn: new Date(Date.now() + YEAR), // todo handle accordingly
           updatedAt: new Date()
         })
       result = true
