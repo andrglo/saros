@@ -10,7 +10,8 @@ import {FormContext} from './Form'
 import {
   getFormIsDirty,
   getForm,
-  getFormLock
+  getFormLock,
+  getFormInitialValues
 } from '../selectors/forms'
 
 const ButtonsPanel = props => {
@@ -22,6 +23,7 @@ const ButtonsPanel = props => {
     style,
     formName,
     isDirty,
+    isNew,
     lock,
     ...rest
   } = props
@@ -72,7 +74,7 @@ const ButtonsPanel = props => {
         onClick={onReset}
         {...focus}
       >
-        {t`Restore`}
+        {isNew ? t`Reset` : t`Restore`}
       </button>
       <button
         className={cn('btn', classes.defaultButton)}
@@ -95,13 +97,16 @@ ButtonsPanel.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   isDirty: PropTypes.bool,
+  isNew: PropTypes.bool.isRequired,
   lock: PropTypes.string
 }
 
 const ConnectedButtonsPanel = connect((state, props) => {
   const {formName} = props
   const form = getForm(state, {formName})
+  const initialValues = (form && getFormInitialValues(form)) || {}
   return {
+    isNew: Object.keys(initialValues).length === 0,
     isDirty: form && getFormIsDirty(form),
     lock: form && getFormLock(form)
   }

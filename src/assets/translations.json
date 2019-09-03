@@ -115,6 +115,10 @@
     "en": "Redo?",
     "pt-BR": "Recuperar?"
   },
+  "reset": {
+    "en": "Reset",
+    "pt-BR": "Limpar"
+  },
   "restore": {
     "en": "Restore",
     "pt-BR": "Restaurar"
