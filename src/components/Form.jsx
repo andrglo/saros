@@ -6,7 +6,6 @@ import React, {
   useMemo
 } from 'react'
 import PropTypes from 'prop-types'
-import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
 import {
@@ -152,11 +151,7 @@ const Form = props => {
 
   return (
     <FormContext.Provider value={context}>
-      <form
-        onSubmit={onSubmit}
-        {...rest}
-        className={cn('rounded border border-toolbar m-1', className)}
-      >
+      <form onSubmit={onSubmit} {...rest} className={className}>
         {children}
       </form>
       {undo && (
