@@ -30,7 +30,7 @@ const ProfileEdit = props => {
 
   return (
     <Form
-      className="mx-auto max-w-lg grid grid-gap-1 p-1 grid-columns-1 sm:grid-columns-3 border-yellow-700 border"
+      className="mx-auto max-w-lg grid grid-gap-1 p-1 grid-columns-1 sm:grid-columns-3"
       formName={formName}
       title={t`My account`}
       collection={`users/${uid}`}

@@ -155,7 +155,7 @@ const Form = props => {
       <form
         onSubmit={onSubmit}
         {...rest}
-        className={cn('', className)}
+        className={cn('rounded border border-toolbar m-1', className)}
       >
         {children}
       </form>

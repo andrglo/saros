@@ -47,7 +47,7 @@ const ButtonsPanel = props => {
   const saving = lock === 'saving'
   return (
     <div
-      className={cn('w-full flex', classes.container)}
+      className={cn('w-full flex pt-6', classes.container)}
       style={{
         gridColumn: '1 / -1',
         ...(style || {})
