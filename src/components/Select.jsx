@@ -488,7 +488,7 @@ const Select = props => {
         <button
           ref={buttonRef}
           className={cn(
-            'focus:outline-none',
+            'focus:outline-none focus:shadow-none',
             classes['expand-button']
           )}
           type="button"
