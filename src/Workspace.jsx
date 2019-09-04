@@ -49,7 +49,6 @@ const Workspace = props => {
 
   const [showUserMenu, setShowUserMenu] = useState(false)
   const drawer = <Drawer />
-  console.log('children', children)
   return (
     <React.Fragment>
       <div className="dashboard h-screen font-sans bg-default text-default">
