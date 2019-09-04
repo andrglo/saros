@@ -163,7 +163,7 @@ class App extends Component {
         return (
           <div className="w-screen h-screen">
             <div className="w-full h-full bg-default text-default">
-              {getView(pathname)}
+              {getView(pathname) || <Dashboard />}
             </div>
           </div>
         )
