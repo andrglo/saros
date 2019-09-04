@@ -1,6 +1,7 @@
 import get from 'lodash/get'
 
 export const getUser = state => state.app.user
+export const getDb = state => state.app.db
 export const getUid = state => get(state.app, 'user.uid')
 export const getTheme = state => state.app.theme
 export const getLocale = state =>

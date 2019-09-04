@@ -1,32 +1,19 @@
-import React, {useState, useRef, useCallback} from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+// import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import cn from 'classnames'
+// import cn from 'classnames'
 import debug from 'debug'
 
-import t from './lib/translate'
-import {getUser, getBrowserLocation} from './selectors/app'
+import TransactionPanel from './components/TransactionPanel'
+import {startOfMonth, today} from './lib/date'
 
 const log = debug('dashboard')
 
 const Dashboard = props => {
   log('render', props)
-  return 'To do'
+  return <TransactionPanel from={startOfMonth()} to={today()} />
 }
 
-Dashboard.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  children: PropTypes.node,
-  user: PropTypes.object.isRequired,
-  isHome: PropTypes.bool
-}
+Dashboard.propTypes = {}
 
-export default connect(state => {
-  const browserLocation = getBrowserLocation(state)
-  return {
-    user: getUser(state),
-    isHome: Boolean(
-      !browserLocation || browserLocation.pathname === '/'
-    )
-  }
-})(Dashboard)
+export default connect()(Dashboard)
