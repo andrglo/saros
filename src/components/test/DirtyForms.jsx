@@ -8,7 +8,7 @@ import {
 } from '@testing-library/react'
 import test from 'ava'
 
-import render from '../../../utils/renderWithRedux'
+import render from '../../../test/lib/renderWithRedux'
 import DirtyFormsButton from '../DirtyForms'
 
 const MINUTE = 60000

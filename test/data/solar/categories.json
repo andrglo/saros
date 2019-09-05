@@ -1,0 +1,59 @@
+{
+  "income": {
+    "id": "income",
+    "children": ["Xo3z0jNPJvQ", "97azP0KF19_"],
+    "description": "All income",
+    "flow": "in",
+    "updatedAt": "2019-09-04T14:32:13.161Z"
+  },
+  "expense": {
+    "id": "expense",
+    "children": [
+      "InYNor0Si",
+      "i7vJFZCrp1k",
+      "_iAneiGru-p",
+      "apo8kLEuaJ"
+    ],
+    "description": "Expenses",
+    "flow": "out",
+    "updatedAt": "2019-09-04T14:32:13.161Z"
+  },
+  "InYNor0Si": {
+    "description": "Home",
+    "createdAt": "2018-07-17T14:30:40.342Z",
+    "updatedAt": "2018-07-17T14:30:40.342Z",
+    "flow": "out"
+  },
+  "i7vJFZCrp1k": {
+    "description": "Health",
+    "createdAt": "2018-07-17T14:30:40.342Z",
+    "updatedAt": "2018-07-17T14:30:40.342Z",
+    "flow": "out"
+  },
+  "_iAneiGru-p": {
+    "description": "Bank",
+    "createdAt": "2018-07-17T14:30:40.342Z",
+    "updatedAt": "2018-07-17T14:30:40.342Z",
+    "flow": "out"
+  },
+  "apo8kLEuaJ": {
+    "description": "Leisure",
+    "createdAt": "2018-07-17T14:30:40.342Z",
+    "updatedAt": "2018-07-17T14:30:40.342Z",
+    "flow": "out"
+  },
+  "Xo3z0jNPJvQ": {
+    "description": "Detachment",
+    "createdAt": "2018-07-17T14:30:40.342Z",
+    "updatedAt": "2018-07-17T14:30:40.342Z",
+    "shopTypes": ["pawn_store"],
+    "flow": "in"
+  },
+  "97azP0KF19_": {
+    "description": "Salary",
+    "createdAt": "2018-07-17T14:30:40.342Z",
+    "updatedAt": "2018-07-17T14:30:40.342Z",
+    "shopTypes": ["salary"],
+    "flow": "in"
+  }
+}

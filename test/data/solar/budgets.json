@@ -1,0 +1,47 @@
+{
+  "f-UqCH7XsaAO": {
+   "partitions": [
+    {
+     "costCenter": "LXrJM4zYSjJ",
+     "category": "_iAneiGru-p",
+     "description": "Bank tax",
+     "amount": -59.85
+    }
+   ],
+   "createdAt": "2019-01-15T15:52:50.249Z",
+   "updatedAt": "2019-01-15T15:52:50.249Z",
+   "flow": "out",
+   "place": "E5lQaJYervD",
+   "account": "CYbteYpzdA6",
+   "frequency": "monthly",
+   "dayOfMonth": 3,
+   "onlyInBusinessDays": "previous",
+   "date": "2019-01-03"
+  },
+  "hDnW3lo-cTTg": {
+   "partitions": [
+    {
+     "costCenter": "eBhqeuMtrBu",
+     "category": "i7vJFZCrp1k",
+     "description": "Mine",
+     "amount": -203.4
+    },
+    {
+     "costCenter": "BXE9vs32ZBA",
+     "category": "i7vJFZCrp1k",
+     "description": "My son",
+     "amount": -105.42
+    }
+   ],
+   "createdAt": "2019-01-15T15:54:55.137Z",
+   "updatedAt": "2019-08-01T12:27:10.851Z",
+   "flow": "out",
+   "place": "vxbJp9WfTu0",
+   "account": "CYbteYpzdA6",
+   "frequency": "monthly",
+   "dayOfMonth": 10,
+   "onlyInBusinessDays": "previous",
+   "date": "2019-01-10",
+   "notes": "Health plan"
+  }
+ }

@@ -1,0 +1,103 @@
+{
+  "1hn9Vgjmpjon": {
+    "createdAt": "2019-01-15T17:53:21.666Z",
+    "updatedAt": "2019-01-15T17:53:56.234Z",
+    "flow": "in",
+    "place": "pnyN4ivgRJL",
+    "notes": "Sold old stuff",
+    "issueDate": "2019-01-14",
+    "parcels": [
+      {
+        "amount": 0.03,
+        "dueDate": "2019-01-14",
+        "payDate": "2019-01-14",
+        "paidAmount": 0.03,
+        "status": "paid",
+        "account": "AHIhOdX7cxo"
+      }
+    ],
+    "partitions": [
+      {
+        "costCenter": "eBhqeuMtrBu",
+        "category": "Xo3z0jNPJvQ",
+        "description": "My pen",
+        "amount": 0.01
+      },
+      {
+        "costCenter": "eBhqeuMtrBu",
+        "category": "Xo3z0jNPJvQ",
+        "description": "My pencil",
+        "amount": 0.02
+      }
+    ]
+  },
+  "BFMTePgome85": {
+    "createdAt": "2019-07-03T18:46:48.477Z",
+    "updatedAt": "2019-07-11T14:46:22.788Z",
+    "flow": "out",
+    "place": "plVeVNFlY6M",
+    "issueDate": "2019-07-03",
+    "account": "AHIhOdX7cxo",
+    "parcels": [
+      {
+        "amount": -1000,
+        "dueDate": "2019-07-03",
+        "payDate": "2019-07-03",
+        "paidAmount": -1000,
+        "status": "paid"
+      },
+      {
+        "amount": -1000,
+        "dueDate": "2019-08-03",
+        "status": "due",
+        "account": "CYbteYpzdA6"
+      },
+      {
+        "amount": -1000,
+        "dueDate": "2019-07-03",
+        "status": "due",
+        "account": "CYbteYpzdA6"
+      }
+    ],
+    "partitions": [
+      {
+        "costCenter": "eBhqeuMtrBu",
+        "category": "InYNor0Si",
+        "description": "Oven",
+        "amount": -2000
+      },
+      {
+        "costCenter": "LXrJM4zYSjJ",
+        "category": "InYNor0Si",
+        "description": "Freezer",
+        "amount": -1000
+      }
+    ]
+  },
+  "RIo6Y1IwJO9": {
+    "installments": 9,
+    "createdAt": "2019-01-16T18:43:40.093Z",
+    "updatedAt": "2019-01-16T18:45:19.171Z",
+    "flow": "out",
+    "place": "0VZ7Torc4p5",
+    "notes": "Full HD 55 inches",
+    "issueDate": "2019-01-01",
+    "parcels": [
+     {
+      "amount": -1728,
+      "dueDate": "2019-01-01",
+      "status": "billed",
+      "account": "zi1OhUwoLhA"
+     }
+    ],
+    "partitions": [
+     {
+      "costCenter": "eBhqeuMtrBu",
+      "category": "InYNor0Si",
+      "description": "TV",
+      "amount": -1728
+     }
+    ],
+    "type": "ccard"
+  }
+}

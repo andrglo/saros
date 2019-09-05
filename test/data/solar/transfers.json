@@ -1,0 +1,34 @@
+{
+  "lGzJl4KiYINF": {
+    "updatedAt": "2019-08-05T11:45:09.218Z",
+    "date": "2019-08-05",
+    "account": "AHIhOdX7cxo",
+    "amount": 3.3,
+    "monthSpan": ["2019-08"]
+  },
+  "gZxGMyv47-np": {
+    "updatedAt": "2019-08-06T17:04:46.553Z",
+    "date": "2019-08-06",
+    "account": "CYbteYpzdA6",
+    "amount": -900,
+    "counterpart": "AHIhOdX7cxo",
+    "monthSpan": ["2019-08"]
+  },
+  "9YXiZnWpqf8k": {
+    "updatedAt": "2019-08-26T11:19:28.284Z",
+    "date": "2019-08-23",
+    "account": "CYbteYpzdA6",
+    "amount": -50,
+    "counterpart": "AHIhOdX7cxo",
+    "monthSpan": ["2019-08"]
+  },
+  "HqoeVnU7yapt": {
+    "updatedAt": "2019-08-26T11:27:34.912Z",
+    "date": "2019-08-23",
+    "account": "AHIhOdX7cxo",
+    "description": "Refund",
+    "amount": -366,
+    "counterpart": "CYbteYpzdA6",
+    "monthSpan": ["2019-08"]
+  }
+}

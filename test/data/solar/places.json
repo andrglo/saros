@@ -1,0 +1,81 @@
+{
+  "gYde7ec6ZU6": {
+    "createdAt": "2019-02-11T15:18:12.332Z",
+    "updatedAt": "2019-02-11T15:18:12.332Z",
+    "name": "Extra Supermarket",
+    "shopTypes": [
+     "bakery",
+     "butcher",
+     "cafe",
+     "cheese",
+     "convenience",
+     "dairy",
+     "deli",
+     "greengrocer",
+     "pastry",
+     "supermarket"
+    ],
+    "geohash": [
+     "7h2ybqq",
+     "7h2ybmt"
+    ]
+   },
+   "0VZ7Torc4p5": {
+    "createdAt": "2019-02-11T19:24:07.767Z",
+    "updatedAt": "2019-02-11T19:24:07.767Z",
+    "name": "Decathlon",
+    "shopTypes": [
+     "baby_goods",
+     "boutique",
+     "clothes",
+     "department_store",
+     "second_hand",
+     "shoes",
+     "tailor"
+    ],
+    "geohash": [
+     "7h2ybmz"
+    ]
+   },
+   "FzBYW-Q9VW7": {
+    "createdAt": "2019-02-11T19:41:21.784Z",
+    "updatedAt": "2019-02-11T19:41:21.784Z",
+    "name": "Gulp",
+    "geohash": [
+     "7h2y8kh"
+    ]
+   },
+   "plVeVNFlY6M": {
+    "createdAt": "2019-02-11T19:43:58.078Z",
+    "updatedAt": "2019-02-11T19:43:58.078Z",
+    "name": "American Stores",
+    "shopTypes": [
+     "electrical",
+     "hardware"
+    ],
+    "geohash": [
+     "7h2y8k5",
+     "7h8weru",
+     "7h2wx9g",
+     "7h2y81z",
+     "7h2y8j7",
+     "7h2y8kq"
+    ]
+   },
+   "pnyN4ivgRJL": {
+    "createdAt": "2019-02-12T14:43:56.003Z",
+    "updatedAt": "2019-02-12T14:43:56.003Z",
+    "name": "Pawn store",
+    "shopTypes": [
+     "baby_goods",
+     "boutique",
+     "clothes",
+     "second_hand",
+     "shoes"
+    ],
+    "geohash": [
+     "7h2ybmy",
+     "7h2ybmz"
+    ]
+   }
+}

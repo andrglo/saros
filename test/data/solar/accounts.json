@@ -1,0 +1,79 @@
+{
+  "CYbteYpzdA6": {
+   "currency": "BRL",
+   "reconciliation": true,
+   "createdAt": "2019-01-06T17:32:39.873Z",
+   "updatedAt": "2019-08-28T15:48:11.786Z",
+   "name": "Itaú",
+   "balance": 53.9,
+   "city": "Belo Horizonte",
+   "state": "MG",
+   "country": "BR",
+   "type": "regular"
+  },
+  "zi1OhUwoLhA": {
+   "currency": "BRL",
+   "createdAt": "2019-01-06T17:33:42.490Z",
+   "updatedAt": "2019-01-06T17:33:42.490Z",
+   "name": "Visa",
+   "balance": 0,
+   "city": "Belo Horizonte",
+   "state": "MG",
+   "payAccount": 1,
+   "dueDay": 20,
+   "bestDay": 10,
+   "country": "BR",
+   "type": "creditcard"
+  },
+  "CQ5B2aXn5QZ": {
+   "currency": "BRL",
+   "createdAt": "2019-01-15T14:18:54.092Z",
+   "updatedAt": "2019-01-15T14:18:54.092Z",
+   "name": "Master",
+   "balance": 0,
+   "city": "Belo Horizonte",
+   "state": "MG",
+   "payAccount": 1,
+   "dueDay": 20,
+   "bestDay": 10,
+   "country": "BR",
+   "type": "creditcard"
+  },
+  "AHIhOdX7cxo": {
+   "currency": "BRL",
+   "reconciliation": true,
+   "createdAt": "2019-01-15T14:19:30.354Z",
+   "updatedAt": "2019-08-26T11:57:52.674Z",
+   "name": "Wallet",
+   "balance": 34.09,
+   "city": "Belo Horizonte",
+   "state": "MG",
+   "country": "BR",
+   "type": "regular"
+  },
+  "-ssZsPnhWoo": {
+   "currency": "BRL",
+   "createdAt": "2019-05-04T18:09:33.195Z",
+   "updatedAt": "2019-05-04T18:09:33.195Z",
+   "name": "Nubank",
+   "balance": 0,
+   "city": "Belo Horizonte",
+   "state": "MG",
+   "payAccount": 1,
+   "dueDay": 28,
+   "bestDay": 21,
+   "country": "BR",
+   "type": "creditcard"
+  },
+  "Gh7_Clk6Mu9": {
+   "currency": "ARS",
+   "createdAt": "2019-05-31T14:15:49.563Z",
+   "updatedAt": "2019-05-31T14:15:49.563Z",
+   "name": "Peso Argentino",
+   "balance": 0,
+   "city": "Belo Horizonte",
+   "state": "MG",
+   "country": "BR",
+   "type": "foreignCurrency"
+  }
+ }
