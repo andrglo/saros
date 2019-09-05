@@ -3,12 +3,19 @@ import {
   createStructuredSelector,
   defaultMemoize as memoize
 } from 'reselect'
+import sumBy from 'lodash/sumBy'
+import round from 'lodash/round'
 import {
   subscribeCollection,
   convertRecordTimestamps
 } from '../controller'
 import {getDb} from './app'
-import {toYearMonth} from '../lib/date'
+import {
+  toYearMonth,
+  addMonths,
+  extractYearMonth,
+  today
+} from '../lib/date'
 
 const MONTH_SPAN_TO_BE_CACHED = 3
 
@@ -41,11 +48,11 @@ const getMonthSpan = memoize((from, to) => {
   to = toYearMonth(to)
   from = from
     ? toYearMonth(from)
-    : to.plusMonths(-(MONTH_SPAN_TO_BE_CACHED - 1))
+    : addMonths(to, -(MONTH_SPAN_TO_BE_CACHED - 1))
   const monthSpan = ['*']
-  while (!from.isAfter(to)) {
-    monthSpan.push(from.toString())
-    from = from.plusMonths(1)
+  while (from <= to) {
+    monthSpan.push(extractYearMonth(from))
+    from = addMonths(from, 1)
   }
   return monthSpan
 })
@@ -120,17 +127,111 @@ export const areAllCollectionsReady = allCollections => {
   return true
 }
 
-export const getTransactions = createSelector(
+export const redistributeAmount = (partitions, newAmount) => {
+  const total = round(sumBy(partitions, 'amount'), 2)
+  const k = newAmount / total
+  let remainder = newAmount
+  const result = []
+  for (const partition of partitions) {
+    const partial = round(k * partition.amount, 2)
+    remainder = round(remainder - partial, 2)
+    result.push({
+      ...partition,
+      amount: partial
+    })
+  }
+  if (!Math.isZero(remainder)) {
+    const lastIndex = result.length - 1
+    result[lastIndex].amount = round(
+      result[lastIndex].amount + remainder,
+      2
+    )
+  }
+  return result
+}
+
+const getIdAndParcelIndex = id => {
+  let [invoiceId, parcelIndex] = id.split('/')
+  if (parcelIndex) {
+    parcelIndex = Number(parcelIndex) - 1
+  }
+  return [invoiceId, parcelIndex]
+}
+
+export const getPartitions = (id, invoices, amount) => {
+  const [invoiceId, parcelIndex] = getIdAndParcelIndex(id)
+  const doc = invoices[invoiceId]
+  const invoicePartitions =
+    (typeof parcelIndex === 'number' &&
+      doc.parcels[parcelIndex].partitions) ||
+    doc.partitions
+  if (invoicePartitions) {
+    return redistributeAmount(invoicePartitions, amount)
+  }
+  let partitions = []
+  for (const billedInvoice of doc.billedFrom) {
+    const {id, amount, ...rest} = billedInvoice
+    if (id) {
+      partitions = [
+        ...partitions,
+        ...getPartitions(id, invoices, amount, partitions)
+      ]
+    } else {
+      partitions.push({
+        amount,
+        ...rest
+      })
+    }
+  }
+  return partitions
+}
+
+export const expandInvoice = (id, invoices) => {
+  const transactions = []
+  const {parcels, billedFrom, ...invoice} = invoices[id]
+  for (const [parcelIndex, parcel] of parcels.entries()) {
+    let partitions = parcel.partitions || invoice.partitions
+    if (!partitions) {
+      partitions = getPartitions(id, invoices)
+    }
+    transactions.push({
+      ...invoice,
+      ...parcel,
+      id: `${id}/${parcelIndex + 1}`,
+      partitions: redistributeAmount(
+        partitions,
+        parcel.paidAmount || parcel.amount
+      )
+    })
+  }
+  return transactions
+}
+
+export const getTransactionsByDay = createSelector(
   createStructuredSelector({
-    allCollections: getAllCollections
+    allCollections: getAllCollections,
+    from: (state, {from} = {}) => from || today(),
+    to: (state, {to} = {}) => to
   }),
   params => {
-    const {allCollections} = params
-    const transactions = []
+    let {allCollections, from, to} = params
+    const transactions = {}
     if (!areAllCollectionsReady(allCollections)) {
       return transactions
     }
-    // const {invoices, budgets, transfers, accounts, categories, costCenters, places} = allCollections
+    to = to && to >= from ? to : from
+    // const {
+    //   invoices,
+    //   budgets,
+    //   transfers,
+    //   accounts,
+    //   categories,
+    //   costCenters,
+    //   places
+    // } = allCollections
+    // for (const id of Object.keys(invoices)) {
+    //   const parcels = expandInvoice(id, invoices)
+    // }
     return transactions
   }
 )
