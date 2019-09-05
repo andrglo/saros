@@ -217,7 +217,7 @@ export const getTransactionsByDay = createSelector(
     let {allCollections, from, to} = params
     const transactions = {}
     if (!areAllCollectionsReady(allCollections)) {
-      return transactions
+      return[]// transactions
     }
     to = to && to >= from ? to : from
     // const {
@@ -232,6 +232,6 @@ export const getTransactionsByDay = createSelector(
     // for (const id of Object.keys(invoices)) {
     //   const parcels = expandInvoice(id, invoices)
     // }
-    return transactions
+    return []//transactions
   }
 )

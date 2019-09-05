@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import debug from 'debug'
 
 import TransactionList from './TransactionList'
-import {getTransactions} from '../selectors/docs'
+import {getTransactionsByDay} from '../selectors/docs'
 
 const log = debug('transaction:panel')
 
@@ -22,7 +22,7 @@ TransactionPanel.propTypes = {
 
 export default connect((state, props) => {
   const {from, to} = props
-  const transactions = getTransactions(state, {
+  const transactions = getTransactionsByDay(state, {
     from,
     to
   })
