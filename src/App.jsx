@@ -7,6 +7,8 @@ import debug from 'debug'
 import serializeError from 'serialize-error'
 
 import './index.css'
+import './lib/polyfill'
+
 import {setError} from './reducers/app'
 import {
   getUid,
