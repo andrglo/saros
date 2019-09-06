@@ -3,6 +3,11 @@ module.exports = {
   presets: ['@babel/preset-react'],
   env: {
     development: {plugins: ['react-hot-loader/babel']},
-    test: {plugins: ['@babel/plugin-transform-modules-commonjs']}
+    test: {
+      plugins: [
+        '@babel/plugin-transform-modules-commonjs',
+        'dynamic-import-node'
+      ]
+    }
   }
 }
