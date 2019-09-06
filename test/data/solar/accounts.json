@@ -46,8 +46,8 @@
    "updatedAt": "2019-08-26T11:57:52.674Z",
    "name": "Wallet",
    "balance": 34.09,
-   "city": "Belo Horizonte",
-   "state": "MG",
+   "city": "Not listed",
+   "state": "SP",
    "country": "BR",
    "type": "regular"
   },
@@ -57,7 +57,7 @@
    "updatedAt": "2019-05-04T18:09:33.195Z",
    "name": "Nubank",
    "balance": 0,
-   "city": "Belo Horizonte",
+   "city": "Betim",
    "state": "MG",
    "payAccount": 1,
    "dueDay": 28,
@@ -71,9 +71,6 @@
    "updatedAt": "2019-05-31T14:15:49.563Z",
    "name": "Peso Argentino",
    "balance": 0,
-   "city": "Belo Horizonte",
-   "state": "MG",
-   "country": "BR",
    "type": "foreignCurrency"
   }
  }

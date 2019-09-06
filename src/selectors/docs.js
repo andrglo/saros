@@ -14,10 +14,16 @@ import {
   toYearMonth,
   addMonths,
   extractYearMonth,
-  today
+  today,
+  getLengthOfMonth,
+  setDayOfMonth,
+  addDays,
+  isBusinessDay
 } from '../lib/date'
+import {getHolidays, loadHolidays} from './atlas'
 
 const MONTH_SPAN_TO_BE_CACHED = 3
+const MONTHS_FOR_CREDITCARD_DUE_DATES = 6
 
 export const getCollection = (state, options) => {
   const {collection, ...rest} = options
@@ -31,18 +37,18 @@ export const getDoc = (state, options) => {
   return data && id ? data[id] : data
 }
 
-// const transformDataToOptions = (data, labelKey) => {
-//   const options = []
-//   for (const key of Object.keys(data || {})) {
-//     const doc = data[key]
-//     options.push({
-//       label: doc[labelKey],
-//       value: key,
-//       doc
-//     })
-//   }
-//   return options
-// }
+const transformDataToOptions = labelKey => data => {
+  const options = []
+  for (const key of Object.keys(data || {})) {
+    const doc = data[key]
+    options.push({
+      label: doc[labelKey],
+      value: key,
+      doc
+    })
+  }
+  return options
+}
 
 const getMonthSpan = memoize((from, to) => {
   to = toYearMonth(to)
@@ -93,6 +99,11 @@ export const getAccounts = state =>
     collection: `dbs/${getDb(state)}/accounts`
   })
 
+export const getAccountsAsOptions = createSelector(
+  getAccounts,
+  transformDataToOptions('name')
+)
+
 export const getCategories = state =>
   getCollection(state, {
     collection: `dbs/${getDb(state)}/categories`
@@ -127,6 +138,16 @@ export const areAllCollectionsReady = allCollections => {
   return true
 }
 
+export const getAccountsCities = createSelector(
+  getAccounts,
+  accounts => {
+    const regions = []
+    if (accounts) {
+    }
+    return regions
+  }
+)
+
 export const redistributeAmount = (partitions, newAmount) => {
   const total = round(sumBy(partitions, 'amount'), 2)
   const k = newAmount / total
@@ -158,35 +179,97 @@ const getIdAndParcelIndex = id => {
   return [invoiceId, parcelIndex]
 }
 
-export const getPartitions = (id, invoices, amount) => {
-  const [invoiceId, parcelIndex] = getIdAndParcelIndex(id)
-  const doc = invoices[invoiceId]
-  const invoicePartitions =
-    (typeof parcelIndex === 'number' &&
-      doc.parcels[parcelIndex].partitions) ||
-    doc.partitions
-  if (invoicePartitions) {
-    return redistributeAmount(invoicePartitions, amount)
-  }
-  let partitions = []
-  for (const billedInvoice of doc.billedFrom) {
-    const {id, amount, ...rest} = billedInvoice
-    if (id) {
-      partitions = [
-        ...partitions,
-        ...getPartitions(id, invoices, amount, partitions)
-      ]
-    } else {
-      partitions.push({
-        amount,
-        ...rest
-      })
+export const getHolidaysForAccounts = createSelector(
+  getHolidays,
+  getAccounts,
+  (holidays, accounts) => {
+    const toBeLoaded = []
+    for (const id of Object.keys(accounts)) {
+      const account = accounts[id]
+      if (
+        !holidays ||
+        !holidays[
+          `${account.country}/${account.state}/${account.city}`
+        ]
+      ) {
+        toBeLoaded.push(account)
+      }
     }
+    if (toBeLoaded.length > 0) {
+      loadHolidays(holidays, toBeLoaded)
+    }
+    return holidays
   }
-  return partitions
+)
+
+export const getPartitions = (id, invoices) => {
+  const seek = (id, amount) => {
+    const isBilledDoc = typeof amount === 'number'
+    const [invoiceId, parcelIndex] = getIdAndParcelIndex(id)
+    const doc = invoices[invoiceId]
+    const invoicePartitions =
+      (typeof parcelIndex === 'number' &&
+        doc.parcels[parcelIndex].partitions) ||
+      doc.partitions
+    if (invoicePartitions) {
+      return isBilledDoc
+        ? redistributeAmount(invoicePartitions, amount)
+        : invoicePartitions
+    }
+    let mergedPartitions = []
+    for (const billedInvoice of doc.billedFrom) {
+      const {id, partitions, ...rest} = billedInvoice
+      if (partitions) {
+        mergedPartitions = [
+          ...mergedPartitions,
+          ...partitions.map(partition => ({
+            ...(id ? {id} : {}),
+            ...rest,
+            ...partition
+          }))
+        ]
+      } else if (id) {
+        mergedPartitions = [
+          ...mergedPartitions,
+          ...seek(id, isBilledDoc ? amount : billedInvoice.amount)
+        ]
+      } else {
+        mergedPartitions.push({
+          amount,
+          ...rest
+        })
+      }
+    }
+    return mergedPartitions
+  }
+  return seek(id)
 }
 
-export const expandInvoice = (id, invoices) => {
+export const getDueDatesForCreditcard = ({
+  account,
+  from,
+  to,
+  holidays
+}) => {
+  const result = []
+  const {dueDay} = account
+  let month = extractYearMonth(from)
+  to = to || addMonths(month, MONTHS_FOR_CREDITCARD_DUE_DATES)
+  while (month <= to) {
+    const lengthOfMonth = getLengthOfMonth(month)
+    const dueDayInThisMonth =
+      dueDay > lengthOfMonth ? lengthOfMonth : dueDay
+    let dueDate = setDayOfMonth(month, dueDayInThisMonth)
+    while (!isBusinessDay(dueDate, holidays, account)) {
+      dueDate = addDays(dueDate, 1)
+    }
+    result.push(dueDate)
+    month = addMonths(month, 1)
+  }
+  return result
+}
+
+export const expandInvoice = (id, {invoices, holidays, accounts}) => {
   const transactions = []
   const {parcels, billedFrom, ...invoice} = invoices[id]
   for (const [parcelIndex, parcel] of parcels.entries()) {
@@ -194,7 +277,7 @@ export const expandInvoice = (id, invoices) => {
     if (!partitions) {
       partitions = getPartitions(id, invoices)
     }
-    transactions.push({
+    const transaction = {
       ...invoice,
       ...parcel,
       id: `${id}/${parcelIndex + 1}`,
@@ -202,36 +285,52 @@ export const expandInvoice = (id, invoices) => {
         partitions,
         parcel.paidAmount || parcel.amount
       )
-    })
+    }
+    transactions.push(transaction)
+    if (transaction.type === 'ccard') {
+      // todo
+    }
   }
   return transactions
 }
 
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
-    allCollections: getAllCollections,
     from: (state, {from} = {}) => from || today(),
-    to: (state, {to} = {}) => to
+    to: (state, {to} = {}) => to,
+    invoices: getInvoices,
+    budgets: getBudgets,
+    transfers: getTransfers,
+    holidays: getHolidaysForAccounts, // for business days
+    accounts: getAccounts // fot credit cards due dates
   }),
   params => {
-    let {allCollections, from, to} = params
-    const transactions = {}
-    if (!areAllCollectionsReady(allCollections)) {
-      return[]// transactions
+    let {
+      from,
+      to,
+      holidays,
+      invoices,
+      budgets,
+      transfers,
+      accounts
+    } = params
+    const transactions = []
+    if (
+      !areAllCollectionsReady({
+        invoices,
+        budgets,
+        transfers,
+        accounts
+      })
+    ) {
+      return transactions
     }
     to = to && to >= from ? to : from
-    // const {
-    //   invoices,
-    //   budgets,
-    //   transfers,
-    //   accounts,
-    //   categories,
-    //   costCenters,
-    //   places
-    // } = allCollections
-    // for (const id of Object.keys(invoices)) {
-    //   const parcels = expandInvoice(id, invoices)
-    // }
-    return []//transactions
+    for (const id of Object.keys(invoices)) {
+      transactions.concat(
+        expandInvoice(id, {invoices, holidays, accounts})
+      )
+    }
+    return transactions
   }
 )
