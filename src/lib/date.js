@@ -1,5 +1,11 @@
-import {LocalDate, YearMonth, TemporalAdjusters} from '@js-joda/core'
-// import calc from 'date-easter'
+import {
+  LocalDate,
+  YearMonth,
+  TemporalAdjusters,
+  DayOfWeek
+} from '@js-joda/core'
+import {defaultMemoize as memoize} from 'reselect'
+import calcEasterDate from 'date-easter'
 
 export const isYearMonth = date => date && date.length === 7
 export const extractYearMonth = date => date && date.substring(0, 7)
@@ -101,28 +107,52 @@ export const setDayOfMonth = (month, day) => {
   return date
 }
 
+const getYearHolidays = memoize((holidays, year) => {
+  const yearHolidays = {}
+  for (const region of Object.keys(holidays)) {
+    const days = holidays[region]
+    for (const monthDay of Object.keys(days)) {
+      let date
+      const match = monthDay.match(/^easter([+-]\d+)$/)
+      if (match) {
+        const ester = calcEasterDate.easter(year)
+        date = LocalDate.now()
+          .withYear(ester.year)
+          .withMonth(ester.month)
+          .withDayOfMonth(ester.day)
+          .plusDays(Number(match.match(1)))
+          .toString()
+      } else {
+        date = `${year}-${monthDay}`
+      }
+      yearHolidays[date] = days[monthDay]
+    }
+  }
+  return yearHolidays
+})
+
 export const isBusinessDay = (date, region, holidays) => {
-  // const dayOfWeek = date.dayOfWeek()
-  // if (
-  //   dayOfWeek.equals(DayOfWeek.SATURDAY) ||
-  //   dayOfWeek.equals(DayOfWeek.SUNDAY)
-  // ) {
-  //   return false
-  // }
-  // const dayOfMonth = date.dayOfMonth()
-  // const month = date.monthValue()
-  // date = date.toString()
-  // for (const day of holidays) {
-  //   if (day.length === 5) {
-  //     if (
-  //       dayOfMonth === Number(day.substr(3)) &&
-  //       month === Number(day.substr(0, 2))
-  //     ) {
-  //       return false
-  //     }
-  //   } else if (date === day) {
-  //     return false
-  //   }
-  // }
+  try {
+    const dayOfWeek = LocalDate.parse(date).dayOfWeek()
+    if (
+      dayOfWeek.equals(DayOfWeek.SATURDAY) ||
+      dayOfWeek.equals(DayOfWeek.SUNDAY)
+    ) {
+      return false
+    }
+    const yearHolidays = getYearHolidays(holidays, date.year())
+    const {country, state, city} = region
+    if ((yearHolidays[country] || {})[date]) {
+      return false
+    }
+    if ((yearHolidays[`${country}/${state}`] || {})[date]) {
+      return false
+    }
+    if ((yearHolidays[`${country}/${state}/${city}`] || {})[date]) {
+      return false
+    }
+  } catch (err) {
+    console.error('isBusinessDay', {date, region, holidays}, err)
+  }
   return true
 }
