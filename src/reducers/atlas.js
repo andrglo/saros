@@ -3,6 +3,7 @@ import createAction from '../lib/createAction'
 
 export const setCountries = createAction('SET_COUNTRIES')
 export const setCountry = createAction('SET_COUNTRY')
+export const setHolidays = createAction('SET_HOLIDAYS')
 
 const initialState = {}
 
@@ -14,6 +15,10 @@ const actionHandlers = {
   [setCountry]: (state, action) => ({
     ...state,
     [action.code]: action.data
+  }),
+  [setHolidays]: (state, action) => ({
+    ...state,
+    holidays: action.holidays
   })
 }
 

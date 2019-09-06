@@ -1,9 +1,11 @@
 import {createSelector} from 'reselect'
 import get from 'lodash/get'
-import {setCountries, setCountry} from '../reducers/atlas'
+import {
+  setCountries,
+  setCountry,
+  setHolidays
+} from '../reducers/atlas'
 import {getStore} from '../controller'
-// import {LocalDate} from '@js-joda/core'
-// import calc from 'date-easter'
 
 export const getAtlasIsLoading = state => state.atlas.isLoading
 
@@ -105,3 +107,40 @@ export const getCitiesAsOptions = createSelector(
     return options
   }
 )
+
+export const getHolidays = state => state.atlas.holidays
+
+export const loadHolidays = async (holidays = {}, regions) => {
+  try {
+    if (isLoading.holidays) {
+      return
+    }
+    holidays = {...holidays}
+    for (const region of regions) {
+      const {country, state, city} = region
+      if (country && state && city) {
+        // eslint-disable-next-line no-await-in-loop
+        const data = await import(
+          `../assets/atlas/${country}.json`
+        ).catch(err => {
+          console.error(err)
+          // no data for this country yet
+          return {}
+        })
+        if (data.holidays) {
+          holidays[country] = data.holidays
+        }
+        const stateHolidays = get(data, `states.${state}.holidays`)
+        if (stateHolidays) {
+          holidays[`${country}/${state}`] = stateHolidays
+        }
+        holidays[`${country}/${state}/${city}`] =
+          get(data, `states.${state}.regions.${city}.holidays`) || {}
+      }
+    }
+    getStore().dispatch(setHolidays({holidays}))
+  } catch (err) {
+    console.error(err)
+  }
+  isLoading.holidays = false
+}
