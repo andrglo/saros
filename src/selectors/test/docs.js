@@ -383,10 +383,10 @@ test.serial('Get holidays for accounts', async t => {
   t.is(actions.length, 1)
 })
 
-test.skip('Get due dates for credit cards', t => {
-  // toBeContinued...
+test('Get due dates for credit cards', t => {
   const {getDueDatesForCreditcard} = t.context
-  const dueDates = getDueDatesForCreditcard({
+
+  let dueDates = getDueDatesForCreditcard({
     account: {
       dueDay: 8,
       country: 'BR',
@@ -399,20 +399,42 @@ test.skip('Get due dates for credit cards', t => {
   })
   t.deepEqual(dueDates, [
     '2019-09-09',
-    '2019-10-09',
+    '2019-10-08',
     '2019-11-08',
     '2019-12-09',
     '2020-01-08',
     '2020-02-10',
-    '2020-03-10',
+    '2020-03-09',
     '2020-04-08',
     '2020-05-08',
     '2020-06-08',
     '2020-07-08',
     '2020-08-10',
     '2020-09-08',
-    '2020-10-09',
+    '2020-10-08',
     '2020-11-09',
     '2020-12-09'
+  ])
+
+  dueDates = getDueDatesForCreditcard({
+    account: {
+      dueDay: 20,
+      country: 'BR',
+      state: 'MG',
+      city: 'Betim'
+    },
+    from: '2018-11',
+    to: '2019-06',
+    holidays
+  })
+  t.deepEqual(dueDates, [
+    '2018-11-21',
+    '2018-12-20',
+    '2019-01-21',
+    '2019-02-20',
+    '2019-03-20',
+    '2019-04-22',
+    '2019-05-20',
+    '2019-06-21'
   ])
 })

@@ -1,4 +1,4 @@
-import {createSelector} from 'reselect'
+import {createSelector, defaultMemoize as memoize} from 'reselect'
 import get from 'lodash/get'
 import {
   setCountries,
@@ -6,6 +6,12 @@ import {
   setHolidays
 } from '../reducers/atlas'
 import {getStore} from '../controller'
+import {
+  addDays,
+  getEasterDate,
+  extractYear,
+  isWeekEnd
+} from '../lib/date'
 
 export const getAtlasIsLoading = state => state.atlas.isLoading
 
@@ -143,4 +149,48 @@ export const loadHolidays = async (holidays = {}, regions) => {
     console.error(err)
   }
   isLoading.holidays = false
+}
+
+const getYearHolidays = memoize((holidays, year) => {
+  const yearHolidays = {}
+  for (const region of Object.keys(holidays)) {
+    const days = holidays[region]
+    yearHolidays[region] = {}
+    for (const monthDay of Object.keys(days)) {
+      let date
+      const match = monthDay.match(/^easter([+-]\d+)$/)
+      if (match) {
+        date = addDays(getEasterDate(year), Number(match[1]))
+      } else {
+        date = `${year}-${monthDay}`
+      }
+      yearHolidays[region][date] = days[monthDay]
+    }
+  }
+  return yearHolidays
+})
+
+export const isBusinessDay = (date, region, holidays) => {
+  try {
+    if (isWeekEnd(date)) {
+      return false
+    }
+    const yearHolidays = getYearHolidays(
+      holidays,
+      Number(extractYear(date))
+    )
+    const {country, state, city} = region
+    if ((yearHolidays[country] || {})[date]) {
+      return false
+    }
+    if ((yearHolidays[`${country}/${state}`] || {})[date]) {
+      return false
+    }
+    if ((yearHolidays[`${country}/${state}/${city}`] || {})[date]) {
+      return false
+    }
+  } catch (err) {
+    console.error('isBusinessDay', {date, region, holidays}, err)
+  }
+  return true
 }

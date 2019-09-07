@@ -17,10 +17,9 @@ import {
   today,
   getLengthOfMonth,
   setDayOfMonth,
-  addDays,
-  isBusinessDay
+  addDays
 } from '../lib/date'
-import {getHolidays, loadHolidays} from './atlas'
+import {getHolidays, loadHolidays, isBusinessDay} from './atlas'
 
 const MONTH_SPAN_TO_BE_CACHED = 3
 const MONTHS_FOR_CREDITCARD_DUE_DATES = 6
@@ -138,16 +137,6 @@ export const areAllCollectionsReady = allCollections => {
   return true
 }
 
-export const getAccountsCities = createSelector(
-  getAccounts,
-  accounts => {
-    const regions = []
-    if (accounts) {
-    }
-    return regions
-  }
-)
-
 export const redistributeAmount = (partitions, newAmount) => {
   const total = round(sumBy(partitions, 'amount'), 2)
   const k = newAmount / total
@@ -260,7 +249,7 @@ export const getDueDatesForCreditcard = ({
     const dueDayInThisMonth =
       dueDay > lengthOfMonth ? lengthOfMonth : dueDay
     let dueDate = setDayOfMonth(month, dueDayInThisMonth)
-    while (!isBusinessDay(dueDate, holidays, account)) {
+    while (!isBusinessDay(dueDate, account, holidays)) {
       dueDate = addDays(dueDate, 1)
     }
     result.push(dueDate)

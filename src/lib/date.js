@@ -4,11 +4,11 @@ import {
   TemporalAdjusters,
   DayOfWeek
 } from '@js-joda/core'
-import {defaultMemoize as memoize} from 'reselect'
-import calcEasterDate from 'date-easter'
+import easter from 'date-easter'
 
 export const isYearMonth = date => date && date.length === 7
 export const extractYearMonth = date => date && date.substring(0, 7)
+export const extractYear = date => date && date.substring(0, 4)
 export const today = () => LocalDate.now().toString()
 
 export const toYearMonth = date => {
@@ -49,7 +49,7 @@ export const addDays = (date, days) => {
   try {
     date = date || today()
     date = LocalDate.parse(date)
-      .plusMonths(days)
+      .plusDays(days)
       .toString()
   } catch (err) {
     console.error('addDays', {date, days}, err)
@@ -95,10 +95,10 @@ export const getLengthOfMonth = date => {
 export const setDayOfMonth = (month, day) => {
   let date
   try {
-    date = date
-      ? isYearMonth(date)
-        ? LocalDate.parse(date + '-01')
-        : LocalDate.parse(date)
+    date = month
+      ? isYearMonth(month)
+        ? LocalDate.parse(month + '-01')
+        : LocalDate.parse(month)
       : LocalDate.now()
     date = date.withDayOfMonth(day).toString()
   } catch (err) {
@@ -107,52 +107,27 @@ export const setDayOfMonth = (month, day) => {
   return date
 }
 
-const getYearHolidays = memoize((holidays, year) => {
-  const yearHolidays = {}
-  for (const region of Object.keys(holidays)) {
-    const days = holidays[region]
-    for (const monthDay of Object.keys(days)) {
-      let date
-      const match = monthDay.match(/^easter([+-]\d+)$/)
-      if (match) {
-        const ester = calcEasterDate.easter(year)
-        date = LocalDate.now()
-          .withYear(ester.year)
-          .withMonth(ester.month)
-          .withDayOfMonth(ester.day)
-          .plusDays(Number(match.match(1)))
-          .toString()
-      } else {
-        date = `${year}-${monthDay}`
-      }
-      yearHolidays[date] = days[monthDay]
-    }
-  }
-  return yearHolidays
-})
-
-export const isBusinessDay = (date, region, holidays) => {
+export const isWeekEnd = date => {
   try {
     const dayOfWeek = LocalDate.parse(date).dayOfWeek()
-    if (
+    return (
       dayOfWeek.equals(DayOfWeek.SATURDAY) ||
       dayOfWeek.equals(DayOfWeek.SUNDAY)
-    ) {
-      return false
-    }
-    const yearHolidays = getYearHolidays(holidays, date.year())
-    const {country, state, city} = region
-    if ((yearHolidays[country] || {})[date]) {
-      return false
-    }
-    if ((yearHolidays[`${country}/${state}`] || {})[date]) {
-      return false
-    }
-    if ((yearHolidays[`${country}/${state}/${city}`] || {})[date]) {
-      return false
-    }
+    )
   } catch (err) {
-    console.error('isBusinessDay', {date, region, holidays}, err)
+    console.error('getDayOfWeek', date, err)
   }
-  return true
+}
+
+export const getEasterDate = year => {
+  try {
+    const easterDate = easter.easter(year)
+    return LocalDate.of(
+      easterDate.year,
+      easterDate.month,
+      easterDate.day
+    ).toString()
+  } catch (err) {
+    console.error('getEasterDate', year, err)
+  }
 }
