@@ -4,6 +4,7 @@ import {
   defaultMemoize as memoize
 } from 'reselect'
 import sumBy from 'lodash/sumBy'
+import sortBy from 'lodash/sortBy'
 import round from 'lodash/round'
 import {
   subscribeCollection,
@@ -17,7 +18,13 @@ import {
   today,
   getLengthOfMonth,
   setDayOfMonth,
-  addDays
+  addDays,
+  setMonthAndDayOfMonth,
+  extractYear,
+  setDayOfWeek,
+  addWeeks,
+  getMonthsUntil,
+  getWeeksUntil
 } from '../lib/date'
 import {getHolidays, loadHolidays, isBusinessDay} from './atlas'
 
@@ -145,11 +152,13 @@ export const areAllCollectionsReady = allCollections => {
   return true
 }
 
-export const getInvoiceTotal = ({parcels}) =>
-  round(sumBy(parcels, 'amount'), 2)
+export const getTotal = recordset =>
+  round(sumBy(recordset, 'amount'), 2)
+
+export const getInvoiceTotal = ({parcels}) => getTotal(parcels)
 
 export const redistributeAmount = (partitions, newAmount) => {
-  const total = round(sumBy(partitions, 'amount'), 2)
+  const total = getTotal(partitions)
   const k = newAmount / total
   let remainder = newAmount
   const result = []
@@ -381,6 +390,213 @@ export const expandInvoice = (id, {invoices, holidays, accounts}) => {
   return transactions
 }
 
+const getActualDueDate = (
+  dueDate,
+  {holidays, account, onlyInBusinessDays}
+) => {
+  if (!onlyInBusinessDays) {
+    return dueDate
+  }
+  const interval = onlyInBusinessDays === 'previous' ? -1 : 1
+  while (!isBusinessDay(dueDate, account, holidays)) {
+    dueDate = addDays(dueDate, interval)
+  }
+  return dueDate
+}
+
+export const getMonthlyDueDates = (
+  from,
+  to,
+  {
+    dayOfMonth,
+    onlyInBusinessDays,
+    holidays,
+    account,
+    interval = 1,
+    startedAt
+  }
+) => {
+  const dueDates = []
+  let date = from
+  if (startedAt && interval > 1) {
+    date = addMonths(date, getMonthsUntil(startedAt, date) % interval)
+  }
+  const scanUntil = addMonths(to, interval)
+  while (date <= scanUntil) {
+    date = setDayOfMonth(date, dayOfMonth)
+    const dueDate = getActualDueDate(date, {
+      onlyInBusinessDays,
+      holidays,
+      account
+    })
+    if (dueDate >= from && dueDate <= to) {
+      dueDates.push(dueDate)
+    }
+    date = extractYearMonth(addMonths(date, interval))
+  }
+  return dueDates
+}
+
+export const getYearlyDueDates = (
+  from,
+  to,
+  {
+    dayOfMonth,
+    months,
+    onlyInBusinessDays,
+    holidays,
+    account,
+    interval = 1,
+    startedAt
+  }
+) => {
+  const dueDates = []
+  let year = Number(extractYear(from))
+  if (startedAt && interval > 1) {
+    year += (year - Number(extractYear(startedAt))) % interval
+  }
+  const scanUntil = Number(extractYear(to)) + interval
+  while (year <= scanUntil) {
+    for (const month of months) {
+      const date = setMonthAndDayOfMonth(year, month, dayOfMonth)
+      const dueDate = getActualDueDate(date, {
+        onlyInBusinessDays,
+        holidays,
+        account
+      })
+      if (dueDate >= from && dueDate <= to) {
+        dueDates.push(dueDate)
+      }
+    }
+    year += interval
+  }
+  return dueDates
+}
+
+export const getWeeklyDueDates = (
+  from,
+  to,
+  {
+    dayOfWeek,
+    onlyInBusinessDays,
+    holidays,
+    account,
+    interval = 1,
+    startedAt
+  }
+) => {
+  const dueDates = []
+  let date = from
+  if (startedAt && interval > 1) {
+    date = addWeeks(date, getWeeksUntil(startedAt, date) % interval)
+  }
+  const scanUntil = addWeeks(to, interval)
+  while (date <= scanUntil) {
+    date = setDayOfWeek(date, dayOfWeek)
+    const dueDate = getActualDueDate(date, {
+      onlyInBusinessDays,
+      holidays,
+      account
+    })
+    if (dueDate >= from && dueDate <= to) {
+      dueDates.push(dueDate)
+    }
+    date = addWeeks(date, interval)
+  }
+  return dueDates
+}
+
+export const expandBudget = (
+  id,
+  from,
+  to,
+  {budget, holidays, accounts}
+) => {
+  let transactions = []
+  const reviews = sortBy(
+    [
+      budget,
+      ...(budget.reviews || []).map(review => ({
+        ...budget,
+        ...review
+      }))
+    ],
+    'date'
+  )
+  const startedAt = budget.date
+  for (const [index, review] of reviews.entries()) {
+    const {date, endedAt} = review
+    const reviewStartsAt = date
+    let reviewEndsAt = endedAt
+    const nextReviewIndex = index + 1
+    if (reviews.length > nextReviewIndex) {
+      reviewEndsAt = addDays(reviews[nextReviewIndex].date, -1)
+      if (endedAt < reviewEndsAt) {
+        reviewEndsAt = endedAt
+      }
+    }
+
+    if (from > reviewEndsAt) {
+      continue
+    }
+    if (to < reviewStartsAt) {
+      break
+    }
+    const startsAt = from > reviewStartsAt ? from : reviewStartsAt
+    const endsAt = to > reviewEndsAt ? reviewEndsAt : to
+    const account = accounts[review.account]
+    let f
+    switch (review.frequency) {
+      case 'weekly':
+        f = getWeeklyDueDates
+        break
+      case 'monthly':
+        f = getMonthlyDueDates
+        break
+      case 'yearly':
+        f = getYearlyDueDates
+        break
+      default:
+        f = () => [endedAt]
+    }
+    const dueDates = f(startsAt, endsAt, {
+      ...budget,
+      holidays,
+      account,
+      startedAt
+    })
+    for (const dueDate of dueDates) {
+      const invoiceId = `${id}@${dueDate}`
+      const amount = getTotal(review.partitions)
+      const invoice = {
+        flow: review.flow,
+        place: review.place,
+        notes: review.notes,
+        partitions: review.partitions,
+        issueDate: dueDate,
+        parcels: [{dueDate, amount, account: review.account}]
+      }
+      if (account.type === 'creditcard') {
+        invoice.type = 'ccard'
+        if (review.installments) {
+          invoice.installments = review.installments
+        }
+      }
+      transactions = [
+        ...transactions,
+        ...expandInvoice(invoiceId, {
+          invoices: {
+            [invoiceId]: invoice
+          },
+          holidays,
+          accounts
+        })
+      ]
+    }
+  }
+  return transactions
+}
+
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
     from: (state, {from} = {}) => from || today(),
@@ -401,7 +617,7 @@ export const getTransactionsByDay = createSelector(
       transfers,
       accounts
     } = params
-    const transactions = []
+    let transactions = []
     if (
       !areAllCollectionsReady({
         invoices,
@@ -414,9 +630,10 @@ export const getTransactionsByDay = createSelector(
     }
     to = to && to >= from ? to : from
     for (const id of Object.keys(invoices)) {
-      transactions.concat(
-        expandInvoice(id, {invoices, holidays, accounts})
-      )
+      transactions = [
+        ...transactions,
+        ...expandInvoice(id, {invoices, holidays, accounts})
+      ]
     }
     return transactions
   }

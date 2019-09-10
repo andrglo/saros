@@ -2,7 +2,9 @@ import {
   LocalDate,
   YearMonth,
   TemporalAdjusters,
-  DayOfWeek
+  DayOfWeek,
+  ChronoField,
+  ChronoUnit
 } from '@js-joda/core'
 import easter from 'date-easter'
 
@@ -57,6 +59,18 @@ export const addDays = (date, days) => {
   return date
 }
 
+export const addWeeks = (date, weeks) => {
+  try {
+    date = date || today()
+    date = LocalDate.parse(date)
+      .plusWeeks(weeks)
+      .toString()
+  } catch (err) {
+    console.error('addWeeks', {date, weeks}, err)
+  }
+  return date
+}
+
 export const startOfMonth = date => {
   try {
     date = date ? LocalDate.parse(date) : LocalDate.now()
@@ -92,17 +106,59 @@ export const getLengthOfMonth = date => {
   return lengthOfMonth
 }
 
-export const setDayOfMonth = (month, day) => {
+export const setDayOfWeek = (yearMonth, dayOfWeek) => {
   let date
   try {
-    date = month
-      ? isYearMonth(month)
-        ? LocalDate.parse(month + '-01')
-        : LocalDate.parse(month)
+    date = yearMonth
+      ? isYearMonth(yearMonth)
+        ? LocalDate.parse(yearMonth + '-01')
+        : LocalDate.parse(yearMonth)
       : LocalDate.now()
-    date = date.withDayOfMonth(day).toString()
+    date = date
+      .withFieldAndValue(ChronoField.DAY_OF_WEEK, Number(dayOfWeek))
+      .toString()
   } catch (err) {
-    console.error('setDayOfMonth', {month, day}, err)
+    console.error('setDayOfWeek', {yearMonth, dayOfWeek}, err)
+    date = null
+  }
+  return date
+}
+
+export const setDayOfMonth = (yearMonth, day) => {
+  let date
+  try {
+    date = yearMonth
+      ? isYearMonth(yearMonth)
+        ? LocalDate.parse(yearMonth + '-01')
+        : LocalDate.parse(yearMonth)
+      : LocalDate.now()
+    const lengthOfMonth = date.lengthOfMonth()
+    day = Number(day)
+    date = date
+      .withDayOfMonth(day < lengthOfMonth ? day : lengthOfMonth)
+      .toString()
+  } catch (err) {
+    console.error('setDayOfMonth', {yearMonth, day}, err)
+    date = null
+  }
+  return date
+}
+
+export const setMonthAndDayOfMonth = (year, month, day) => {
+  let date
+  try {
+    year = typeof year === 'string' ? extractYear(year) : year
+    date = year
+      ? LocalDate.of(Number(year), Number(month), 1)
+      : LocalDate.now()
+    const lengthOfMonth = date.lengthOfMonth()
+    day = Number(day)
+    date = date
+      .withDayOfMonth(day < lengthOfMonth ? day : lengthOfMonth)
+      .toString()
+  } catch (err) {
+    console.error('setMonthAndDayOfMonth', {year, month, day}, err)
+    date = null
   }
   return date
 }
@@ -115,7 +171,7 @@ export const isWeekEnd = date => {
       dayOfWeek.equals(DayOfWeek.SUNDAY)
     )
   } catch (err) {
-    console.error('getDayOfWeek', date, err)
+    console.error('isWeekEnd', date, err)
   }
 }
 
@@ -130,4 +186,28 @@ export const getEasterDate = year => {
   } catch (err) {
     console.error('getEasterDate', year, err)
   }
+}
+
+export const getMonthsUntil = (from, to) => {
+  let interval = -1
+  try {
+    from = YearMonth.parse(extractYearMonth(from))
+    to = YearMonth.parse(extractYearMonth(to))
+    interval = from.until(to, ChronoUnit.MONTHS)
+  } catch (err) {
+    console.error('getMonthsUntil', from, to, err)
+  }
+  return interval
+}
+
+export const getWeeksUntil = (from, to) => {
+  let interval = -1
+  try {
+    from = LocalDate.parse(from)
+    to = LocalDate.parse(to)
+    interval = from.until(to, ChronoUnit.WEEKS)
+  } catch (err) {
+    console.error('getWeeksUntil', from, to, err)
+  }
+  return interval
 }

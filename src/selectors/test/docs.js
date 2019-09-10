@@ -32,6 +32,7 @@ const holidays = {
     '11-02': {name: 'Finados'},
     '11-15': {name: 'Proclamação da república'},
     '12-25': {name: 'Natal'},
+    '12-31': {name: 'Feriado bancário'},
     'easter-48': {name: 'Carnaval'},
     'easter-47': {name: 'Carnaval'},
     'easter-2': {name: 'Sexta-feira Santa'},
@@ -849,4 +850,275 @@ test('Expand invoice', t => {
       id: '6'
     }
   ])
+})
+
+test('Get monthly due dates', t => {
+  const {getMonthlyDueDates} = t.context
+  const account = {
+    country: 'BR',
+    state: 'MG',
+    city: 'Belo Horizonte'
+  }
+  let dueDates = getMonthlyDueDates('2019-01-31', '2019-12-31', {
+    dayOfMonth: 31,
+    onlyInBusinessDays: 'previous',
+    holidays,
+    account
+  })
+  t.deepEqual(dueDates, [
+    '2019-01-31',
+    '2019-02-28',
+    '2019-03-29',
+    '2019-04-30',
+    '2019-05-31',
+    '2019-06-28',
+    '2019-07-31',
+    '2019-08-30',
+    '2019-09-30',
+    '2019-10-31',
+    '2019-11-29',
+    '2019-12-30'
+  ])
+
+  dueDates = getMonthlyDueDates('2019-09-02', '2019-10-31', {
+    dayOfMonth: 1,
+    onlyInBusinessDays: 'next',
+    holidays,
+    account
+  })
+  t.deepEqual(dueDates, ['2019-09-02', '2019-10-01'])
+
+  dueDates = getMonthlyDueDates('2019-10-01', '2019-12-31', {
+    dayOfMonth: 1,
+    onlyInBusinessDays: 'previous',
+    holidays,
+    startedAt: '2019-10-01',
+    interval: 3,
+    account
+  })
+  console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-10-01', '2019-12-30'])
+
+  dueDates = getMonthlyDueDates('2020-01-02', '2020-03-31', {
+    dayOfMonth: 31,
+    onlyInBusinessDays: 'next',
+    holidays,
+    startedAt: '2019-01-02',
+    interval: 2,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2020-01-31', '2020-03-31'])
+})
+
+test('Get yearly due dates', t => {
+  const {getYearlyDueDates} = t.context
+  const account = {
+    country: 'BR',
+    state: 'MG',
+    city: 'Belo Horizonte'
+  }
+  let dueDates = getYearlyDueDates('2019-01-31', '2019-12-31', {
+    dayOfMonth: 31,
+    months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    onlyInBusinessDays: 'previous',
+    holidays,
+    account
+  })
+  t.deepEqual(dueDates, [
+    '2019-01-31',
+    '2019-02-28',
+    '2019-03-29',
+    '2019-04-30',
+    '2019-05-31',
+    '2019-06-28',
+    '2019-07-31',
+    '2019-08-30',
+    '2019-09-30',
+    '2019-10-31',
+    '2019-11-29',
+    '2019-12-30'
+  ])
+
+  dueDates = getYearlyDueDates('2019-09-02', '2019-10-31', {
+    dayOfMonth: 1,
+    months: [9, 10],
+    onlyInBusinessDays: 'next',
+    holidays,
+    account
+  })
+  t.deepEqual(dueDates, ['2019-09-02', '2019-10-01'])
+
+  dueDates = getYearlyDueDates('2019-10-01', '2019-12-31', {
+    dayOfMonth: 1,
+    months: [12],
+    onlyInBusinessDays: 'previous',
+    holidays,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-11-29'])
+
+  dueDates = getYearlyDueDates('2019-10-01', '2021-12-31', {
+    dayOfMonth: 1,
+    onlyInBusinessDays: 'previous',
+    holidays,
+    months: ['1', '10'],
+    startedAt: '2019-10-01',
+    interval: 3,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-10-01', '2021-12-30'])
+  dueDates = getYearlyDueDates('2019-10-01', '2021-12-31', {
+    dayOfMonth: 1,
+    onlyInBusinessDays: 'previous',
+    holidays,
+    months: ['1', '10'],
+    startedAt: '1989-10-01',
+    interval: 3,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-10-01', '2021-12-30'])
+})
+
+test('Get weekly due dates', t => {
+  const {getWeeklyDueDates} = t.context
+  const account = {
+    country: 'BR',
+    state: 'MG',
+    city: 'Belo Horizonte'
+  }
+  let dueDates = getWeeklyDueDates('2019-02-24', '2019-03-31', {
+    dayOfWeek: 1,
+    onlyInBusinessDays: 'next',
+    interval: 2,
+    holidays,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-03-06', '2019-03-18'])
+
+  dueDates = getWeeklyDueDates('2019-11-20', '2019-12-30', {
+    dayOfWeek: 2,
+    onlyInBusinessDays: 'previous',
+    startedAt: '2019-11-20',
+    interval: 3,
+    holidays,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-12-10', '2019-12-30'])
+
+  dueDates = getWeeklyDueDates('2019-02-24', '2019-03-31', {
+    dayOfWeek: 1,
+    onlyInBusinessDays: 'next',
+    startedAt: '2018-12-30',
+    interval: 2,
+    holidays,
+    account
+  })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  t.deepEqual(dueDates, ['2019-03-06', '2019-03-18'])
+})
+
+test('Expand budget', t => {
+  const {expandBudget} = t.context
+  const accounts = {
+    '1': {
+      country: 'BR',
+      state: 'MG',
+      city: 'Belo Horizonte'
+    },
+    '2': {
+      type: 'creditcard',
+      country: 'BR',
+      state: 'MG',
+      city: 'Belo Horizonte',
+      dueDay: 8,
+      bestDay: 25
+    }
+  }
+  const budget = {
+    partitions: [
+      {
+        costCenter: 'A',
+        category: 'a',
+        description: 'Mine',
+        amount: -203.4
+      },
+      {
+        costCenter: 'B',
+        category: 'b',
+        description: 'My son',
+        amount: -105.42
+      }
+    ],
+    flow: 'out',
+    place: 'vxbJp9WfTu0',
+    account: '1',
+    frequency: 'monthly',
+    dayOfMonth: 10,
+    onlyInBusinessDays: 'previous',
+    date: '2019-01-10',
+    notes: 'Health plan'
+  }
+  let transactions = expandBudget('b', '2019-02-24', '2019-03-31', {
+    budget,
+    holidays,
+    accounts
+  })
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(transactions, [
+    {
+      flow: 'out',
+      place: 'vxbJp9WfTu0',
+      notes: 'Health plan',
+      partitions: [
+        {
+          costCenter: 'A',
+          category: 'a',
+          description: 'Mine',
+          amount: -203.4
+        },
+        {
+          costCenter: 'B',
+          category: 'b',
+          description: 'My son',
+          amount: -105.42
+        }
+      ],
+      issueDate: '2019-03-08',
+      dueDate: '2019-03-08',
+      amount: -308.82,
+      account: '1',
+      id: 'b@2019-03-08'
+    }
+  ])
+  // toBeContinued...
+  // dueDates = expandBudget('2019-11-20', '2019-12-30', {
+  //   dayOfWeek: 2,
+  //   onlyInBusinessDays: 'previous',
+  //   startedAt: '2019-11-20',
+  //   interval: 3,
+  //   holidays,
+  //   account
+  // })
+  // // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  // t.deepEqual(dueDates, ['2019-12-10', '2019-12-30'])
+
+  // dueDates = expandBudget('2019-02-24', '2019-03-31', {
+  //   dayOfWeek: 1,
+  //   onlyInBusinessDays: 'next',
+  //   startedAt: '2018-12-30',
+  //   interval: 2,
+  //   holidays,
+  //   account
+  // })
+  // // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
+  // t.deepEqual(dueDates, ['2019-03-06', '2019-03-18'])
 })
