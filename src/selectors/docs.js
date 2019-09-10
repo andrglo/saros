@@ -22,7 +22,6 @@ import {
 import {getHolidays, loadHolidays, isBusinessDay} from './atlas'
 
 const MONTH_SPAN_TO_BE_CACHED = 3
-const MONTHS_FOR_CREDITCARD_DUE_DATES = 6
 
 export const getCollection = (state, options) => {
   const {collection, ...rest} = options
@@ -62,13 +61,22 @@ const getMonthSpan = memoize((from, to) => {
   return monthSpan
 })
 
-const invoiceTransform = (data, id, doc) => {
-  if (doc.invoices) {
-    doc.invoices = doc.invoices.map(item => {
+const getIdAndParcelIndex = id => {
+  let [invoiceId, parcelIndex] = id.split('/')
+  if (parcelIndex) {
+    parcelIndex = Number(parcelIndex) - 1
+  }
+  return [invoiceId, parcelIndex]
+}
+
+export const invoiceTransform = (data, id, doc) => {
+  if (doc.billedFrom) {
+    doc.billedFrom = doc.billedFrom.map(item => {
       const {id, doc, ...rest} = item
       if (id && doc) {
         convertRecordTimestamps(doc)
-        data[id] = doc
+        const [invoiceId] = getIdAndParcelIndex(id)
+        data[invoiceId] = doc
       }
       return {id, ...rest}
     })
@@ -137,6 +145,9 @@ export const areAllCollectionsReady = allCollections => {
   return true
 }
 
+export const getInvoiceTotal = ({parcels}) =>
+  round(sumBy(parcels, 'amount'), 2)
+
 export const redistributeAmount = (partitions, newAmount) => {
   const total = round(sumBy(partitions, 'amount'), 2)
   const k = newAmount / total
@@ -150,7 +161,7 @@ export const redistributeAmount = (partitions, newAmount) => {
       amount: partial
     })
   }
-  if (!Math.isZero(remainder)) {
+  if (!Math.isZero(remainder) && result.length) {
     const lastIndex = result.length - 1
     result[lastIndex].amount = round(
       result[lastIndex].amount + remainder,
@@ -158,14 +169,6 @@ export const redistributeAmount = (partitions, newAmount) => {
     )
   }
   return result
-}
-
-const getIdAndParcelIndex = id => {
-  let [invoiceId, parcelIndex] = id.split('/')
-  if (parcelIndex) {
-    parcelIndex = Number(parcelIndex) - 1
-  }
-  return [invoiceId, parcelIndex]
 }
 
 export const getHolidaysForAccounts = createSelector(
@@ -205,8 +208,12 @@ export const getPartitions = (id, invoices) => {
         ? redistributeAmount(invoicePartitions, amount)
         : invoicePartitions
     }
+    const {billedFrom} = doc
+    if (!billedFrom) {
+      return [{amount: isBilledDoc ? amount : getInvoiceTotal(doc)}]
+    }
     let mergedPartitions = []
-    for (const billedInvoice of doc.billedFrom) {
+    for (const billedInvoice of billedFrom) {
       const {id, partitions, ...rest} = billedInvoice
       if (partitions) {
         mergedPartitions = [
@@ -224,7 +231,7 @@ export const getPartitions = (id, invoices) => {
         ]
       } else {
         mergedPartitions.push({
-          amount,
+          amount: isBilledDoc ? amount : billedInvoice.amount,
           ...rest
         })
       }
@@ -234,32 +241,115 @@ export const getPartitions = (id, invoices) => {
   return seek(id)
 }
 
-export const getDueDatesForCreditcard = ({
-  account,
-  from,
-  to,
-  holidays
+export const getInvoicesLastBill = memoize(invoices => {
+  const invoicesLastBill = {}
+  for (const id of Object.keys(invoices)) {
+    const invoice = invoices[id]
+    for (const item of invoice.billedFrom || []) {
+      if (item.id) {
+        const lastBill = invoicesLastBill[item.id]
+        if (!lastBill || lastBill.issueDate < invoice.issueDate) {
+          invoicesLastBill[item.id] = item
+        }
+      }
+    }
+  }
+  return invoicesLastBill
+})
+
+export const getRemainingPaymentsForCreditcard = ({
+  transaction,
+  accounts,
+  holidays,
+  invoicesLastBill
 }) => {
-  const result = []
-  const {dueDay} = account
-  let month = extractYearMonth(from)
-  to = to || addMonths(month, MONTHS_FOR_CREDITCARD_DUE_DATES)
-  while (month <= to) {
+  const {payDate, installments = 1} = transaction
+  const account = accounts[transaction.account]
+  const {bestDay, dueDay} = account
+
+  let firstPayment
+
+  const getIssueDate = month => {
     const lengthOfMonth = getLengthOfMonth(month)
     const dueDayInThisMonth =
       dueDay > lengthOfMonth ? lengthOfMonth : dueDay
-    let dueDate = setDayOfMonth(month, dueDayInThisMonth)
+    return setDayOfMonth(month, dueDayInThisMonth)
+  }
+
+  const getFirstPayment = () => {
+    if (!firstPayment) {
+      firstPayment = getIssueDate(payDate)
+      if (firstPayment <= payDate) {
+        firstPayment = getIssueDate(addMonths(firstPayment, 1))
+      }
+      let bestDate
+      if (bestDay > dueDay) {
+        bestDate = setDayOfMonth(addMonths(firstPayment, -1), bestDay)
+      } else {
+        bestDate = setDayOfMonth(firstPayment, bestDay)
+      }
+      if (payDate >= bestDate) {
+        firstPayment = addMonths(firstPayment, 1)
+      }
+    }
+    return firstPayment
+  }
+
+  const getInstallmentIssueDate = installment => {
+    return getIssueDate(addMonths(getFirstPayment(), installment - 1))
+  }
+
+  const getDueDate = issueDate => {
+    let dueDate = issueDate
     while (!isBusinessDay(dueDate, account, holidays)) {
       dueDate = addDays(dueDate, 1)
     }
-    result.push(dueDate)
-    month = addMonths(month, 1)
+    return dueDate
   }
-  return result
+
+  const lastBill = invoicesLastBill[transaction.id]
+  let balance
+  let installment
+  const payments = []
+  if (lastBill) {
+    balance =
+      typeof lastBill.balance === 'number' ? lastBill.balance : 0
+    installment = lastBill.installment || 1
+  } else {
+    balance = transaction.amount
+    installment = 0
+  }
+  while (installment < installments) {
+    const remainingInstallments = installments - installment
+    const amount =
+      remainingInstallments === 1
+        ? balance
+        : round(
+            Math.trunc((balance / remainingInstallments) * 100) / 100,
+            2
+          )
+    installment++
+    balance = round(balance - amount, 2)
+    const issueDate = getInstallmentIssueDate(installment)
+    payments.push({
+      billedFrom: transaction.id,
+      type: 'ccardBill',
+      amount,
+      status: 'draft',
+      issueDate,
+      dueDate: getDueDate(issueDate),
+      account: transaction.account,
+      partitions: redistributeAmount(transaction.partitions, amount),
+      installment,
+      installments,
+      balance
+    })
+  }
+  return payments
 }
 
 export const expandInvoice = (id, {invoices, holidays, accounts}) => {
-  const transactions = []
+  let transactions = []
   const {parcels, billedFrom, ...invoice} = invoices[id]
   for (const [parcelIndex, parcel] of parcels.entries()) {
     let partitions = parcel.partitions || invoice.partitions
@@ -269,7 +359,7 @@ export const expandInvoice = (id, {invoices, holidays, accounts}) => {
     const transaction = {
       ...invoice,
       ...parcel,
-      id: `${id}/${parcelIndex + 1}`,
+      id: `${id}${parcels.length > 1 ? `/${parcelIndex + 1}` : ''}`,
       partitions: redistributeAmount(
         partitions,
         parcel.paidAmount || parcel.amount
@@ -277,7 +367,15 @@ export const expandInvoice = (id, {invoices, holidays, accounts}) => {
     }
     transactions.push(transaction)
     if (transaction.type === 'ccard') {
-      // todo
+      transactions = [
+        ...transactions,
+        ...getRemainingPaymentsForCreditcard({
+          transaction,
+          accounts,
+          holidays,
+          invoicesLastBill: getInvoicesLastBill(invoices)
+        })
+      ]
     }
   }
   return transactions
@@ -290,8 +388,8 @@ export const getTransactionsByDay = createSelector(
     invoices: getInvoices,
     budgets: getBudgets,
     transfers: getTransfers,
-    holidays: getHolidaysForAccounts, // for business days
-    accounts: getAccounts // fot credit cards due dates
+    holidays: getHolidaysForAccounts,
+    accounts: getAccounts
   }),
   params => {
     let {

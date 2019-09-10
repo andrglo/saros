@@ -1,6 +1,9 @@
 import test from 'ava'
 import mockery from 'mockery'
 import noop from 'lodash/noop'
+import sumBy from 'lodash/sumBy'
+import round from 'lodash/round'
+import map from 'lodash/fp/map'
 
 // eslint-disable-next-line no-unused-vars
 import util from 'util'
@@ -54,6 +57,11 @@ test.before(async t => {
   Object.keys(selectors).forEach(p => {
     t.context[p] = selectors[p]
   })
+  const {getInvoices, invoiceTransform} = selectors
+  const invoices = getInvoices(state)
+  for (const id of Object.keys(invoices)) {
+    invoiceTransform(invoices, id, invoices[id])
+  }
 })
 
 test.after(() => {
@@ -179,8 +187,327 @@ test('Get partitions', t => {
   ])
 })
 
+test.serial('Get holidays for accounts', async t => {
+  const {getHolidaysForAccounts} = t.context
+  const actions = []
+  controller.getStore = () => ({
+    dispatch: action => {
+      actions.push(action)
+    }
+  })
+  let holidaysForAccounts = getHolidaysForAccounts(state)
+  getHolidaysForAccounts(state) // again
+  getHolidaysForAccounts(state) // again
+  getHolidaysForAccounts(state) // again
+  getHolidaysForAccounts(state) // and again
+  t.is(holidaysForAccounts, undefined)
+  holidaysForAccounts = await completion(() => {
+    if (actions.length > 0) {
+      return actions[0].holidays
+    }
+  })
+  // console.log('TCL: result', util.inspect(requiredHolidays, {depth: null}))
+  t.deepEqual(holidaysForAccounts, holidays)
+  await sleep(100)
+  t.is(actions.length, 1)
+})
+
+test('Get invoices last bill', t => {
+  const {getInvoicesLastBill, getInvoices} = t.context
+  const invoicesLastBill = getInvoicesLastBill(getInvoices(state))
+  t.deepEqual(invoicesLastBill, {
+    ai8H2bFxt4jv: {id: 'ai8H2bFxt4jv', amount: -16.9},
+    '6zzwHBvMRmmm': {
+      id: '6zzwHBvMRmmm',
+      installment: 1,
+      amount: -232.52,
+      balance: -232.52
+    },
+    XrE2xUBgkjPj: {id: 'XrE2xUBgkjPj', amount: -563},
+    tjuWBgnG42Rd: {id: 'tjuWBgnG42Rd', amount: -89.7}
+  })
+})
+
+test('Get remaining payments for credit cards', t => {
+  const {
+    getRemainingPaymentsForCreditcard,
+    getInvoicesLastBill,
+    getInvoices
+  } = t.context
+  const invoicesLastBill = getInvoicesLastBill(getInvoices(state))
+  const accounts = {
+    '1': {
+      dueDay: 8,
+      bestDay: 31,
+      country: 'BR',
+      state: 'MG',
+      city: 'Belo Horizonte'
+    }
+  }
+
+  const total = 333.33
+  let remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2019-08-30',
+      installments: 16,
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+  // console.log(
+  //   'TCL: remainingPayments',
+  //   util.inspect(remainingPayments, {depth: null})
+  // )
+  t.deepEqual(
+    remainingPayments.map(
+      (
+        {
+          installment,
+          balance,
+          amount,
+          status,
+          account,
+          partitions,
+          dueDate
+        },
+        i
+      ) => {
+        t.is(partitions.length, 1)
+        t.is(amount, partitions[0].amount)
+        t.is(status, 'draft')
+        t.is(account, '1')
+        t.is(installment, i + 1)
+        if (installment === 16) {
+          t.is(balance, 0)
+        }
+        let remainingAmount = balance
+        for (let k = i + 1; k < remainingPayments.length; k++) {
+          remainingAmount -= remainingPayments[k].amount
+        }
+        t.is(Math.abs(round(remainingAmount, 2)), 0)
+        return dueDate
+      }
+    ),
+    [
+      '2019-09-09',
+      '2019-10-08',
+      '2019-11-08',
+      '2019-12-09',
+      '2020-01-08',
+      '2020-02-10',
+      '2020-03-09',
+      '2020-04-08',
+      '2020-05-08',
+      '2020-06-08',
+      '2020-07-08',
+      '2020-08-10',
+      '2020-09-08',
+      '2020-10-08',
+      '2020-11-09',
+      '2020-12-09'
+    ]
+  )
+  t.deepEqual(remainingPayments.map(({issueDate}) => issueDate), [
+    '2019-09-08',
+    '2019-10-08',
+    '2019-11-08',
+    '2019-12-08',
+    '2020-01-08',
+    '2020-02-08',
+    '2020-03-08',
+    '2020-04-08',
+    '2020-05-08',
+    '2020-06-08',
+    '2020-07-08',
+    '2020-08-08',
+    '2020-09-08',
+    '2020-10-08',
+    '2020-11-08',
+    '2020-12-08'
+  ])
+  t.is(round(sumBy(remainingPayments, 'amount'), 2), total)
+
+  const mapDueDates = map('dueDate')
+
+  accounts['1'] = {
+    bestDay: 10,
+    dueDay: 20,
+    country: 'BR',
+    state: 'MG',
+    city: 'Betim'
+  }
+  remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2018-11-09',
+      installments: 8,
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+
+  t.deepEqual(mapDueDates(remainingPayments), [
+    '2018-11-21',
+    '2018-12-20',
+    '2019-01-21',
+    '2019-02-20',
+    '2019-03-20',
+    '2019-04-22',
+    '2019-05-20',
+    '2019-06-21'
+  ])
+
+  accounts['1'] = {
+    bestDay: 21,
+    dueDay: 31,
+    country: 'BR',
+    state: 'MG',
+    city: 'Belo Horizonte'
+  }
+  remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2019-01-20',
+      installments: 3,
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+
+  t.deepEqual(mapDueDates(remainingPayments), [
+    '2019-01-31',
+    '2019-02-28',
+    '2019-04-01'
+  ])
+
+  remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2019-01-21',
+      installments: 3,
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+  t.deepEqual(mapDueDates(remainingPayments), [
+    '2019-02-28',
+    '2019-04-01',
+    '2019-04-30'
+  ])
+
+  accounts['1'] = {
+    bestDay: 31,
+    dueDay: 8,
+    country: 'BR',
+    state: 'MG',
+    city: 'Belo Horizonte'
+  }
+  remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2018-12-30',
+      installments: 3,
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+  t.deepEqual(mapDueDates(remainingPayments), [
+    '2019-01-08',
+    '2019-02-08',
+    '2019-03-08'
+  ])
+  remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2018-12-31',
+      installments: 3,
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+  t.deepEqual(mapDueDates(remainingPayments), [
+    '2019-02-08',
+    '2019-03-08',
+    '2019-04-08'
+  ])
+
+  accounts['1'] = {
+    bestDay: 25,
+    dueDay: 8,
+    country: 'BR',
+    state: 'MG',
+    city: 'Belo Horizonte'
+  }
+  remainingPayments = getRemainingPaymentsForCreditcard({
+    transaction: {
+      id: 'zero',
+      amount: total,
+      payDate: '2019-01-31',
+      account: '1',
+      partitions: [
+        {
+          amount: total
+        }
+      ]
+    },
+    accounts,
+    holidays,
+    invoicesLastBill
+  })
+  t.deepEqual(mapDueDates(remainingPayments), ['2019-03-08'])
+})
+
 test('Expand invoice', t => {
-  const {expandInvoice} = t.context
+  const {expandInvoice, getAccounts} = t.context
   const invoices = {
     '1': {
       parcels: [{amount: 10}],
@@ -224,6 +551,18 @@ test('Expand invoice', t => {
         }
       ]
     },
+    '3': {
+      type: 'ccard',
+      installments: 3,
+      parcels: [{amount: 100, payDate: '2019-07-10'}],
+      partitions: [
+        {
+          category: 'X',
+          amount: 100
+        }
+      ],
+      account: '-ssZsPnhWoo'
+    },
     '4': {
       parcels: [{amount: 1}],
       billedFrom: [
@@ -232,6 +571,52 @@ test('Expand invoice', t => {
           amount: 1
         }
       ]
+    },
+    '5': {
+      type: 'ccard',
+      installments: 10,
+      parcels: [{amount: 99, payDate: '2018-07-10'}],
+      partitions: [
+        {
+          category: 'X',
+          amount: 99
+        }
+      ],
+      account: '-ssZsPnhWoo'
+    },
+    '6': {
+      type: 'ccard',
+      installments: 10,
+      parcels: [{amount: 99, payDate: '2018-07-10'}],
+      partitions: [
+        {
+          category: 'X',
+          amount: 99
+        }
+      ],
+      account: '-ssZsPnhWoo'
+    },
+    '7': {
+      billedFrom: [
+        {
+          id: '6',
+          amount: 9.9,
+          installment: 10,
+          balance: 10
+        }
+      ],
+      parcels: [{amount: 9.9}]
+    },
+    '8': {
+      billedFrom: [
+        {
+          id: '5',
+          amount: 9.9,
+          installment: 8,
+          balance: 10
+        }
+      ],
+      parcels: [{amount: 9.9}]
     },
     '9': {
       billedFrom: [
@@ -317,7 +702,7 @@ test('Expand invoice', t => {
   t.deepEqual(list, [
     {
       amount: 1,
-      id: '4/1',
+      id: '4',
       partitions: [
         {category: 'A', amount: 0.2},
         {category: 'B', amount: 0.8}
@@ -353,88 +738,115 @@ test('Expand invoice', t => {
         {category: 'Y', amount: 8}
       ],
       amount: 10,
-      id: '1/1'
+      id: '1'
     }
   ])
-})
 
-test.serial('Get holidays for accounts', async t => {
-  const {getHolidaysForAccounts} = t.context
-  const actions = []
-  controller.getStore = () => ({
-    dispatch: action => {
-      actions.push(action)
-    }
-  })
-  let holidaysForAccounts = getHolidaysForAccounts(state)
-  getHolidaysForAccounts(state) // again
-  getHolidaysForAccounts(state) // again
-  getHolidaysForAccounts(state) // again
-  getHolidaysForAccounts(state) // and again
-  t.is(holidaysForAccounts, undefined)
-  holidaysForAccounts = await completion(() => {
-    if (actions.length > 0) {
-      return actions[0].holidays
-    }
-  })
-  // console.log('TCL: result', util.inspect(requiredHolidays, {depth: null}))
-  t.deepEqual(holidaysForAccounts, holidays)
-  await sleep(100)
-  t.is(actions.length, 1)
-})
-
-test('Get due dates for credit cards', t => {
-  const {getDueDatesForCreditcard} = t.context
-
-  let dueDates = getDueDatesForCreditcard({
-    account: {
-      dueDay: 8,
-      country: 'BR',
-      state: 'MG',
-      city: 'Belo Horizonte'
+  const accounts = getAccounts(state)
+  list = expandInvoice('3', {invoices, holidays, accounts})
+  // console.log('TCL: list', util.inspect(list, {depth: null}))
+  t.deepEqual(list, [
+    {
+      type: 'ccard',
+      installments: 3,
+      partitions: [{category: 'X', amount: 100}],
+      account: '-ssZsPnhWoo',
+      amount: 100,
+      payDate: '2019-07-10',
+      id: '3'
     },
-    from: '2019-09',
-    to: '2020-12',
-    holidays
-  })
-  t.deepEqual(dueDates, [
-    '2019-09-09',
-    '2019-10-08',
-    '2019-11-08',
-    '2019-12-09',
-    '2020-01-08',
-    '2020-02-10',
-    '2020-03-09',
-    '2020-04-08',
-    '2020-05-08',
-    '2020-06-08',
-    '2020-07-08',
-    '2020-08-10',
-    '2020-09-08',
-    '2020-10-08',
-    '2020-11-09',
-    '2020-12-09'
+    {
+      billedFrom: '3',
+      type: 'ccardBill',
+      amount: 33.33,
+      status: 'draft',
+      issueDate: '2019-07-31',
+      dueDate: '2019-07-31',
+      account: '-ssZsPnhWoo',
+      partitions: [{category: 'X', amount: 33.33}],
+      installment: 1,
+      installments: 3,
+      balance: 66.67
+    },
+    {
+      billedFrom: '3',
+      type: 'ccardBill',
+      amount: 33.33,
+      status: 'draft',
+      issueDate: '2019-08-31',
+      dueDate: '2019-09-02',
+      account: '-ssZsPnhWoo',
+      partitions: [{category: 'X', amount: 33.33}],
+      installment: 2,
+      installments: 3,
+      balance: 33.34
+    },
+    {
+      billedFrom: '3',
+      type: 'ccardBill',
+      amount: 33.34,
+      status: 'draft',
+      issueDate: '2019-09-30',
+      dueDate: '2019-09-30',
+      account: '-ssZsPnhWoo',
+      partitions: [{category: 'X', amount: 33.34}],
+      installment: 3,
+      installments: 3,
+      balance: 0
+    }
   ])
 
-  dueDates = getDueDatesForCreditcard({
-    account: {
-      dueDay: 20,
-      country: 'BR',
-      state: 'MG',
-      city: 'Betim'
+  list = expandInvoice('5', {invoices, holidays, accounts})
+  // console.log('TCL: list', util.inspect(list, {depth: null}))
+  t.deepEqual(list, [
+    {
+      type: 'ccard',
+      installments: 10,
+      partitions: [{category: 'X', amount: 99}],
+      account: '-ssZsPnhWoo',
+      amount: 99,
+      payDate: '2018-07-10',
+      id: '5'
     },
-    from: '2018-11',
-    to: '2019-06',
-    holidays
-  })
-  t.deepEqual(dueDates, [
-    '2018-11-21',
-    '2018-12-20',
-    '2019-01-21',
-    '2019-02-20',
-    '2019-03-20',
-    '2019-04-22',
-    '2019-05-20',
-    '2019-06-21'
+    {
+      billedFrom: '5',
+      type: 'ccardBill',
+      amount: 5,
+      status: 'draft',
+      issueDate: '2019-03-31',
+      dueDate: '2019-04-01',
+      account: '-ssZsPnhWoo',
+      partitions: [{category: 'X', amount: 5}],
+      installment: 9,
+      installments: 10,
+      balance: 5
+    },
+    {
+      billedFrom: '5',
+      type: 'ccardBill',
+      amount: 5,
+      status: 'draft',
+      issueDate: '2019-04-30',
+      dueDate: '2019-04-30',
+      account: '-ssZsPnhWoo',
+      partitions: [{category: 'X', amount: 5}],
+      installment: 10,
+      installments: 10,
+      balance: 0
+    }
+  ])
+
+  list = expandInvoice('6', {invoices, holidays, accounts})
+  // console.log('TCL: list', util.inspect(list, {depth: null}))
+  t.deepEqual(list, [
+    {
+      type: 'ccard',
+      installments: 10,
+      partitions: [{category: 'X', amount: 99}],
+      account: '-ssZsPnhWoo',
+      amount: 99,
+      payDate: '2018-07-10',
+      id: '6'
+    }
   ])
 })
