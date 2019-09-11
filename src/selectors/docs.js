@@ -523,11 +523,22 @@ export const getWeeklyDueDates = (
   return dueDates
 }
 
+const getInvoicesByBudget = memoize(invoices => {
+  const invoicesByBudget = new Set()
+  for (const id of Object.keys(invoices || {})) {
+    if (invoices[id].budget) {
+      const invoice = invoices[id]
+      invoicesByBudget.add(`${invoice.budget}@${invoice.issueDate}`)
+    }
+  }
+  return invoicesByBudget
+})
+
 export const expandBudget = (
   id,
   from,
   to,
-  {budget, holidays, accounts}
+  {budget, holidays, accounts, invoices}
 ) => {
   let transactions = []
   const reviews = sortBy(
@@ -582,8 +593,12 @@ export const expandBudget = (
       account,
       startedAt
     })
+    const invoicesByBudget = getInvoicesByBudget(invoices)
     for (const [date, dueDate] of dueDates) {
       const invoiceId = `${id}@${date}`
+      if (invoicesByBudget.has(invoiceId)) {
+        continue
+      }
       const amount = getTotal(review.partitions)
       const invoice = {
         flow: review.flow,
@@ -617,13 +632,73 @@ export const expandBudget = (
   return transactions
 }
 
+export const getInvoicesTransactions = createSelector(
+  createStructuredSelector({
+    invoices: getInvoices,
+    holidays: getHolidaysForAccounts,
+    accounts: getAccounts
+  }),
+  params => {
+    const {holidays, invoices, accounts} = params
+    let transactions = []
+    if (
+      !areAllCollectionsReady({
+        invoices,
+        accounts,
+        holidays
+      })
+    ) {
+      return transactions
+    }
+    for (const id of Object.keys(invoices)) {
+      transactions = [
+        ...transactions,
+        ...expandInvoice(id, {invoices, holidays, accounts})
+      ]
+    }
+    return transactions
+  }
+)
+
+export const getTransfersTransactions = createSelector(
+  getTransfers,
+  transfers => {
+    let transactions = []
+    if (
+      !areAllCollectionsReady({
+        transfers
+      })
+    ) {
+      return transactions
+    }
+    for (const id of Object.keys(transfers)) {
+      const {counterpart, amount, date, account} = transfers[id]
+      transactions = [
+        ...transactions,
+        {
+          type: counterpart
+            ? 'tranfer'
+            : Math.isNegative(amount)
+            ? 'out'
+            : 'in',
+          dueDate: date,
+          account,
+          counterpart
+        }
+      ]
+    }
+    return transactions
+  }
+)
+
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
     from: (state, {from} = {}) => from || today(),
     to: (state, {to} = {}) => to,
+    invoicesTransactions: getInvoicesTransactions,
+    transfersTransactions: getTransfersTransactions,
     invoices: getInvoices,
     budgets: getBudgets,
-    transfers: getTransfers,
     holidays: getHolidaysForAccounts,
     accounts: getAccounts
   }),
@@ -632,9 +707,10 @@ export const getTransactionsByDay = createSelector(
       from,
       to,
       holidays,
+      invoicesTransactions,
+      transfersTransactions,
       invoices,
       budgets,
-      transfers,
       accounts
     } = params
     let transactions = []
@@ -642,19 +718,41 @@ export const getTransactionsByDay = createSelector(
       !areAllCollectionsReady({
         invoices,
         budgets,
-        transfers,
         accounts
       })
     ) {
       return transactions
     }
     to = to && to >= from ? to : from
-    for (const id of Object.keys(invoices)) {
+    for (const id of Object.keys(budgets)) {
       transactions = [
         ...transactions,
-        ...expandInvoice(id, {invoices, holidays, accounts})
+        ...expandBudget(id, from, to, {
+          budget: budgets[id],
+          invoices,
+          holidays,
+          accounts
+        })
       ]
     }
-    return transactions
+    const result = []
+    for (const transaction of [
+      ...invoicesTransactions,
+      ...transfersTransactions,
+      ...transactions
+    ]) {
+      const date = transaction.dueDate
+      if (!date) {
+        throw new Error(
+          `Transaction has no due date: ${JSON.stringify(
+            transaction
+          )}`
+        )
+      }
+      if (date >= from && date <= to) {
+        result.push(transaction)
+      }
+    }
+    return sortBy(result, ['dueDate', 'createdAt'])
   }
 )

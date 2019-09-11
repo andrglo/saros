@@ -15,14 +15,6 @@ import '../../lib/polyfill'
 
 const db = 'solar'
 
-const state = {
-  app: {
-    db
-  },
-  atlas: {},
-  docs: loadDb(db)
-}
-
 const holidays = {
   BR: {
     '01-01': {name: 'Confraternização Universal'},
@@ -46,9 +38,20 @@ const holidays = {
   'BR/MG/Betim': {'07-16': {name: ''}, '11-20': {name: ''}}
 }
 
+const state = {
+  app: {
+    db
+  },
+  atlas: {},
+  docs: loadDb(db)
+}
+
 const controller = {
   subscribeCollection: noop,
-  convertRecordTimestamps: noop
+  convertRecordTimestamps: noop,
+  getStore: () => ({
+    dispatch: noop
+  })
 }
 
 const mapTransactionsDueDates = map('dueDate')
@@ -72,7 +75,7 @@ test.after(() => {
   mockery.deregisterAll()
 })
 
-test('Check solar model', t => {
+test('Check model', t => {
   const {getAllCollections} = t.context
   const allCollections = getAllCollections(state)
   t.is(Object.keys(allCollections).length, 7)
@@ -194,6 +197,7 @@ test('Get partitions', t => {
 test.serial('Get holidays for accounts', async t => {
   const {getHolidaysForAccounts} = t.context
   const actions = []
+  const getStore = controller.getStore
   controller.getStore = () => ({
     dispatch: action => {
       actions.push(action)
@@ -214,6 +218,7 @@ test.serial('Get holidays for accounts', async t => {
   t.deepEqual(holidaysForAccounts, holidays)
   await sleep(100)
   t.is(actions.length, 1)
+  controller.getStore = getStore
 })
 
 test('Get invoices last bill', t => {
@@ -868,7 +873,7 @@ test('Expand invoice', t => {
   ])
 })
 
-test.only('Get monthly due dates', t => {
+test('Get monthly due dates', t => {
   const {getMonthlyDueDates} = t.context
   const account = {
     country: 'BR',
@@ -1080,10 +1085,16 @@ test('Expand budget', t => {
     date: '2019-01-10',
     notes: 'Health plan'
   }
-  let transactions = expandBudget('b', '2019-02-24', '2019-03-31', {
+  let transactions = expandBudget('b', '2019-02-24', '2019-04-30', {
     budget,
     holidays,
-    accounts
+    accounts,
+    invoices: {
+      ehv: {
+        budget: 'b',
+        issueDate: '2019-04-10'
+      }
+    }
   })
   // console.log(
   //   'TCL: transactions',
@@ -1215,6 +1226,115 @@ test('Expand budget', t => {
       installment: 2,
       installments: 2,
       balance: 0
+    }
+  ])
+})
+
+test('Get transactions by day', t => {
+  const localState = {...state, atlas: {holidays}}
+  const {getTransactionsByDay} = t.context
+  const transactions = getTransactionsByDay(localState, {
+    from: '2019-01-10',
+    to: '2019-01-20'
+  })
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(transactions, [
+    {
+      flow: 'out',
+      place: 'vxbJp9WfTu0',
+      notes: 'Health plan',
+      partitions: [
+        {
+          costCenter: 'eBhqeuMtrBu',
+          category: 'i7vJFZCrp1k',
+          description: 'Mine',
+          amount: -203.4
+        },
+        {
+          costCenter: 'BXE9vs32ZBA',
+          category: 'i7vJFZCrp1k',
+          description: 'My son',
+          amount: -105.42
+        }
+      ],
+      issueDate: '2019-01-10',
+      dueDate: '2019-01-10',
+      amount: -308.82,
+      account: 'CYbteYpzdA6',
+      id: 'hDnW3lo-cTTg@2019-01-10'
+    },
+    {
+      createdAt: 1547574801666,
+      updatedAt: 1547574836234,
+      flow: 'in',
+      place: 'pnyN4ivgRJL',
+      notes: 'Sold old stuff',
+      issueDate: '2019-01-14',
+      amount: 0.03,
+      dueDate: '2019-01-14',
+      payDate: '2019-01-14',
+      paidAmount: 0.03,
+      status: 'paid',
+      account: 'AHIhOdX7cxo',
+      partitions: [
+        {
+          costCenter: 'eBhqeuMtrBu',
+          category: 'Xo3z0jNPJvQ',
+          description: 'My pen',
+          amount: 0.01
+        },
+        {
+          costCenter: 'eBhqeuMtrBu',
+          category: 'Xo3z0jNPJvQ',
+          description: 'My pencil',
+          amount: 0.02
+        }
+      ],
+      id: '1hn9Vgjmpjon'
+    },
+    {
+      issuer: '-ssZsPnhWoo',
+      createdAt: 1548789013380,
+      updatedAt: 1548791898760,
+      flow: 'out',
+      issueDate: '2019-01-18',
+      amount: -2849.73,
+      dueDate: '2019-01-18',
+      payDate: '2019-01-18',
+      paidAmount: -2849.73,
+      status: 'paid',
+      account: 'pXuNLYMCZZ3',
+      id: 'LdfdmhY7wZMr',
+      partitions: [
+        {
+          costCenter: 'd4hS3Qb9E5O',
+          category: '2ASvvWRLha',
+          description: 'Canal de música',
+          amount: -16.9
+        },
+        {
+          costCenter: 'd4hS3Qb9E5O',
+          category: 'c8H31KdYqn8',
+          description: 'Faculdade',
+          amount: -232.52
+        },
+        {
+          costCenter: 'hgtbIUhE-lB',
+          category: 'c8H31KdYqn8',
+          description: 'Matrícula',
+          amount: -563
+        },
+        {
+          costCenter: 'd4hS3Qb9E5O',
+          category: 'FUv4lDrdTYL',
+          description: 'Toys',
+          amount: -89.7
+        },
+        {amount: -1947.61}
+      ]
     }
   ])
 })
