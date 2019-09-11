@@ -108,7 +108,7 @@ test('Get partitions', t => {
   const {getPartitions} = t.context
   const list = getPartitions('9', {
     '1': {
-      parcels: [{amount: 10}],
+      amount: 10,
       partitions: [
         {
           category: 'X',
@@ -121,8 +121,8 @@ test('Get partitions', t => {
       ]
     },
     '2': {
+      amount: 4,
       parcels: [
-        {amount: 4},
         {
           amount: 6,
           partitions: [
@@ -149,10 +149,10 @@ test('Get partitions', t => {
       ]
     },
     '4': {
-      parcels: [{amount: 2}],
+      amount: 2,
       billedFrom: [
         {
-          id: '2/1',
+          id: '2',
           amount: 1
         }
       ]
@@ -165,7 +165,7 @@ test('Get partitions', t => {
           description: 'first'
         },
         {
-          id: '2/2',
+          id: '2/1',
           amount: 3,
           description: 'second'
         },
@@ -511,7 +511,7 @@ test('Expand invoice', t => {
   const {expandInvoice, getAccounts} = t.context
   const invoices = {
     '1': {
-      parcels: [{amount: 10}],
+      amount: 10,
       partitions: [
         {
           category: 'X',
@@ -525,8 +525,8 @@ test('Expand invoice', t => {
       ]
     },
     '2': {
+      amount: 4,
       parcels: [
-        {amount: 4},
         {
           amount: 6,
           partitions: [
@@ -555,7 +555,8 @@ test('Expand invoice', t => {
     '3': {
       type: 'ccard',
       installments: 3,
-      parcels: [{amount: 100, payDate: '2019-07-10'}],
+      amount: 100,
+      payDate: '2019-07-10',
       partitions: [
         {
           category: 'X',
@@ -565,10 +566,10 @@ test('Expand invoice', t => {
       account: '-ssZsPnhWoo'
     },
     '4': {
-      parcels: [{amount: 1}],
+      amount: 1,
       billedFrom: [
         {
-          id: '2/1',
+          id: '2',
           amount: 1
         }
       ]
@@ -576,7 +577,8 @@ test('Expand invoice', t => {
     '5': {
       type: 'ccard',
       installments: 10,
-      parcels: [{amount: 99, payDate: '2018-07-10'}],
+      amount: 99,
+      payDate: '2018-07-10',
       partitions: [
         {
           category: 'X',
@@ -588,7 +590,8 @@ test('Expand invoice', t => {
     '6': {
       type: 'ccard',
       installments: 10,
-      parcels: [{amount: 99, payDate: '2018-07-10'}],
+      amount: 99,
+      payDate: '2018-07-10',
       partitions: [
         {
           category: 'X',
@@ -606,7 +609,7 @@ test('Expand invoice', t => {
           balance: 10
         }
       ],
-      parcels: [{amount: 9.9}]
+      amount: 9.9
     },
     '8': {
       billedFrom: [
@@ -617,7 +620,7 @@ test('Expand invoice', t => {
           balance: 10
         }
       ],
-      parcels: [{amount: 9.9}]
+      amount: 9.9
     },
     '9': {
       billedFrom: [
@@ -626,7 +629,7 @@ test('Expand invoice', t => {
           amount: 4
         },
         {
-          id: '2/2',
+          id: '2/1',
           amount: 3
         },
         {
@@ -648,8 +651,8 @@ test('Expand invoice', t => {
           description: 'extra dif'
         }
       ],
+      amount: 4,
       parcels: [
-        {amount: 4},
         {
           amount: 4.3
         }
@@ -663,7 +666,7 @@ test('Expand invoice', t => {
   t.deepEqual(list, [
     {
       amount: 4,
-      id: '9/1',
+      id: '9',
       partitions: [
         {category: 'X', description: 'category X', amount: 0.38},
         {category: 'Y', amount: 1.52},
@@ -681,7 +684,7 @@ test('Expand invoice', t => {
     },
     {
       amount: 4.3,
-      id: '9/2',
+      id: '9/1',
       partitions: [
         {category: 'X', description: 'category X', amount: 0.41},
         {category: 'Y', amount: 1.64},
@@ -719,7 +722,7 @@ test('Expand invoice', t => {
         {category: 'B', amount: 3.2}
       ],
       amount: 4,
-      id: '2/1'
+      id: '2'
     },
     {
       partitions: [
@@ -727,7 +730,7 @@ test('Expand invoice', t => {
         {category: 'C', amount: 5}
       ],
       amount: 6,
-      id: '2/2'
+      id: '2/1'
     }
   ])
   list = expandInvoice('1', {invoices})
@@ -757,39 +760,45 @@ test('Expand invoice', t => {
       id: '3'
     },
     {
+      id: '3@2019-07-31',
       billedFrom: '3',
       type: 'ccardBill',
       amount: 33.33,
       status: 'draft',
       issueDate: '2019-07-31',
       dueDate: '2019-07-31',
-      account: '-ssZsPnhWoo',
+      account: 'AHIhOdX7cxo',
+      issuer: '-ssZsPnhWoo',
       partitions: [{category: 'X', amount: 33.33}],
       installment: 1,
       installments: 3,
       balance: 66.67
     },
     {
+      id: '3@2019-08-31',
       billedFrom: '3',
       type: 'ccardBill',
       amount: 33.33,
       status: 'draft',
       issueDate: '2019-08-31',
       dueDate: '2019-09-02',
-      account: '-ssZsPnhWoo',
+      account: 'AHIhOdX7cxo',
+      issuer: '-ssZsPnhWoo',
       partitions: [{category: 'X', amount: 33.33}],
       installment: 2,
       installments: 3,
       balance: 33.34
     },
     {
+      id: '3@2019-09-30',
       billedFrom: '3',
       type: 'ccardBill',
       amount: 33.34,
       status: 'draft',
       issueDate: '2019-09-30',
       dueDate: '2019-09-30',
-      account: '-ssZsPnhWoo',
+      account: 'AHIhOdX7cxo',
+      issuer: '-ssZsPnhWoo',
       partitions: [{category: 'X', amount: 33.34}],
       installment: 3,
       installments: 3,
@@ -810,26 +819,30 @@ test('Expand invoice', t => {
       id: '5'
     },
     {
+      id: '5@2019-03-31',
       billedFrom: '5',
       type: 'ccardBill',
       amount: 5,
       status: 'draft',
       issueDate: '2019-03-31',
       dueDate: '2019-04-01',
-      account: '-ssZsPnhWoo',
+      account: 'AHIhOdX7cxo',
+      issuer: '-ssZsPnhWoo',
       partitions: [{category: 'X', amount: 5}],
       installment: 9,
       installments: 10,
       balance: 5
     },
     {
+      id: '5@2019-04-30',
       billedFrom: '5',
       type: 'ccardBill',
       amount: 5,
       status: 'draft',
       issueDate: '2019-04-30',
       dueDate: '2019-04-30',
-      account: '-ssZsPnhWoo',
+      account: 'AHIhOdX7cxo',
+      issuer: '-ssZsPnhWoo',
       partitions: [{category: 'X', amount: 5}],
       installment: 10,
       installments: 10,
@@ -1037,7 +1050,8 @@ test('Expand budget', t => {
       state: 'MG',
       city: 'Belo Horizonte',
       dueDay: 8,
-      bestDay: 25
+      bestDay: 25,
+      payAccount: '1'
     }
   }
   const budget = {
@@ -1099,26 +1113,106 @@ test('Expand budget', t => {
       id: 'b@2019-03-08'
     }
   ])
-  // toBeContinued...
-  // dueDates = expandBudget('2019-11-20', '2019-12-30', {
-  //   dayOfWeek: 2,
-  //   onlyInBusinessDays: 'previous',
-  //   startedAt: '2019-11-20',
-  //   interval: 3,
-  //   holidays,
-  //   account
-  // })
-  // // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  // t.deepEqual(dueDates, ['2019-12-10', '2019-12-30'])
 
-  // dueDates = expandBudget('2019-02-24', '2019-03-31', {
-  //   dayOfWeek: 1,
-  //   onlyInBusinessDays: 'next',
-  //   startedAt: '2018-12-30',
-  //   interval: 2,
-  //   holidays,
-  //   account
-  // })
-  // // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  // t.deepEqual(dueDates, ['2019-03-06', '2019-03-18'])
+  budget.reviews = [
+    {
+      date: '2019-02-10',
+      installments: 2,
+      account: '2'
+    }
+  ]
+  transactions = expandBudget('b', '2019-02-24', '2019-03-31', {
+    budget,
+    holidays,
+    accounts
+  })
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(transactions, [
+    {
+      flow: 'out',
+      place: 'vxbJp9WfTu0',
+      notes: 'Health plan',
+      partitions: [
+        {
+          costCenter: 'A',
+          category: 'a',
+          description: 'Mine',
+          amount: -203.4
+        },
+        {
+          costCenter: 'B',
+          category: 'b',
+          description: 'My son',
+          amount: -105.42
+        }
+      ],
+      issueDate: '2019-03-08',
+      type: 'ccard',
+      installments: 2,
+      payDate: '2019-03-08',
+      dueDate: '2019-03-08',
+      amount: -308.82,
+      account: '2',
+      id: 'b@2019-03-08'
+    },
+    {
+      id: 'b@2019-03-08@2019-04-08',
+      billedFrom: 'b@2019-03-08',
+      type: 'ccardBill',
+      amount: -154.41,
+      status: 'draft',
+      issueDate: '2019-04-08',
+      dueDate: '2019-04-08',
+      issuer: '2',
+      account: '1',
+      partitions: [
+        {
+          costCenter: 'A',
+          category: 'a',
+          description: 'Mine',
+          amount: -101.7
+        },
+        {
+          costCenter: 'B',
+          category: 'b',
+          description: 'My son',
+          amount: -52.71
+        }
+      ],
+      installment: 1,
+      installments: 2,
+      balance: -154.41
+    },
+    {
+      id: 'b@2019-03-08@2019-05-08',
+      billedFrom: 'b@2019-03-08',
+      type: 'ccardBill',
+      amount: -154.41,
+      status: 'draft',
+      issueDate: '2019-05-08',
+      dueDate: '2019-05-08',
+      issuer: '2',
+      account: '1',
+      partitions: [
+        {
+          costCenter: 'A',
+          category: 'a',
+          description: 'Mine',
+          amount: -101.7
+        },
+        {
+          costCenter: 'B',
+          category: 'b',
+          description: 'My son',
+          amount: -52.71
+        }
+      ],
+      installment: 2,
+      installments: 2,
+      balance: 0
+    }
+  ])
 })

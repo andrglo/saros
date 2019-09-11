@@ -6,16 +6,12 @@
     "place": "pnyN4ivgRJL",
     "notes": "Sold old stuff",
     "issueDate": "2019-01-14",
-    "parcels": [
-      {
-        "amount": 0.03,
-        "dueDate": "2019-01-14",
-        "payDate": "2019-01-14",
-        "paidAmount": 0.03,
-        "status": "paid",
-        "account": "AHIhOdX7cxo"
-      }
-    ],
+    "amount": 0.03,
+    "dueDate": "2019-01-14",
+    "payDate": "2019-01-14",
+    "paidAmount": 0.03,
+    "status": "paid",
+    "account": "AHIhOdX7cxo",
     "partitions": [
       {
         "costCenter": "eBhqeuMtrBu",
@@ -38,14 +34,12 @@
     "place": "plVeVNFlY6M",
     "issueDate": "2019-07-03",
     "account": "AHIhOdX7cxo",
+    "amount": -1000,
+    "dueDate": "2019-07-03",
+    "payDate": "2019-07-03",
+    "paidAmount": -1000,
+    "status": "paid",
     "parcels": [
-      {
-        "amount": -1000,
-        "dueDate": "2019-07-03",
-        "payDate": "2019-07-03",
-        "paidAmount": -1000,
-        "status": "paid"
-      },
       {
         "amount": -1000,
         "dueDate": "2019-08-03",
@@ -82,21 +76,17 @@
     "place": "0VZ7Torc4p5",
     "notes": "Full HD 55 inches",
     "issueDate": "2019-01-01",
-    "parcels": [
-     {
-      "amount": -1728,
-      "dueDate": "2019-01-01",
-      "status": "billed",
-      "account": "zi1OhUwoLhA"
-     }
-    ],
+    "amount": -1728,
+    "dueDate": "2019-01-01",
+    "status": "billed",
+    "account": "zi1OhUwoLhA",
     "partitions": [
-     {
-      "costCenter": "eBhqeuMtrBu",
-      "category": "InYNor0Si",
-      "description": "TV",
-      "amount": -1728
-     }
+      {
+        "costCenter": "eBhqeuMtrBu",
+        "category": "InYNor0Si",
+        "description": "TV",
+        "amount": -1728
+      }
     ],
     "type": "ccard"
   },
@@ -106,138 +96,118 @@
     "updatedAt": "2019-01-29T19:58:18.760Z",
     "flow": "out",
     "issueDate": "2019-01-18",
-    "parcels": [
-     {
-      "amount": -2849.73,
-      "dueDate": "2019-01-18",
-      "payDate": "2019-01-18",
-      "paidAmount": -2849.73,
-      "status": "paid",
-      "account": "pXuNLYMCZZ3"
-     }
-    ],
+    "amount": -2849.73,
+    "dueDate": "2019-01-18",
+    "payDate": "2019-01-18",
+    "paidAmount": -2849.73,
+    "status": "paid",
+    "account": "pXuNLYMCZZ3",
     "billedFrom": [
-     {
-      "id": "ai8H2bFxt4jv",
-      "doc": {
-       "createdAt": "2019-01-16T22:41:16.264Z",
-       "updatedAt": "2019-01-16T22:41:16.264Z",
-       "flow": "out",
-       "place": "_2tXMQjXzGF",
-       "budget": "mjtC89p_hGOX",
-       "issueDate": "2018-12-26",
-       "parcels": [
-        {
-         "amount": -16.9,
-         "dueDate": "2018-12-26",
-         "status": "billed",
-         "account": "aCnwNryvhfp"
-        }
-       ],
-       "partitions": [
-        {
-         "costCenter": "d4hS3Qb9E5O",
-         "category": "2ASvvWRLha",
-         "description": "Canal de música",
-         "amount": -16.9
-        }
-       ],
-       "type": "ccard"
+      {
+        "id": "ai8H2bFxt4jv",
+        "doc": {
+          "createdAt": "2019-01-16T22:41:16.264Z",
+          "updatedAt": "2019-01-16T22:41:16.264Z",
+          "flow": "out",
+          "place": "_2tXMQjXzGF",
+          "budget": "mjtC89p_hGOX",
+          "issueDate": "2018-12-26",
+          "amount": -16.9,
+          "dueDate": "2018-12-26",
+          "status": "billed",
+          "account": "aCnwNryvhfp",
+          "partitions": [
+            {
+              "costCenter": "d4hS3Qb9E5O",
+              "category": "2ASvvWRLha",
+              "description": "Canal de música",
+              "amount": -16.9
+            }
+          ],
+          "type": "ccard"
+        },
+        "amount": -16.9
       },
-      "amount": -16.9
-     },
-     {
-      "id": "6zzwHBvMRmmm",
-      "doc": {
-       "installments": 2,
-       "createdAt": "2019-01-16T19:25:32.506Z",
-       "updatedAt": "2019-01-16T19:28:10.364Z",
-       "flow": "out",
-       "place": "mhTFuBW6d9b",
-       "issueDate": "2019-01-01",
-       "parcels": [
-        {
-         "amount": -465.04,
-         "dueDate": "2019-01-01",
-         "status": "billed",
-         "account": "aCnwNryvhfp"
-        }
-       ],
-       "partitions": [
-        {
-         "costCenter": "d4hS3Qb9E5O",
-         "category": "c8H31KdYqn8",
-         "description": "Faculdade",
-         "amount": -465.04
-        }
-       ],
-       "type": "ccard"
+      {
+        "id": "6zzwHBvMRmmm",
+        "doc": {
+          "installments": 2,
+          "createdAt": "2019-01-16T19:25:32.506Z",
+          "updatedAt": "2019-01-16T19:28:10.364Z",
+          "flow": "out",
+          "place": "mhTFuBW6d9b",
+          "issueDate": "2019-01-01",
+          "amount": -465.04,
+          "dueDate": "2019-01-01",
+          "status": "billed",
+          "account": "aCnwNryvhfp",
+          "partitions": [
+            {
+              "costCenter": "d4hS3Qb9E5O",
+              "category": "c8H31KdYqn8",
+              "description": "Faculdade",
+              "amount": -465.04
+            }
+          ],
+          "type": "ccard"
+        },
+        "installment": 1,
+        "amount": -232.52,
+        "balance": -232.52
       },
-      "installment": 1,
-      "amount": -232.52,
-      "balance": -232.52
-     },
-     {
-      "id": "XrE2xUBgkjPj",
-      "doc": {
-       "installments": 1,
-       "createdAt": "2019-01-16T19:26:42.090Z",
-       "updatedAt": "2019-01-16T19:28:28.345Z",
-       "flow": "out",
-       "place": "o54UPfFU45S",
-       "issueDate": "2019-01-01",
-       "parcels": [
-        {
-         "amount": -563,
-         "dueDate": "2019-01-01",
-         "status": "billed",
-         "account": "aCnwNryvhfp"
-        }
-       ],
-       "partitions": [
-        {
-         "costCenter": "hgtbIUhE-lB",
-         "category": "c8H31KdYqn8",
-         "description": "Matrícula",
-         "amount": -563
-        }
-       ],
-       "type": "ccard"
+      {
+        "id": "XrE2xUBgkjPj",
+        "doc": {
+          "installments": 1,
+          "createdAt": "2019-01-16T19:26:42.090Z",
+          "updatedAt": "2019-01-16T19:28:28.345Z",
+          "flow": "out",
+          "place": "o54UPfFU45S",
+          "issueDate": "2019-01-01",
+          "amount": -563,
+          "dueDate": "2019-01-01",
+          "status": "billed",
+          "account": "aCnwNryvhfp",
+          "partitions": [
+            {
+              "costCenter": "hgtbIUhE-lB",
+              "category": "c8H31KdYqn8",
+              "description": "Matrícula",
+              "amount": -563
+            }
+          ],
+          "type": "ccard"
+        },
+        "amount": -563
       },
-      "amount": -563
-     },
-     {
-      "id": "tjuWBgnG42Rd",
-      "doc": {
-       "installments": 1,
-       "createdAt": "2019-01-16T19:28:55.256Z",
-       "updatedAt": "2019-01-16T19:30:58.003Z",
-       "flow": "out",
-       "place": "9T0DnXGXs4d",
-       "issueDate": "2019-01-01",
-       "parcels": [
-        {
-         "amount": -89.7,
-         "dueDate": "2019-01-01",
-         "status": "billed",
-         "account": "aCnwNryvhfp"
-        }
-       ],
-       "partitions": [
-        {
-         "costCenter": "d4hS3Qb9E5O",
-         "category": "FUv4lDrdTYL",
-         "description": "Toys",
-         "amount": -89.7
-        }
-       ],
-       "type": "ccard"
+      {
+        "id": "tjuWBgnG42Rd",
+        "doc": {
+          "installments": 1,
+          "createdAt": "2019-01-16T19:28:55.256Z",
+          "updatedAt": "2019-01-16T19:30:58.003Z",
+          "flow": "out",
+          "place": "9T0DnXGXs4d",
+          "issueDate": "2019-01-01",
+          "amount": -89.7,
+          "dueDate": "2019-01-01",
+          "status": "billed",
+          "account": "aCnwNryvhfp",
+          "partitions": [
+            {
+              "costCenter": "d4hS3Qb9E5O",
+              "category": "FUv4lDrdTYL",
+              "description": "Toys",
+              "amount": -89.7
+            }
+          ],
+          "type": "ccard"
+        },
+        "amount": -89.7
       },
-      "amount": -89.7
-     },
-     {
-      "amount": -1947.61
-     }
+      {
+        "amount": -1947.61
+      }
     ]
   }
 }

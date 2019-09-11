@@ -155,7 +155,8 @@ export const areAllCollectionsReady = allCollections => {
 export const getTotal = recordset =>
   round(sumBy(recordset, 'amount'), 2)
 
-export const getInvoiceTotal = ({parcels}) => getTotal(parcels)
+export const getInvoiceTotal = ({amount = 0, parcels = []}) =>
+  getTotal([{amount}, ...parcels])
 
 export const redistributeAmount = (partitions, newAmount) => {
   const total = getTotal(partitions)
@@ -308,9 +309,10 @@ export const getRemainingPaymentsForCreditcard = ({
     return getIssueDate(addMonths(getFirstPayment(), installment - 1))
   }
 
+  const payAccount = accounts[transaction.payAccount] || account
   const getDueDate = issueDate => {
     let dueDate = issueDate
-    while (!isBusinessDay(dueDate, account, holidays)) {
+    while (!isBusinessDay(dueDate, payAccount, holidays)) {
       dueDate = addDays(dueDate, 1)
     }
     return dueDate
@@ -341,13 +343,15 @@ export const getRemainingPaymentsForCreditcard = ({
     balance = round(balance - amount, 2)
     const issueDate = getInstallmentIssueDate(installment)
     payments.push({
+      id: `${transaction.id}@${issueDate}`,
       billedFrom: transaction.id,
       type: 'ccardBill',
       amount,
       status: 'draft',
       issueDate,
       dueDate: getDueDate(issueDate),
-      account: transaction.account,
+      account: account.payAccount || transaction.account,
+      issuer: transaction.account,
       partitions: redistributeAmount(transaction.partitions, amount),
       installment,
       installments,
@@ -359,21 +363,9 @@ export const getRemainingPaymentsForCreditcard = ({
 
 export const expandInvoice = (id, {invoices, holidays, accounts}) => {
   let transactions = []
-  const {parcels, billedFrom, ...invoice} = invoices[id]
-  for (const [parcelIndex, parcel] of parcels.entries()) {
-    let partitions = parcel.partitions || invoice.partitions
-    if (!partitions) {
-      partitions = getPartitions(id, invoices)
-    }
-    const transaction = {
-      ...invoice,
-      ...parcel,
-      id: `${id}${parcels.length > 1 ? `/${parcelIndex + 1}` : ''}`,
-      partitions: redistributeAmount(
-        partitions,
-        parcel.paidAmount || parcel.amount
-      )
-    }
+  const {parcels = [], billedFrom, ...invoice} = invoices[id]
+
+  const addTransaction = transaction => {
     transactions.push(transaction)
     if (transaction.type === 'ccard') {
       transactions = [
@@ -386,6 +378,31 @@ export const expandInvoice = (id, {invoices, holidays, accounts}) => {
         })
       ]
     }
+  }
+
+  let partitions = invoice.partitions
+  if (!partitions) {
+    partitions = getPartitions(id, invoices)
+  }
+  addTransaction({
+    ...invoice,
+    id,
+    partitions: redistributeAmount(
+      partitions,
+      invoice.paidAmount || invoice.amount
+    )
+  })
+  for (const [parcelIndex, parcel] of parcels.entries()) {
+    partitions = parcel.partitions || partitions
+    addTransaction({
+      ...invoice,
+      ...parcel,
+      id: `${id}/${parcelIndex + 1}`,
+      partitions: redistributeAmount(
+        partitions,
+        parcel.paidAmount || parcel.amount
+      )
+    })
   }
   return transactions
 }
@@ -574,10 +591,13 @@ export const expandBudget = (
         notes: review.notes,
         partitions: review.partitions,
         issueDate: dueDate,
-        parcels: [{dueDate, amount, account: review.account}]
+        dueDate,
+        amount,
+        account: review.account
       }
       if (account.type === 'creditcard') {
         invoice.type = 'ccard'
+        invoice.payDate = invoice.issueDate
         if (review.installments) {
           invoice.installments = review.installments
         }
