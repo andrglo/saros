@@ -447,7 +447,7 @@ export const getMonthlyDueDates = (
       account
     })
     if (dueDate >= from && dueDate <= to) {
-      dueDates.push(dueDate)
+      dueDates.push([date, dueDate])
     }
     date = extractYearMonth(addMonths(date, interval))
   }
@@ -482,7 +482,7 @@ export const getYearlyDueDates = (
         account
       })
       if (dueDate >= from && dueDate <= to) {
-        dueDates.push(dueDate)
+        dueDates.push([date, dueDate])
       }
     }
     year += interval
@@ -516,7 +516,7 @@ export const getWeeklyDueDates = (
       account
     })
     if (dueDate >= from && dueDate <= to) {
-      dueDates.push(dueDate)
+      dueDates.push([date, dueDate])
     }
     date = addWeeks(date, interval)
   }
@@ -574,7 +574,7 @@ export const expandBudget = (
         f = getYearlyDueDates
         break
       default:
-        f = () => [endedAt]
+        f = () => [endedAt, endedAt]
     }
     const dueDates = f(startsAt, endsAt, {
       ...budget,
@@ -582,22 +582,22 @@ export const expandBudget = (
       account,
       startedAt
     })
-    for (const dueDate of dueDates) {
-      const invoiceId = `${id}@${dueDate}`
+    for (const [date, dueDate] of dueDates) {
+      const invoiceId = `${id}@${date}`
       const amount = getTotal(review.partitions)
       const invoice = {
         flow: review.flow,
         place: review.place,
         notes: review.notes,
         partitions: review.partitions,
-        issueDate: dueDate,
+        issueDate: date,
         dueDate,
         amount,
         account: review.account
       }
       if (account.type === 'creditcard') {
         invoice.type = 'ccard'
-        invoice.payDate = invoice.issueDate
+        invoice.payDate = invoice.dueDate
         if (review.installments) {
           invoice.installments = review.installments
         }

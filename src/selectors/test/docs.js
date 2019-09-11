@@ -51,6 +51,9 @@ const controller = {
   convertRecordTimestamps: noop
 }
 
+const mapTransactionsDueDates = map('dueDate')
+const mapDueDates = map('1')
+
 test.before(async t => {
   mockery.enable({warnOnUnregistered: false})
   mockery.registerMock('../controller', controller)
@@ -337,8 +340,6 @@ test('Get remaining payments for credit cards', t => {
   ])
   t.is(round(sumBy(remainingPayments, 'amount'), 2), total)
 
-  const mapDueDates = map('dueDate')
-
   accounts['1'] = {
     bestDay: 10,
     dueDay: 20,
@@ -364,7 +365,7 @@ test('Get remaining payments for credit cards', t => {
     invoicesLastBill
   })
 
-  t.deepEqual(mapDueDates(remainingPayments), [
+  t.deepEqual(mapTransactionsDueDates(remainingPayments), [
     '2018-11-21',
     '2018-12-20',
     '2019-01-21',
@@ -400,7 +401,7 @@ test('Get remaining payments for credit cards', t => {
     invoicesLastBill
   })
 
-  t.deepEqual(mapDueDates(remainingPayments), [
+  t.deepEqual(mapTransactionsDueDates(remainingPayments), [
     '2019-01-31',
     '2019-02-28',
     '2019-04-01'
@@ -423,7 +424,7 @@ test('Get remaining payments for credit cards', t => {
     holidays,
     invoicesLastBill
   })
-  t.deepEqual(mapDueDates(remainingPayments), [
+  t.deepEqual(mapTransactionsDueDates(remainingPayments), [
     '2019-02-28',
     '2019-04-01',
     '2019-04-30'
@@ -453,7 +454,7 @@ test('Get remaining payments for credit cards', t => {
     holidays,
     invoicesLastBill
   })
-  t.deepEqual(mapDueDates(remainingPayments), [
+  t.deepEqual(mapTransactionsDueDates(remainingPayments), [
     '2019-01-08',
     '2019-02-08',
     '2019-03-08'
@@ -475,7 +476,7 @@ test('Get remaining payments for credit cards', t => {
     holidays,
     invoicesLastBill
   })
-  t.deepEqual(mapDueDates(remainingPayments), [
+  t.deepEqual(mapTransactionsDueDates(remainingPayments), [
     '2019-02-08',
     '2019-03-08',
     '2019-04-08'
@@ -504,7 +505,9 @@ test('Get remaining payments for credit cards', t => {
     holidays,
     invoicesLastBill
   })
-  t.deepEqual(mapDueDates(remainingPayments), ['2019-03-08'])
+  t.deepEqual(mapTransactionsDueDates(remainingPayments), [
+    '2019-03-08'
+  ])
 })
 
 test('Expand invoice', t => {
@@ -865,7 +868,7 @@ test('Expand invoice', t => {
   ])
 })
 
-test('Get monthly due dates', t => {
+test.only('Get monthly due dates', t => {
   const {getMonthlyDueDates} = t.context
   const account = {
     country: 'BR',
@@ -878,19 +881,20 @@ test('Get monthly due dates', t => {
     holidays,
     account
   })
+  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(dueDates, [
-    '2019-01-31',
-    '2019-02-28',
-    '2019-03-29',
-    '2019-04-30',
-    '2019-05-31',
-    '2019-06-28',
-    '2019-07-31',
-    '2019-08-30',
-    '2019-09-30',
-    '2019-10-31',
-    '2019-11-29',
-    '2019-12-30'
+    ['2019-01-31', '2019-01-31'],
+    ['2019-02-28', '2019-02-28'],
+    ['2019-03-31', '2019-03-29'],
+    ['2019-04-30', '2019-04-30'],
+    ['2019-05-31', '2019-05-31'],
+    ['2019-06-30', '2019-06-28'],
+    ['2019-07-31', '2019-07-31'],
+    ['2019-08-31', '2019-08-30'],
+    ['2019-09-30', '2019-09-30'],
+    ['2019-10-31', '2019-10-31'],
+    ['2019-11-30', '2019-11-29'],
+    ['2019-12-31', '2019-12-30']
   ])
 
   dueDates = getMonthlyDueDates('2019-09-02', '2019-10-31', {
@@ -899,7 +903,7 @@ test('Get monthly due dates', t => {
     holidays,
     account
   })
-  t.deepEqual(dueDates, ['2019-09-02', '2019-10-01'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-09-02', '2019-10-01'])
 
   dueDates = getMonthlyDueDates('2019-10-01', '2019-12-31', {
     dayOfMonth: 1,
@@ -909,8 +913,7 @@ test('Get monthly due dates', t => {
     interval: 3,
     account
   })
-  console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-10-01', '2019-12-30'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-10-01', '2019-12-30'])
 
   dueDates = getMonthlyDueDates('2020-01-02', '2020-03-31', {
     dayOfMonth: 31,
@@ -920,8 +923,7 @@ test('Get monthly due dates', t => {
     interval: 2,
     account
   })
-  // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2020-01-31', '2020-03-31'])
+  t.deepEqual(mapDueDates(dueDates), ['2020-01-31', '2020-03-31'])
 })
 
 test('Get yearly due dates', t => {
@@ -938,7 +940,7 @@ test('Get yearly due dates', t => {
     holidays,
     account
   })
-  t.deepEqual(dueDates, [
+  t.deepEqual(mapDueDates(dueDates), [
     '2019-01-31',
     '2019-02-28',
     '2019-03-29',
@@ -960,7 +962,7 @@ test('Get yearly due dates', t => {
     holidays,
     account
   })
-  t.deepEqual(dueDates, ['2019-09-02', '2019-10-01'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-09-02', '2019-10-01'])
 
   dueDates = getYearlyDueDates('2019-10-01', '2019-12-31', {
     dayOfMonth: 1,
@@ -970,7 +972,7 @@ test('Get yearly due dates', t => {
     account
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-11-29'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-11-29'])
 
   dueDates = getYearlyDueDates('2019-10-01', '2021-12-31', {
     dayOfMonth: 1,
@@ -982,7 +984,7 @@ test('Get yearly due dates', t => {
     account
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-10-01', '2021-12-30'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-10-01', '2021-12-30'])
   dueDates = getYearlyDueDates('2019-10-01', '2021-12-31', {
     dayOfMonth: 1,
     onlyInBusinessDays: 'previous',
@@ -993,7 +995,7 @@ test('Get yearly due dates', t => {
     account
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-10-01', '2021-12-30'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-10-01', '2021-12-30'])
 })
 
 test('Get weekly due dates', t => {
@@ -1011,7 +1013,7 @@ test('Get weekly due dates', t => {
     account
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-03-06', '2019-03-18'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-03-06', '2019-03-18'])
 
   dueDates = getWeeklyDueDates('2019-11-20', '2019-12-30', {
     dayOfWeek: 2,
@@ -1022,7 +1024,7 @@ test('Get weekly due dates', t => {
     account
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-12-10', '2019-12-30'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-12-10', '2019-12-30'])
 
   dueDates = getWeeklyDueDates('2019-02-24', '2019-03-31', {
     dayOfWeek: 1,
@@ -1033,7 +1035,7 @@ test('Get weekly due dates', t => {
     account
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
-  t.deepEqual(dueDates, ['2019-03-06', '2019-03-18'])
+  t.deepEqual(mapDueDates(dueDates), ['2019-03-06', '2019-03-18'])
 })
 
 test('Expand budget', t => {
@@ -1106,11 +1108,11 @@ test('Expand budget', t => {
           amount: -105.42
         }
       ],
-      issueDate: '2019-03-08',
+      issueDate: '2019-03-10',
       dueDate: '2019-03-08',
       amount: -308.82,
       account: '1',
-      id: 'b@2019-03-08'
+      id: 'b@2019-03-10'
     }
   ])
 
@@ -1149,18 +1151,18 @@ test('Expand budget', t => {
           amount: -105.42
         }
       ],
-      issueDate: '2019-03-08',
+      issueDate: '2019-03-10',
       type: 'ccard',
       installments: 2,
       payDate: '2019-03-08',
       dueDate: '2019-03-08',
       amount: -308.82,
       account: '2',
-      id: 'b@2019-03-08'
+      id: 'b@2019-03-10'
     },
     {
-      id: 'b@2019-03-08@2019-04-08',
-      billedFrom: 'b@2019-03-08',
+      id: 'b@2019-03-10@2019-04-08',
+      billedFrom: 'b@2019-03-10',
       type: 'ccardBill',
       amount: -154.41,
       status: 'draft',
@@ -1187,8 +1189,8 @@ test('Expand budget', t => {
       balance: -154.41
     },
     {
-      id: 'b@2019-03-08@2019-05-08',
-      billedFrom: 'b@2019-03-08',
+      id: 'b@2019-03-10@2019-05-08',
+      billedFrom: 'b@2019-03-10',
       type: 'ccardBill',
       amount: -154.41,
       status: 'draft',
