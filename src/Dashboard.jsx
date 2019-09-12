@@ -5,13 +5,15 @@ import {connect} from 'react-redux'
 import debug from 'debug'
 
 import TransactionPanel from './components/TransactionPanel'
-import {startOfMonth, today} from './lib/date'
+import {startOfMonth, getCurrentDate} from './lib/date'
 
 const log = debug('dashboard')
 
 const Dashboard = props => {
   log('render', props)
-  return <TransactionPanel from={startOfMonth()} to={today()} />
+  return (
+    <TransactionPanel from={startOfMonth()} to={getCurrentDate()} />
+  )
 }
 
 Dashboard.propTypes = {}

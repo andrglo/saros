@@ -4,11 +4,12 @@ import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
 
+// eslint-disable-next-line no-unused-vars
 const log = debug('transaction:view')
 
 const TransactionView = props => {
   const {dispatch, transaction, className, ...rest} = props
-  log('render', props)
+  // log('render', props)
   return (
     <div
       {...rest}

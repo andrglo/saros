@@ -6,11 +6,12 @@ import debug from 'debug'
 
 import TransactionView from './TransactionView'
 
+// eslint-disable-next-line no-unused-vars
 const log = debug('transaction:list')
 
 const TransactionList = props => {
   const {dispatch, transactions, className, ...rest} = props
-  log('render', props)
+  // log('render', props)
   return (
     <ul {...rest} className={cn('bg-blue-800', className)}>
       {transactions.map(transaction => {
