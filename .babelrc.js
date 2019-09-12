@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['@babel/plugin-syntax-dynamic-import'],
+  plugins: ['@babel/plugin-syntax-dynamic-import', 'codegen'],
   presets: ['@babel/preset-react'],
   env: {
     development: {plugins: ['react-hot-loader/babel']},

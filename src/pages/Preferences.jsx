@@ -8,7 +8,7 @@ import SmartInput from '../components/SmartInput'
 import {getTheme, getLocale} from '../selectors/app'
 import {setTheme, setLocale} from '../reducers/app'
 import {locales} from '../../saros.config'
-import themes from '../loaders/themes!'
+import themes from '../loaders/themes'
 
 const log = debug('preferences')
 

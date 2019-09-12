@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 
-import {version, revision} from '../loaders/version!'
+import {version, revision} from '../loaders/version'
 import t from '../lib/translate'
 
 const Version = props => {
