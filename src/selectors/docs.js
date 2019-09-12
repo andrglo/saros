@@ -6,6 +6,8 @@ import {
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
 import round from 'lodash/round'
+import debug from 'debug'
+
 import {
   subscribeCollection,
   convertRecordTimestamps
@@ -15,7 +17,7 @@ import {
   toYearMonth,
   addMonths,
   extractYearMonth,
-  today,
+  getCurrentDate,
   getLengthOfMonth,
   setDayOfMonth,
   addDays,
@@ -24,11 +26,15 @@ import {
   setDayOfWeek,
   addWeeks,
   getMonthsUntil,
-  getWeeksUntil
+  getWeeksUntil,
+  getCurrentMonth
 } from '../lib/date'
 import {getHolidays, loadHolidays, isBusinessDay} from './atlas'
 
-const MONTH_SPAN_TO_BE_CACHED = 3
+// eslint-disable-next-line no-unused-vars
+const log = debug('selectors:docs')
+
+const PREVIOUS_MONTHS_TO_BE_CACHED = 3
 
 export const getCollection = (state, options) => {
   const {collection, ...rest} = options
@@ -55,11 +61,16 @@ const transformDataToOptions = labelKey => data => {
   return options
 }
 
-const getMonthSpan = memoize((from, to) => {
-  to = toYearMonth(to)
-  from = from
-    ? toYearMonth(from)
-    : addMonths(to, -(MONTH_SPAN_TO_BE_CACHED - 1))
+const getMonthSpan = memoize((from, to, currentMonth) => {
+  to = (to && toYearMonth(to)) || currentMonth
+  if (to > currentMonth) {
+    to = currentMonth
+  }
+  from = (from && toYearMonth(from)) || currentMonth
+  if (from > currentMonth) {
+    from = currentMonth
+  }
+  from = addMonths(from, -PREVIOUS_MONTHS_TO_BE_CACHED)
   const monthSpan = ['*']
   while (from <= to) {
     monthSpan.push(extractYearMonth(from))
@@ -95,7 +106,7 @@ export const getInvoices = (state, {from, to} = {}) =>
   getCollection(state, {
     collection: `dbs/${getDb(state)}/invoices`,
     transform: invoiceTransform,
-    monthSpan: getMonthSpan(from, to)
+    monthSpan: getMonthSpan(from, to, getCurrentMonth())
   })
 
 export const getBudgets = state =>
@@ -185,6 +196,14 @@ export const getHolidaysForAccounts = createSelector(
   getHolidays,
   getAccounts,
   (holidays, accounts) => {
+    if (
+      !areAllCollectionsReady({
+        accounts,
+        holidays
+      })
+    ) {
+      return {}
+    }
     const toBeLoaded = []
     for (const id of Object.keys(accounts)) {
       const account = accounts[id]
@@ -693,7 +712,7 @@ export const getTransfersTransactions = createSelector(
 
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
-    from: (state, {from} = {}) => from || today(),
+    from: (state, {from} = {}) => from || getCurrentDate(),
     to: (state, {to} = {}) => to,
     invoicesTransactions: getInvoicesTransactions,
     transfersTransactions: getTransfersTransactions,
@@ -735,7 +754,7 @@ export const getTransactionsByDay = createSelector(
         })
       ]
     }
-    const result = []
+    let result = []
     for (const transaction of [
       ...invoicesTransactions,
       ...transfersTransactions,
@@ -753,6 +772,8 @@ export const getTransactionsByDay = createSelector(
         result.push(transaction)
       }
     }
-    return sortBy(result, ['dueDate', 'createdAt'])
+    result = sortBy(result, ['dueDate', 'createdAt'])
+    log('getTransactionsByDay result', result)
+    return result
   }
 )
