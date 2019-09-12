@@ -11,7 +11,8 @@ import easter from 'date-easter'
 export const isYearMonth = date => date && date.length === 7
 export const extractYearMonth = date => date && date.substring(0, 7)
 export const extractYear = date => date && date.substring(0, 4)
-export const today = () => LocalDate.now().toString()
+export const getCurrentDate = () => LocalDate.now().toString()
+export const getCurrentMonth = () => YearMonth.now().toString()
 
 export const toYearMonth = date => {
   let result
@@ -31,7 +32,7 @@ export const toYearMonth = date => {
 
 export const addMonths = (date, months) => {
   try {
-    date = date || today()
+    date = date || getCurrentDate()
     if (isYearMonth(date)) {
       date = YearMonth.parse(date)
         .plusMonths(months)
@@ -49,7 +50,7 @@ export const addMonths = (date, months) => {
 
 export const addDays = (date, days) => {
   try {
-    date = date || today()
+    date = date || getCurrentDate()
     date = LocalDate.parse(date)
       .plusDays(days)
       .toString()
@@ -61,7 +62,7 @@ export const addDays = (date, days) => {
 
 export const addWeeks = (date, weeks) => {
   try {
-    date = date || today()
+    date = date || getCurrentDate()
     date = LocalDate.parse(date)
       .plusWeeks(weeks)
       .toString()
