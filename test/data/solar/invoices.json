@@ -25,6 +25,9 @@
         "description": "My pencil",
         "amount": 0.02
       }
+    ],
+    "monthSpan": [
+      "2019-01"
     ]
   },
   "BFMTePgome85": {
@@ -67,6 +70,10 @@
         "amount": -1000
       }
     ]
+    ,
+    "monthSpan": [
+      "*"
+    ]
   },
   "RIo6Y1IwJO9": {
     "installments": 9,
@@ -88,7 +95,10 @@
         "amount": -1728
       }
     ],
-    "type": "ccard"
+    "type": "ccard",
+    "monthSpan": [
+      "2019-01"
+    ]
   },
   "LdfdmhY7wZMr": {
     "issuer": "-ssZsPnhWoo",
@@ -208,6 +218,9 @@
       {
         "amount": -1947.61
       }
+    ],
+    "monthSpan": [
+      "2019-01"
     ]
   }
 }

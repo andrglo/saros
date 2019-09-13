@@ -4,7 +4,7 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/storage'
 
-import firebaseConfig from '../loaders/firebase!'
+import firebaseConfig from '../loaders/firebase'
 
 firebase.initializeApp(firebaseConfig)
 

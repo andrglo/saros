@@ -198,8 +198,7 @@ export const getHolidaysForAccounts = createSelector(
   (holidays, accounts) => {
     if (
       !areAllCollectionsReady({
-        accounts,
-        holidays
+        accounts
       })
     ) {
       return {}

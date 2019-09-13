@@ -1,31 +1,16 @@
-const {exec} = require('child_process')
+// @codegen
 
 let firebaseConfig
 
-module.exports = function loader() {
-  const callback = this.async()
-  if (!callback) {
-    console.error('Loader for firebase is async')
-    process.exit(1)
-  }
-  const sendSource = () => {
-    callback(null, `export default ${firebaseConfig || '{}'}`)
-  }
-  if (!firebaseConfig) {
-    exec('firebase setup:web', (err, stdout) => {
-      if (err) {
-        callback(err)
-        return
-      }
-      const match = stdout
-        .toString()
-        .match(/firebase\.initializeApp\(([^)]+)\)/m)
-      if (match) {
-        firebaseConfig = match[1]
-      }
-      sendSource()
-    })
-  } else {
-    sendSource()
+if (process.env.NODE_ENV !== 'test') {
+  const {execSync} = require('child_process')
+  const stdout = execSync('firebase setup:web')
+  const match = stdout
+    .toString()
+    .match(/firebase\.initializeApp\(([^)]+)\)/m)
+  if (match) {
+    firebaseConfig = match[1]
   }
 }
+
+module.exports = `export default ${firebaseConfig || '{}'}`

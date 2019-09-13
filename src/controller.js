@@ -61,7 +61,7 @@ const reducers = new Map()
 
 const middleware = [thunk]
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   const actionsBlacklist = ['IDLE', 'REHYDRATE_STATE_KEY']
   const {createLogger} = require('redux-logger')
   middleware.push(
@@ -432,7 +432,7 @@ export const disconnect = async () => {
 firebase.auth().onAuthStateChanged(user => {
   log('onAuthStateChanged', user)
   if (user) {
-    const justSignedIn = window.location.pathname === '/signin'
+    const justSignedIn = !store.getState().app.db
     connect(justSignedIn).then(() => {
       if (justSignedIn) {
         localDb.save(
@@ -870,50 +870,57 @@ export const subscribeCollection = async (path, options) => {
             }
             const monthSpanReceived = {}
             snapshot.docChanges().forEach(change => {
-              const doc = change.doc
+              const id = change.doc.id
+              const record = {...change.doc.data()}
               log(
                 'subscription doc change firestore',
                 path,
                 change.type,
-                doc,
-                change,
-                doc && doc.data()
+                id,
+                record
               )
-              const record = {...doc.data()}
               convertRecordTimestamps(record)
-              const monthSpan = doc.monthSpan
+              const monthSpan = record.monthSpan
               if (record.updatedAt > doc.lastUpdatedAt) {
                 doc.lastUpdatedAt = record.updatedAt
               }
               const added = monthSpan && {}
               const deleted = monthSpan && []
               if (record.deletedAt) {
-                delete doc.data[doc.id]
+                delete doc.data[id]
                 if (deleted) {
-                  deleted.push(doc.id)
+                  deleted.push(id)
                 }
               } else {
                 delete record.keywords
                 delete record.monthSpan
                 if (transform) {
-                  transform(added || doc.data, doc.id, record)
+                  transform(added || doc.data, id, record)
                   if (added) {
                     Object.keys(added).forEach(key => {
                       doc.data[key] = added[key]
                     })
                   }
                 } else {
-                  doc.data[doc.id] = record
+                  doc.data[id] = record
                   if (added) {
-                    added[doc.id] = record
+                    added[id] = record
                   }
                 }
               }
               if (monthSpan) {
                 for (const month of monthSpan) {
-                  monthSpanReceived[month] =
-                    monthSpanReceived[month] || []
-                  monthSpanReceived[month].push({added, deleted})
+                  monthSpanReceived[month] = monthSpanReceived[
+                    month
+                  ] || {added: {}, deleted: []}
+                  monthSpanReceived[month].added = {
+                    ...monthSpanReceived[month].added,
+                    ...(added || {})
+                  }
+                  monthSpanReceived[month].deleted = [
+                    ...monthSpanReceived[month].deleted,
+                    ...(deleted || [])
+                  ]
                 }
               }
             })

@@ -12,12 +12,15 @@ const getPathname = location => {
 export const getQuery = location =>
   location.query || qs.parse(location.search)
 
-const push = location =>
-  history.pushState(
-    location.state,
-    location.title,
-    getPathname(location)
-  )
+const push =
+  process.env.NODE_ENV === 'test'
+    ? () => {}
+    : location =>
+        history.pushState(
+          location.state,
+          location.title,
+          getPathname(location)
+        )
 
 const replace = location =>
   history.replaceState(
