@@ -158,7 +158,7 @@ const sendPendingItems = async items => {
     let [path, data] = item
     let [root, key] = path.split('.')
     root = `${uid}/${root}`
-    const now = new Date().toISOString()
+    const now = window.performance.now()
     await localDb.save(PENDENT_STORE_NAME, now, {
       type: 'state',
       list: [[path, data]]
@@ -368,6 +368,35 @@ export const createStore = async () => {
   return store
 }
 
+const processPendingTasks = async () => {
+  const pending = (await localDb.getKeys(PENDENT_STORE_NAME)).map(
+    Number
+  )
+  pending.sort()
+  log('pending from last session', pending)
+  for (const instant of pending) {
+    // eslint-disable-next-line no-await-in-loop
+    const {type, ...payload} = await localDb.get(
+      PENDENT_STORE_NAME,
+      String(instant)
+    )
+    switch (type) {
+      case 'state':
+        sendPendingItems(payload.list) // do not wait, will block when offline
+        break
+      case 'states':
+        saveDocBatch(payload.list) // do not wait, will block when offline
+        break
+      case 'snapshot':
+        // toBeContinued...
+        break
+      default:
+        console.error('Invalid pendent db record:', type, payload)
+    }
+    localDb.delete(PENDENT_STORE_NAME, instant)
+  }
+}
+
 const connect = async justSignedIn => {
   let dbs = initCurrentUser(
     await firebase.auth().currentUser.getIdTokenResult()
@@ -388,19 +417,7 @@ const connect = async justSignedIn => {
     })
   }
 
-  const pending = await localDb.getKeys(PENDENT_STORE_NAME)
-  pending.sort()
-  log('pending from last session', pending)
-  for (const date of pending) {
-    // eslint-disable-next-line no-await-in-loop
-    const {type, list} = await localDb.get(PENDENT_STORE_NAME, date)
-    if (type === 'state') {
-      sendPendingItems(list) // do not wait, will block when offline
-    } else {
-      saveDocBatch(list) // do not wait, will block when offline
-    }
-    localDb.delete(PENDENT_STORE_NAME, date)
-  }
+  await processPendingTasks()
 
   const stateSubscribes = []
   for (const path of reducers.keys()) {
@@ -698,6 +715,93 @@ const getNotCachedMonths = (months, subscription = {}) => {
   return null
 }
 
+// toBeContinued...
+// const ud = () => {
+//   doc = {
+//     ...(store.getState().docs[path] || {}),
+//     data: {...(doc.data || {})},
+//     lastUpdatedAt: Number(doc.lastUpdatedAt) || 0
+//   }
+//   const monthSpanReceived = {}
+//   snapshot.docChanges().forEach(change => {
+//     const id = change.doc.id
+//     const record = {...change.doc.data()}
+//     log(
+//       'subscription doc change firestore',
+//       path,
+//       change.type,
+//       id,
+//       record
+//     )
+//     convertRecordTimestamps(record)
+//     const monthSpan = record.monthSpan
+//     if (record.updatedAt > doc.lastUpdatedAt) {
+//       doc.lastUpdatedAt = record.updatedAt
+//     }
+//     const added = monthSpan && {}
+//     const deleted = monthSpan && []
+//     if (record.deletedAt) {
+//       delete doc.data[id]
+//       if (deleted) {
+//         deleted.push(id)
+//       }
+//     } else {
+//       delete record.keywords
+//       delete record.monthSpan
+//       if (transform) {
+//         transform(added || doc.data, id, record)
+//         if (added) {
+//           Object.keys(added).forEach(key => {
+//             doc.data[key] = added[key]
+//           })
+//         }
+//       } else {
+//         doc.data[id] = record
+//         if (added) {
+//           added[id] = record
+//         }
+//       }
+//     }
+//     if (monthSpan) {
+//       for (const month of monthSpan) {
+//         monthSpanReceived[month] = monthSpanReceived[month] || {
+//           added: {},
+//           deleted: []
+//         }
+//         monthSpanReceived[month].added = {
+//           ...monthSpanReceived[month].added,
+//           ...(added || {})
+//         }
+//         monthSpanReceived[month].deleted = [
+//           ...monthSpanReceived[month].deleted,
+//           ...(deleted || [])
+//         ]
+//       }
+//     }
+//   })
+//   if (hasMonthlyCache) {
+//     const updateLocalDb = async (month, {added, deleted}) => {
+//       const localDbKey = makeLocalDbKey(path, month)
+//       const doc = (await localDb.get(DOC_STORE_NAME, localDbKey)) || {
+//         data: {}
+//       }
+//       Object.keys(added).forEach(id => {
+//         doc.data[id] = added[id]
+//       })
+//       deleted.forEach(id => {
+//         delete doc.data[id]
+//       })
+//       await localDb.save(DOC_STORE_NAME, localDbKey, doc)
+//     }
+//     for (const month of Object.keys(monthSpanReceived)) {
+//       updateLocalDb(month, monthSpanReceived[month])
+//     }
+//   } else {
+//     localDb.save(DOC_STORE_NAME, path, doc)
+//   }
+//   updateDocState(path, doc)
+// }
+
 export const subscribeCollection = async (path, options) => {
   const subscription = subscribedCollections.get(path)
   const isSubscribed = Boolean(subscription)
@@ -863,92 +967,23 @@ export const subscribeCollection = async (path, options) => {
               path,
               snapshot.size
             )
-            doc = {
-              ...(store.getState().docs[path] || {}),
-              data: {...(doc.data || {})},
-              lastUpdatedAt: Number(doc.lastUpdatedAt) || 0
-            }
-            const monthSpanReceived = {}
             snapshot.docChanges().forEach(change => {
               const id = change.doc.id
               const record = {...change.doc.data()}
               log(
                 'subscription doc change firestore',
-                path,
                 change.type,
+                path,
                 id,
                 record
               )
               convertRecordTimestamps(record)
-              const monthSpan = record.monthSpan
-              if (record.updatedAt > doc.lastUpdatedAt) {
-                doc.lastUpdatedAt = record.updatedAt
-              }
-              const added = monthSpan && {}
-              const deleted = monthSpan && []
-              if (record.deletedAt) {
-                delete doc.data[id]
-                if (deleted) {
-                  deleted.push(id)
-                }
-              } else {
-                delete record.keywords
-                delete record.monthSpan
-                if (transform) {
-                  transform(added || doc.data, id, record)
-                  if (added) {
-                    Object.keys(added).forEach(key => {
-                      doc.data[key] = added[key]
-                    })
-                  }
-                } else {
-                  doc.data[id] = record
-                  if (added) {
-                    added[id] = record
-                  }
-                }
-              }
-              if (monthSpan) {
-                for (const month of monthSpan) {
-                  monthSpanReceived[month] = monthSpanReceived[
-                    month
-                  ] || {added: {}, deleted: []}
-                  monthSpanReceived[month].added = {
-                    ...monthSpanReceived[month].added,
-                    ...(added || {})
-                  }
-                  monthSpanReceived[month].deleted = [
-                    ...monthSpanReceived[month].deleted,
-                    ...(deleted || [])
-                  ]
-                }
-              }
+              const now = window.performance.now()
+              localDb.save(PENDENT_STORE_NAME, now, {
+                type: 'snapshot',
+                change: {path, id, doc: record}
+              })
             })
-            if (hasMonthlyCache) {
-              const updateLocalDb = async (
-                month,
-                {added, deleted}
-              ) => {
-                const localDbKey = makeLocalDbKey(path, month)
-                const doc = (await localDb.get(
-                  DOC_STORE_NAME,
-                  localDbKey
-                )) || {data: {}}
-                Object.keys(added).forEach(id => {
-                  doc.data[id] = added[id]
-                })
-                deleted.forEach(id => {
-                  delete doc.data[id]
-                })
-                await localDb.save(DOC_STORE_NAME, localDbKey, doc)
-              }
-              for (const month of Object.keys(monthSpanReceived)) {
-                updateLocalDb(month, monthSpanReceived[month])
-              }
-            } else {
-              localDb.save(DOC_STORE_NAME, path, doc)
-            }
-            updateDocState(path, doc)
           },
           err => {
             console.error(`In onSnapshot collection ${path}`, err)
@@ -979,7 +1014,7 @@ export const saveDocBatch = async list => {
     }
     firestoreBatch.set(docRef, doc, {merge: true})
   }
-  const now = new Date().toISOString()
+  const now = window.performance.now()
   await localDb.save(PENDENT_STORE_NAME, now, {list})
   try {
     log('batch commit started')

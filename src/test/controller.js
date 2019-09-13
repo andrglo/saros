@@ -15,6 +15,7 @@ import completion from '../../test/lib/completion'
 const db = 'solar'
 const getCollectionPath = collection => `dbs/${db}/${collection}`
 const DOC_STORE_NAME = 'docs'
+const PENDENT_STORE_NAME = 'pendent'
 
 let storeIsReady
 
@@ -325,28 +326,36 @@ test('Subscribe (via selector) a monthly cached collection', async t => {
   await sleep(100)
   localDbPath = `${invoicesPath}:*`
   record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  // console.log(
-  //   'TCL: localDbPath',
-  //   localDbPath,
-  //   Object.keys(record.data)
-  // )
-  // todo fix this test
-  // t.deepEqual(Object.keys(record.data), [])
+  t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
   localDbPath = `${invoicesPath}:2019-07`
   record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  // console.log(
-  //   'TCL: localDbPath',
-  //   localDbPath,
-  //   Object.keys(record.data)
-  // )
-  t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
-
+  t.is(record, undefined)
   localDbPath = `${invoicesPath}:2019-08`
   record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  // console.log(
-  //   'TCL: localDbPath',
-  //   localDbPath,
-  //   Object.keys(record.data)
-  // )
-  t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
+  t.is(record, undefined)
+  const pending = await localDb.getKeys(PENDENT_STORE_NAME)
+  t.truthy(pending.length === 1)
+  const pendingTask = await localDb.get(
+    PENDENT_STORE_NAME,
+    pending[0]
+  )
+  t.is(pendingTask.type, 'snapshot')
+  t.is(pendingTask.change.path, invoicesPath)
+  t.is(pendingTask.change.id, 'BFMTePgome85')
+  t.deepEqual(pendingTask.change.doc, {
+    ...invoice,
+    createdAt: 1562179608477,
+    updatedAt: 1562942782788
+  })
+
+  // await sleep(100) // after a while
+  // localDbPath = `${invoicesPath}:*`
+  // record = await localDb.get(DOC_STORE_NAME, localDbPath)
+  // t.deepEqual(Object.keys(record.data), [])
+  // localDbPath = `${invoicesPath}:2019-07`
+  // record = await localDb.get(DOC_STORE_NAME, localDbPath)
+  // t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
+  // localDbPath = `${invoicesPath}:2019-08`
+  // record = await localDb.get(DOC_STORE_NAME, localDbPath)
+  // t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
 })
