@@ -7,8 +7,8 @@
     "start": "webpack-dev-server --inline --history-api-fallback --host 0.0.0.0",
     "start:pwa": "http-server",
     "build": "NODE_ENV=production webpack",
-    "test": "ava",
-    "test:coverage": "nyc ava"
+    "test": "ava --timeout=10s",
+    "test:coverage": "nyc ava --timeout=10s"
   },
   "repository": "git@github.com:andrglo/saros.git",
   "author": "Andre Gloria <andredagloria@gmail.com>",
@@ -40,6 +40,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.0.1",
+    "fake-indexeddb": "^2.1.1",
     "favicons": "^5.4.1",
     "glob": "^7.1.4",
     "http-server": "^0.11.1",
