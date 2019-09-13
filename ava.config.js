@@ -3,7 +3,13 @@ const config = {
   babel: {
     extensions: ['js', 'jsx']
   },
-  files: ['**/test/**/*.js', '!test/data', '!test/lib', '!test/mocks']
+  files: [
+    '**/test/**/*.js',
+    '**/test/**/*.jsx',
+    '!test/data',
+    '!test/lib',
+    '!test/mocks'
+  ]
 }
 
 export default config
