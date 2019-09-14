@@ -8,10 +8,7 @@ import sortBy from 'lodash/sortBy'
 import round from 'lodash/round'
 import debug from 'debug'
 
-import {
-  subscribeCollection,
-  convertRecordTimestamps
-} from '../controller'
+import {subscribeCollection} from '../controller'
 import {getDb} from './app'
 import {
   toYearMonth,
@@ -92,7 +89,6 @@ export const invoiceTransform = (data, id, doc) => {
     doc.billedFrom = doc.billedFrom.map(item => {
       const {id, doc, ...rest} = item
       if (id && doc) {
-        convertRecordTimestamps(doc)
         const [invoiceId] = getIdAndParcelIndex(id)
         data[invoiceId] = doc
       }

@@ -387,9 +387,6 @@ const processPendingTasks = async () => {
       case 'states':
         saveDocBatch(payload.list) // do not wait, will block when offline
         break
-      case 'snapshot':
-        // toBeContinued...
-        break
       default:
         console.error('Invalid pendent db record:', type, payload)
     }
@@ -417,7 +414,7 @@ const connect = async justSignedIn => {
     })
   }
 
-  await processPendingTasks()
+  await processPendingTasks() // should be executed only after connection
 
   const stateSubscribes = []
   for (const path of reducers.keys()) {
@@ -648,58 +645,64 @@ export const convertRecordTimestamps = record => {
 const makeLocalDbKey = (path, month) =>
   `${path}${month ? `:${month}` : ''}`
 
-const fetchDoc = async ({path, doc, query, month, transform}) => {
+const fetchDocs = async ({path, bundle, query, month, transform}) => {
   const snapshot = await query.get()
-  console.warn('fetchDoc', path, month, snapshot.size)
+  console.warn('fetchDocs', path, month, snapshot.size)
   let lastUpdatedAt = 0
-  const data = doc.data
+  const data = bundle.data
   snapshot.forEach(doc => {
     const record = {...doc.data()}
     convertRecordTimestamps(record)
     if (record.updatedAt > lastUpdatedAt) {
       lastUpdatedAt = record.updatedAt
     }
-    delete record.keywords
-    delete record.monthSpan
-    if (transform) {
-      transform(data, doc.id, record)
-    } else {
-      data[doc.id] = record
+    if (data) {
+      // when cached by month the main bundle only stores lastUpdatedAt,
+      // so no data
+      delete record.keywords
+      delete record.monthSpan
+      if (transform) {
+        transform(data, doc.id, record)
+      } else {
+        data[doc.id] = record
+      }
     }
   })
-  if (lastUpdatedAt > 0) {
-    doc.lastUpdatedAt = lastUpdatedAt
+  if (!month && lastUpdatedAt > 0) {
+    // when cache lastUpdatedAt is stored only in the main bundle
+    bundle.lastUpdatedAt = lastUpdatedAt
   }
-  await localDb.save(DOC_STORE_NAME, makeLocalDbKey(path, month), doc)
+  await localDb.save(
+    DOC_STORE_NAME,
+    makeLocalDbKey(path, month),
+    bundle
+  )
 }
 
-const getDocFromLocalDb = async (path, months) => {
-  let doc
+const getBundleFromLocalDb = async (path, months) => {
+  const bundle = await localDb.get(DOC_STORE_NAME, path)
+  if (!bundle) {
+    return [null, months]
+  }
   let missingMonths
   if (months) {
     const found = []
     for (const month of months) {
       // eslint-disable-next-line no-await-in-loop
-      const monthDoc = await localDb.get(
+      const monthBundle = await localDb.get(
         DOC_STORE_NAME,
         makeLocalDbKey(path, month)
       )
-      if (monthDoc) {
-        doc = doc || {data: {}}
+      if (monthBundle) {
         found.push(month)
-        for (const id of Object.keys(monthDoc.data)) {
-          doc.data[id] = monthDoc.data[id]
-        }
-        if (monthDoc.lastUpdatedAt > (doc.lastUpdatedAt || 0)) {
-          doc.lastUpdatedAt = monthDoc.lastUpdatedAt
+        for (const id of Object.keys(monthBundle.data)) {
+          bundle.data[id] = monthBundle.data[id]
         }
       }
     }
     missingMonths = difference(months, found)
-  } else {
-    doc = await localDb.get(DOC_STORE_NAME, path)
   }
-  return [doc, missingMonths]
+  return [bundle, missingMonths]
 }
 
 const getNotCachedMonths = (months, subscription = {}) => {
@@ -715,92 +718,49 @@ const getNotCachedMonths = (months, subscription = {}) => {
   return null
 }
 
-// toBeContinued...
-// const ud = () => {
-//   doc = {
-//     ...(store.getState().docs[path] || {}),
-//     data: {...(doc.data || {})},
-//     lastUpdatedAt: Number(doc.lastUpdatedAt) || 0
-//   }
-//   const monthSpanReceived = {}
-//   snapshot.docChanges().forEach(change => {
-//     const id = change.doc.id
-//     const record = {...change.doc.data()}
-//     log(
-//       'subscription doc change firestore',
-//       path,
-//       change.type,
-//       id,
-//       record
-//     )
-//     convertRecordTimestamps(record)
-//     const monthSpan = record.monthSpan
-//     if (record.updatedAt > doc.lastUpdatedAt) {
-//       doc.lastUpdatedAt = record.updatedAt
-//     }
-//     const added = monthSpan && {}
-//     const deleted = monthSpan && []
-//     if (record.deletedAt) {
-//       delete doc.data[id]
-//       if (deleted) {
-//         deleted.push(id)
-//       }
-//     } else {
-//       delete record.keywords
-//       delete record.monthSpan
-//       if (transform) {
-//         transform(added || doc.data, id, record)
-//         if (added) {
-//           Object.keys(added).forEach(key => {
-//             doc.data[key] = added[key]
-//           })
-//         }
-//       } else {
-//         doc.data[id] = record
-//         if (added) {
-//           added[id] = record
-//         }
-//       }
-//     }
-//     if (monthSpan) {
-//       for (const month of monthSpan) {
-//         monthSpanReceived[month] = monthSpanReceived[month] || {
-//           added: {},
-//           deleted: []
-//         }
-//         monthSpanReceived[month].added = {
-//           ...monthSpanReceived[month].added,
-//           ...(added || {})
-//         }
-//         monthSpanReceived[month].deleted = [
-//           ...monthSpanReceived[month].deleted,
-//           ...(deleted || [])
-//         ]
-//       }
-//     }
-//   })
-//   if (hasMonthlyCache) {
-//     const updateLocalDb = async (month, {added, deleted}) => {
-//       const localDbKey = makeLocalDbKey(path, month)
-//       const doc = (await localDb.get(DOC_STORE_NAME, localDbKey)) || {
-//         data: {}
-//       }
-//       Object.keys(added).forEach(id => {
-//         doc.data[id] = added[id]
-//       })
-//       deleted.forEach(id => {
-//         delete doc.data[id]
-//       })
-//       await localDb.save(DOC_STORE_NAME, localDbKey, doc)
-//     }
-//     for (const month of Object.keys(monthSpanReceived)) {
-//       updateLocalDb(month, monthSpanReceived[month])
-//     }
-//   } else {
-//     localDb.save(DOC_STORE_NAME, path, doc)
-//   }
-//   updateDocState(path, doc)
-// }
+const saveDocChangesToLocalDb = async ({
+  collection,
+  changes,
+  bundle,
+  hasMonthlyCache
+}) => {
+  if (hasMonthlyCache) {
+    bundle = {...bundle}
+    delete bundle.data
+    let keys = await localDb.getKeys(STATE_STORE_NAME)
+    keys = keys
+      .filter(key => key.startsWith(`${collection}:`))
+      .map(key => key.match(/:(.+)$/)[1])
+    const updates = []
+    const updateLocalDb = async (month, id, doc) => {
+      const localDbKey = makeLocalDbKey(collection, month)
+      const bundle = (await localDb.get(
+        DOC_STORE_NAME,
+        localDbKey
+      )) || {
+        data: {}
+      }
+      if (doc) {
+        bundle.data[id] = doc
+      } else {
+        delete bundle.data[id]
+      }
+      await localDb.save(DOC_STORE_NAME, localDbKey, doc)
+    }
+    for (const {id, doc, monthSpan} of changes) {
+      const bundlesToDelete = new Set(...keys)
+      for (const month of monthSpan) {
+        updates.push(updateLocalDb(month, id, doc))
+        bundlesToDelete.delete(month)
+      }
+      for (const month of bundlesToDelete) {
+        updates.push(updateLocalDb(month, id))
+      }
+    }
+    await Promise.all(updates)
+  }
+  await localDb.save(DOC_STORE_NAME, collection, bundle)
+}
 
 export const subscribeCollection = async (path, options) => {
   const subscription = subscribedCollections.get(path)
@@ -831,7 +791,7 @@ export const subscribeCollection = async (path, options) => {
     const collection = !isSingleDocument
       ? path
       : parts.slice(0, parts.length - 1).join('/')
-    let [doc, missingMonths] = await getDocFromLocalDb(
+    let [bundle, missingMonths] = await getBundleFromLocalDb(
       path,
       notCachedMonths
     )
@@ -848,11 +808,11 @@ export const subscribeCollection = async (path, options) => {
       // first wait to avoid flicking
       if (
         !currentUser &&
-        doc &&
-        doc.lastUpdatedAt > 0 &&
+        bundle &&
+        bundle.lastUpdatedAt > 0 &&
         !stateUpdated
       ) {
-        updateDocState(path, doc)
+        updateDocState(path, bundle)
         log(
           'subscribeCollection state updated when disconnected',
           path
@@ -863,42 +823,46 @@ export const subscribeCollection = async (path, options) => {
     log('subscribeCollection connected', path)
 
     if (missingMonths && missingMonths.length > 0) {
-      doc = doc || {data: {}}
+      bundle = bundle || {data: {}}
+      if (!bundle.lastUpdatedAt) {
+        const mainBundle = {}
+        await fetchDocs({
+          path,
+          bundle: mainBundle,
+          query: firestoreDb
+            .collection(collection)
+            .orderBy('updatedAt', 'desc')
+            .limit(1)
+        })
+        bundle.lastUpdatedAt = mainBundle.lastUpdatedAt
+      }
       for (const month of missingMonths) {
-        const monthDoc = {data: {}}
         // eslint-disable-next-line no-await-in-loop
-        await fetchDoc({
+        await fetchDocs({
           path,
           month,
-          doc: monthDoc,
+          bundle,
           query: firestoreDb
             .collection(collection)
             .where('monthSpan', 'array-contains', month),
           transform
         })
-        for (const id of Object.keys(monthDoc.data)) {
-          doc.data[id] = monthDoc.data[id]
-        }
-        if (monthDoc.lastUpdatedAt > (doc.lastUpdatedAt || 0)) {
-          doc.lastUpdatedAt = monthDoc.lastUpdatedAt
-        }
       }
-      if (doc.lastUpdatedAt > 0) {
-        updateDocState(path, doc)
+      if (bundle.lastUpdatedAt > 0) {
+        updateDocState(path, bundle)
       }
-    } else if (!doc && !isSingleDocument) {
-      doc = {data: {}}
-      await fetchDoc({
+    } else if (!bundle && !isSingleDocument) {
+      await fetchDocs({
         path,
-        doc,
+        bundle,
         query: firestoreDb.collection(collection),
         transform
       })
-      if (doc.lastUpdatedAt > 0) {
-        updateDocState(path, doc)
+      if (bundle.lastUpdatedAt > 0) {
+        updateDocState(path, bundle)
       }
-    } else if (doc && doc.lastUpdatedAt > 0 && !stateUpdated) {
-      updateDocState(path, doc)
+    } else if (bundle && bundle.lastUpdatedAt > 0 && !stateUpdated) {
+      updateDocState(path, bundle)
     }
 
     if (isSubscribed) {
@@ -919,23 +883,19 @@ export const subscribeCollection = async (path, options) => {
           snapshot => {
             const data = {...snapshot.data()}
             convertRecordTimestamps(data)
-            const currentDoc = store.getState().docs[path] || {}
+            const bundle = store.getState().docs[path] || {}
             log('firestore snapshot for document received', path)
             if (
-              currentDoc.lastUpdatedAt !== undefined &&
+              bundle.lastUpdatedAt !== undefined &&
               (data.updatedAt === undefined ||
-                currentDoc.lastUpdatedAt === data.updatedAt)
+                bundle.lastUpdatedAt === data.updatedAt)
             ) {
               return
             }
-            const updatedAt = data.updatedAt
-            const doc = {
-              ...currentDoc,
-              data,
-              lastUpdatedAt: updatedAt
-            }
-            localDb.save(DOC_STORE_NAME, path, doc)
-            updateDocState(path, doc)
+            bundle.lastUpdatedAt = data.updatedAt
+            bundle.data = data
+            updateDocState(path, bundle)
+            localDb.save(DOC_STORE_NAME, path, bundle)
           },
           err => {
             console.error(`In onSnapshot document ${path}`, err)
@@ -945,7 +905,7 @@ export const subscribeCollection = async (path, options) => {
     } else {
       log(
         'subscribeCollection will listen firestore where lastUpdatedAt >',
-        doc.lastUpdatedAt,
+        bundle.lastUpdatedAt,
         collection
       )
       const query = firestoreDb
@@ -953,36 +913,50 @@ export const subscribeCollection = async (path, options) => {
         .where(
           'updatedAt',
           '>',
-          new Date(Number(doc.lastUpdatedAt) || 0)
+          new Date(Number(bundle.lastUpdatedAt) || 0)
         )
       subscriptions.add(
         query.onSnapshot(
           snapshot => {
-            log('firestore snapshot for collection received', path)
             if (snapshot.size === 0) {
               return
             }
             console.warn(
-              'firestore snapshot size is greater than 0',
+              'firestore snapshot received',
               path,
               snapshot.size
             )
+            const bundle = store.getState().docs[collection]
+            const changes = []
             snapshot.docChanges().forEach(change => {
               const id = change.doc.id
-              const record = {...change.doc.data()}
-              log(
-                'subscription doc change firestore',
-                change.type,
-                path,
-                id,
-                record
-              )
-              convertRecordTimestamps(record)
-              const now = window.performance.now()
-              localDb.save(PENDENT_STORE_NAME, now, {
-                type: 'snapshot',
-                change: {path, id, doc: record}
-              })
+              let doc = {...change.doc.data()}
+              log('firestore', change.type, path, id, doc)
+              convertRecordTimestamps(doc)
+              if (doc.updatedAt > bundle.lastUpdatedAt) {
+                bundle.lastUpdatedAt = doc.updatedAt
+              }
+              const monthSpan = doc.monthSpan
+              if (doc.deletedAt) {
+                delete bundle.data[doc.id]
+              } else {
+                delete doc.keywords
+                delete doc.monthSpan
+                if (transform) {
+                  transform(bundle.data, id, doc)
+                  doc = bundle.data[id]
+                } else {
+                  bundle.data[id] = doc
+                }
+              }
+              changes.push({id, doc, monthSpan})
+            })
+            updateDocState(path, bundle)
+            saveDocChangesToLocalDb({
+              path,
+              changes,
+              bundle,
+              hasMonthlyCache
             })
           },
           err => {
