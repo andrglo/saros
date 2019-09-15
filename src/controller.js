@@ -740,14 +740,19 @@ const saveDocChangesToLocalDb = async ({
       )) || {
         data: {}
       }
+      let wasUpdated
       for (const {id, doc} of docs) {
         if (doc) {
           bundle.data[id] = doc
-        } else {
+          wasUpdated = true
+        } else if (bundle.data[id]) {
           delete bundle.data[id]
+          wasUpdated = true
         }
       }
-      await localDb.save(DOC_STORE_NAME, localDbKey, bundle)
+      if (wasUpdated) {
+        await localDb.save(DOC_STORE_NAME, localDbKey, bundle)
+      }
     }
     const toBeUpdated = {}
     for (const {id, doc, monthSpan} of changes) {
