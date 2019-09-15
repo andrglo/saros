@@ -730,7 +730,6 @@ const saveDocChangesToLocalDb = async ({
       collection + ':',
       collection + ':\uffff'
     )
-    console.log('TCL: keys', keys)
     keys = keys.map(key => key.match(/:(.+)$/)[1])
     const updates = []
     const updateLocalDb = async (month, docs) => {
