@@ -5,6 +5,7 @@ import mockery from 'mockery'
 import noop from 'lodash/noop'
 import sortBy from 'lodash/sortBy'
 import indexedDB from 'fake-indexeddb'
+import IDBKeyRange from 'fake-indexeddb/lib/FDBKeyRange'
 
 // eslint-disable-next-line no-unused-vars
 import util from 'util'
@@ -22,6 +23,7 @@ const DOC_STORE_NAME = 'docs'
 let storeIsReady
 
 global.indexedDB = indexedDB
+global.IDBKeyRange = IDBKeyRange
 
 const user = {
   uid: 'uid',

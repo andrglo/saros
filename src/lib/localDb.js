@@ -111,9 +111,13 @@ db.get = (storeName, key) =>
     request.onerror = () => reject(request.error)
   })
 
-db.getKeys = storeName =>
+db.getKeys = (storeName, from, to) =>
   new Promise((resolve, reject) => {
-    const request = getObjectStore(storeName).getAllKeys()
+    let range
+    if (from && to) {
+      range = IDBKeyRange.bound(from, to)
+    }
+    const request = getObjectStore(storeName).getAllKeys(range)
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })

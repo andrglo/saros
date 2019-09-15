@@ -725,14 +725,15 @@ const saveDocChangesToLocalDb = async ({
   hasMonthlyCache
 }) => {
   if (hasMonthlyCache) {
-    bundle = {...bundle}
-    delete bundle.data
-    let keys = await localDb.getKeys(DOC_STORE_NAME)
-    keys = keys
-      .filter(key => key.startsWith(`${collection}:`))
-      .map(key => key.match(/:(.+)$/)[1])
+    let keys = await localDb.getKeys(
+      DOC_STORE_NAME,
+      collection + ':',
+      collection + ':\uffff'
+    )
+    console.log('TCL: keys', keys)
+    keys = keys.map(key => key.match(/:(.+)$/)[1])
     const updates = []
-    const updateLocalDb = async (month, id, doc) => {
+    const updateLocalDb = async (month, docs) => {
       const localDbKey = makeLocalDbKey(collection, month)
       const bundle = (await localDb.get(
         DOC_STORE_NAME,
@@ -740,24 +741,34 @@ const saveDocChangesToLocalDb = async ({
       )) || {
         data: {}
       }
-      if (doc) {
-        bundle.data[id] = doc
-      } else {
-        delete bundle.data[id]
+      for (const {id, doc} of docs) {
+        if (doc) {
+          bundle.data[id] = doc
+        } else {
+          delete bundle.data[id]
+        }
       }
       await localDb.save(DOC_STORE_NAME, localDbKey, bundle)
     }
+    const toBeUpdated = {}
     for (const {id, doc, monthSpan} of changes) {
       const bundlesToDelete = new Set(...keys)
       for (const month of monthSpan) {
-        updates.push(updateLocalDb(month, id, doc))
+        toBeUpdated[month] = toBeUpdated[month] || []
+        toBeUpdated[month].push({id, doc})
         bundlesToDelete.delete(month)
       }
       for (const month of bundlesToDelete) {
-        updates.push(updateLocalDb(month, id))
+        toBeUpdated[month] = toBeUpdated[month] || []
+        toBeUpdated[month].push({id})
       }
     }
+    for (const month of Object.keys(toBeUpdated)) {
+      updates.push(updateLocalDb(month, toBeUpdated[month]))
+    }
     await Promise.all(updates)
+    bundle = {...bundle}
+    delete bundle.data
   }
   await localDb.save(DOC_STORE_NAME, collection, bundle)
 }
