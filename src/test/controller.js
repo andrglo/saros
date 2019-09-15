@@ -3,6 +3,7 @@
 import test from 'ava'
 import mockery from 'mockery'
 import noop from 'lodash/noop'
+import sortBy from 'lodash/sortBy'
 import indexedDB from 'fake-indexeddb'
 
 // eslint-disable-next-line no-unused-vars
@@ -15,7 +16,6 @@ import completion from '../../test/lib/completion'
 const db = 'solar'
 const getCollectionPath = collection => `dbs/${db}/${collection}`
 const DOC_STORE_NAME = 'docs'
-const PENDENT_STORE_NAME = 'pendent'
 
 let storeIsReady
 
@@ -48,27 +48,42 @@ const auth = {
     })
 }
 
-const getDocsFromFile = (file, where) => () => {
-  // console.log('TCL: get', file, where)
+const getDocsFromFile = (file, query, payload) => () => {
+  // console.log('TCL: get', file, query, payload)
   const collection = require(file)
-  let data = {}
-  if (where && where[0] === 'monthSpan') {
-    const [, , month] = where
-    Object.keys(collection).forEach(id => {
-      const {monthSpan} = collection[id]
-      if (monthSpan.includes(month)) {
-        data[id] = collection[id]
+  let recordset = []
+  if (query) {
+    if (query[0] === 'monthSpan') {
+      const [, , month] = query
+      Object.keys(collection).forEach(id => {
+        const {monthSpan} = collection[id]
+        if (monthSpan.includes(month)) {
+          recordset.push({id, doc: {...collection[id]}})
+        }
+      })
+    } else if (query[0] === 'updatedAt') {
+      const n = payload
+      Object.keys(collection).forEach(id => {
+        recordset.push({id, doc: {...collection[id]}})
+      })
+      recordset = sortBy(recordset, 'doc.updatedAt')
+      if (query[1] === 'desc') {
+        recordset.reverse()
       }
-    })
+      recordset = recordset.slice(0, n)
+    }
   } else {
-    data = collection
+    Object.keys(collection).forEach(id => {
+      recordset.push({id, doc: {...collection[id]}})
+    })
   }
+  // console.log('TCL: get', file, query, payload, data)
   return Promise.resolve({
     forEach: f => {
-      for (const id of Object.keys(data)) {
+      for (const {id, doc} of recordset) {
         f({
           id,
-          data: () => data[id]
+          data: () => doc
         })
       }
     }
@@ -97,6 +112,16 @@ const firebase = {
               }
             },
             get: getDocsFromFile(file, args)
+          }
+        },
+        orderBy: (...args) => {
+          // console.log('TCL: where with args', args)
+          return {
+            limit: n => {
+              return {
+                get: getDocsFromFile(file, args, n)
+              }
+            }
           }
         },
         doc: id => ({
@@ -207,15 +232,25 @@ test('Subscribe (via selector) a monthly cached collection', async t => {
   // )
   t.truthy(Object.keys(invoices).length > 0)
 
-  let keys = await localDb.getKeys(DOC_STORE_NAME)
-  // console.log('TCL: keys', keys)
   const invoicesPath = getCollectionPath('invoices')
-  keys = keys.filter(k => k.startsWith(invoicesPath))
-  t.truthy(keys.length === 5)
-  t.truthy(keys.find(p => p === `${invoicesPath}:*`))
+  const keys = (await localDb.getKeys(DOC_STORE_NAME))
+    .filter(k => k.startsWith(invoicesPath))
+    .sort()
+  t.is(keys.length, 6)
+  t.is(keys[0], invoicesPath)
+  t.is(keys[1], `${invoicesPath}:*`)
+  t.is(keys[2], `${invoicesPath}:2018-11`)
+  t.is(keys[3], `${invoicesPath}:2018-12`)
+  t.is(keys[4], `${invoicesPath}:2019-01`)
+  t.is(keys[5], `${invoicesPath}:2019-02`)
 
-  let localDbPath = `${invoicesPath}:*`
+  let localDbPath = invoicesPath
   let record = await localDb.get(DOC_STORE_NAME, localDbPath)
+  // console.log('TCL: main bundle', localDbPath, record)
+  t.deepEqual(record, {lastUpdatedAt: 1562856382788})
+
+  localDbPath = `${invoicesPath}:*`
+  record = await localDb.get(DOC_STORE_NAME, localDbPath)
   // console.log(
   //   'TCL: localDbPath',
   //   localDbPath,
@@ -324,38 +359,24 @@ test('Subscribe (via selector) a monthly cached collection', async t => {
     })
   })
   await sleep(100)
+  localDbPath = invoicesPath
+  record = await localDb.get(DOC_STORE_NAME, localDbPath)
+  t.deepEqual(record, {lastUpdatedAt: 1562942782788})
   localDbPath = `${invoicesPath}:*`
   record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
+  t.deepEqual(Object.keys(record.data), [])
+  t.deepEqual(record.lastUpdatedAt, undefined)
   localDbPath = `${invoicesPath}:2019-07`
   record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  t.is(record, undefined)
+  t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
+  t.deepEqual(record.lastUpdatedAt, undefined)
   localDbPath = `${invoicesPath}:2019-08`
   record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  t.is(record, undefined)
-  const pending = await localDb.getKeys(PENDENT_STORE_NAME)
-  t.truthy(pending.length === 1)
-  const pendingTask = await localDb.get(
-    PENDENT_STORE_NAME,
-    pending[0]
-  )
-  t.is(pendingTask.type, 'snapshot')
-  t.is(pendingTask.change.path, invoicesPath)
-  t.is(pendingTask.change.id, 'BFMTePgome85')
-  t.deepEqual(pendingTask.change.doc, {
-    ...invoice,
-    createdAt: 1562179608477,
-    updatedAt: 1562942782788
-  })
+  t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
+  t.deepEqual(record.lastUpdatedAt, undefined)
 
-  // await sleep(100) // after a while
-  // localDbPath = `${invoicesPath}:*`
-  // record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  // t.deepEqual(Object.keys(record.data), [])
-  // localDbPath = `${invoicesPath}:2019-07`
-  // record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  // t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
-  // localDbPath = `${invoicesPath}:2019-08`
-  // record = await localDb.get(DOC_STORE_NAME, localDbPath)
-  // t.deepEqual(Object.keys(record.data), ['BFMTePgome85'])
+  state = getStore().getState()
+  invoices = getInvoices(state, options)
+  t.is(Object.keys(invoices).length, 8)
+  t.is(state.docs[invoicesPath].lastUpdatedAt, 1562942782788)
 })

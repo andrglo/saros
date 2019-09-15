@@ -727,7 +727,7 @@ const saveDocChangesToLocalDb = async ({
   if (hasMonthlyCache) {
     bundle = {...bundle}
     delete bundle.data
-    let keys = await localDb.getKeys(STATE_STORE_NAME)
+    let keys = await localDb.getKeys(DOC_STORE_NAME)
     keys = keys
       .filter(key => key.startsWith(`${collection}:`))
       .map(key => key.match(/:(.+)$/)[1])
@@ -745,7 +745,7 @@ const saveDocChangesToLocalDb = async ({
       } else {
         delete bundle.data[id]
       }
-      await localDb.save(DOC_STORE_NAME, localDbKey, doc)
+      await localDb.save(DOC_STORE_NAME, localDbKey, bundle)
     }
     for (const {id, doc, monthSpan} of changes) {
       const bundlesToDelete = new Set(...keys)
@@ -765,7 +765,7 @@ const saveDocChangesToLocalDb = async ({
 export const subscribeCollection = async (path, options) => {
   const subscription = subscribedCollections.get(path)
   const isSubscribed = Boolean(subscription)
-  const hasMonthlyCache = options && options.monthSpan
+  const hasMonthlyCache = Boolean(options && options.monthSpan)
   const notCachedMonths =
     hasMonthlyCache &&
     getNotCachedMonths(options.monthSpan, subscription)
@@ -837,21 +837,24 @@ export const subscribeCollection = async (path, options) => {
         bundle.lastUpdatedAt = mainBundle.lastUpdatedAt
       }
       for (const month of missingMonths) {
+        const monthBundle = {data: {}}
         // eslint-disable-next-line no-await-in-loop
         await fetchDocs({
           path,
           month,
-          bundle,
+          bundle: monthBundle,
           query: firestoreDb
             .collection(collection)
             .where('monthSpan', 'array-contains', month),
           transform
         })
+        bundle.data = {...bundle.data, ...monthBundle.data}
       }
       if (bundle.lastUpdatedAt > 0) {
         updateDocState(path, bundle)
       }
     } else if (!bundle && !isSingleDocument) {
+      bundle = bundle || {data: {}}
       await fetchDocs({
         path,
         bundle,
@@ -953,7 +956,7 @@ export const subscribeCollection = async (path, options) => {
             })
             updateDocState(path, bundle)
             saveDocChangesToLocalDb({
-              path,
+              collection: path,
               changes,
               bundle,
               hasMonthlyCache
