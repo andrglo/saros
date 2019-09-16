@@ -153,7 +153,7 @@ export const loadHolidays = async (holidays = {}, regions) => {
 
 const getYearHolidays = memoize((holidays, year) => {
   const yearHolidays = {}
-  for (const region of Object.keys(holidays)) {
+  for (const region of Object.keys(holidays || {})) {
     const days = holidays[region]
     yearHolidays[region] = {}
     for (const monthDay of Object.keys(days)) {
