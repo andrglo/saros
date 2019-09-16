@@ -121,6 +121,7 @@ export const loadHolidays = async (holidays = {}, regions) => {
     if (isLoading.holidays) {
       return
     }
+    isLoading.holidays = true
     holidays = {...holidays}
     for (const region of regions) {
       const {country, state, city} = region

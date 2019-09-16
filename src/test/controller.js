@@ -140,7 +140,7 @@ const firebase = {
 const axios = {
   get: url => {
     if (url.startsWith('/locale')) {
-      return Promise.resolve(require(`../../test${url}`))
+      return Promise.resolve({data: require(`../../test${url}`)})
     }
     throw new Error('url not handled by axios mock:' + url)
   },
@@ -172,7 +172,6 @@ test.before(async t => {
   const {default: openLocalDb} = await import('../lib/localDb')
   t.context.localDb = await openLocalDb()
   await completion(() => store.getState().app.dbs.length > 0)
-  // await sleep(100)
 })
 
 test.after(() => {
