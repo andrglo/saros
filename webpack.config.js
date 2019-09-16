@@ -55,10 +55,6 @@ const config = {
         ]
       },
       {
-        test: /\.md$/,
-        loader: ['babel-loader', './src/loaders/markdown.js']
-      },
-      {
         test: /\.svg$/,
         loader: 'svg-url-loader?limit=65536'
       }

@@ -1,10 +1,13 @@
+/* eslint-disable react/jsx-no-undef */
 import React from 'react'
-import Privacy from './assets/privacy.md'
+import /* codegen('../assets/privacy.md') */ './loaders/markdown'
 
-export default () => {
+const Privacy = () => {
   return (
     <div className="p-4 bg-gray-200 text-gray-900 h-screen w-screen">
-      <Privacy />
+      <Markdown />
     </div>
   )
 }
+
+export default Privacy

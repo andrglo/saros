@@ -1,10 +1,13 @@
+/* eslint-disable react/jsx-no-undef */
 import React from 'react'
-import Agreement from './assets/agreement.md'
+import /* codegen('../assets/agreement.md') */ './loaders/markdown'
 
-export default () => {
+const Agreement = () => {
   return (
     <div className="p-4 bg-gray-200 text-gray-900 h-screen w-screen">
-      <Agreement />
+      <Markdown />
     </div>
   )
 }
+
+export default Agreement
