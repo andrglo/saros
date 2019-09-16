@@ -14,7 +14,7 @@ const TransactionView = props => {
     <div
       {...rest}
       className={cn(
-        'bg-gray-900 border hover:bg-gray-700',
+        'bg-green-900 border hover:bg-gray-700',
         className
       )}
     >

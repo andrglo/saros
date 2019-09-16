@@ -1,6 +1,5 @@
 import React, {Component, Suspense} from 'react'
 import PropTypes from 'prop-types'
-import {hot} from 'react-hot-loader/root'
 import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
@@ -21,8 +20,11 @@ import {updateApp} from './controller'
 import Alert from './components/Alert'
 import t, {fetchLocale} from './lib/translate'
 
-import getView from './loaders/router!'
+import getView from './loaders/router'
 import {getQuery} from './lib/history'
+
+// eslint-disable-next-line import/order
+import {hot} from 'react-hot-loader/root' // should be positioned after loaders
 
 const log = debug('app')
 

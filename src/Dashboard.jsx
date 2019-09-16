@@ -1,5 +1,7 @@
 import React from 'react'
 // import PropTypes from 'prop-types'
+import {hot} from 'react-hot-loader/root'
+
 import {connect} from 'react-redux'
 // import cn from 'classnames'
 import debug from 'debug'
@@ -18,4 +20,4 @@ const Dashboard = props => {
 
 Dashboard.propTypes = {}
 
-export default connect()(Dashboard)
+export default connect()(hot(Dashboard))
