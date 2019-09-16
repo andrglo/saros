@@ -36,7 +36,12 @@ const source = `
     const PageNotFound = React.lazy(() => import('${__dirname}/../PageNotFound.jsx'))
     ${imports.join('\n')}
     export default pathname => {
-      const url = new URL(pathname, window.location.origin)
+      let url
+      if (process.env.NODE_ENV === 'test') {
+        url = {pathname}
+      } else {
+        url = new URL(pathname, window.location.origin)
+      }
       switch (url.pathname) {
         case '/':
         case '/index.html':
