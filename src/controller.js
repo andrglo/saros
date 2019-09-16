@@ -55,6 +55,10 @@ const MAX_DOCS_READS_IN_SEEK = 36
 let store
 let localDb
 const subscribedCollections = new Map()
+export const unsubscribeCollection =
+  process.env.NODE_ENV === 'test'
+    ? collection => subscribedCollections.delete(collection)
+    : null
 const subscriptions = new Set()
 
 const reducers = new Map()
@@ -687,6 +691,7 @@ const getBundleFromLocalDb = async (path, months) => {
   let missingMonths
   if (months) {
     const found = []
+    bundle.data = {}
     for (const month of months) {
       // eslint-disable-next-line no-await-in-loop
       const monthBundle = await localDb.get(

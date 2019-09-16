@@ -208,17 +208,26 @@ for (const tab of tabs) {
   })
 
   test(`Subscribe (via selector) a monthly cached collection - Tab ${tab}`, async t => {
-    const {getStore, getInvoices, localDb} = t.context
+    const {
+      getStore,
+      getInvoices,
+      localDb,
+      unsubscribeCollection
+    } = t.context
+    const invoicesPath = getCollectionPath('invoices')
     const options = {from: '2019-02', to: '2019-02'}
     let state = getStore().getState()
     let invoices = getInvoices(state, options)
     t.is(invoices, undefined) // when empty return undefined
     await sleep(100) // wait collection load after subscription
+
+    unsubscribeCollection(invoicesPath)
+    getInvoices({app: state.app, docs: {}}, options) // simulate a subscription with index already populated
+
     state = getStore().getState()
     invoices = getInvoices(state, options)
     t.truthy(Object.keys(invoices).length > 0)
 
-    const invoicesPath = getCollectionPath('invoices')
     const keys = (await localDb.getKeys(DOC_STORE_NAME))
       .filter(k => k.startsWith(invoicesPath))
       .sort()
