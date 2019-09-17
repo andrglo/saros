@@ -1,4 +1,3 @@
-import {createSelector, defaultMemoize as memoize} from 'reselect'
 import get from 'lodash/get'
 import {
   setCountries,
@@ -12,6 +11,7 @@ import {
   extractYear,
   isWeekEnd
 } from '../lib/date'
+import {createSelector, memoize} from '../lib/reselect'
 
 export const getAtlasIsLoading = state => state.atlas.isLoading
 

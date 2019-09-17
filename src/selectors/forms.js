@@ -1,4 +1,4 @@
-import {createSelector} from 'reselect'
+import {createSelector} from '../lib/reselect'
 
 export const getForms = state => state.forms
 export const getForm = (state, {formName}) => state.forms[formName]

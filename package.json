@@ -67,6 +67,7 @@
     "debug": "^4.1.1",
     "firebase": "^6.6.1",
     "lodash": "^4.17.15",
+    "memoizee": "^0.4.14",
     "prop-types": "^15.7.2",
     "query-string": "^6.8.3",
     "react": "^16.9.0",
@@ -75,7 +76,6 @@
     "react-redux": "^7.1.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "reselect": "^4.0.0",
     "serialize-error": "^4.1.0"
   }
 }
