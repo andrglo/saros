@@ -37,14 +37,14 @@ a:focus {
   background-color: rgba(0, 0, 0, 0.3)
 }
 
-.dashboard {
+.workspace {
   transition: background-color 1s ease;
   display: grid;
   grid-template-columns: fit-content(12em) 1fr;
   grid-template-rows: 4em 1fr
 }
 
-.dashboard .toolbar {
+.workspace .toolbar {
   grid-column: span 2
 }
 

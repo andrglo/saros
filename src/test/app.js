@@ -169,16 +169,17 @@ test.after(() => {
 test.serial('Open app', async t => {
   await import('..')
   await sleep(LOGIN_TIMEOUT + 100)
-  const dashboard = document.querySelector('.dashboard')
-  t.truthy(dashboard)
+  const workspace = document.querySelector('.workspace')
+  t.truthy(workspace)
 })
 
-const clickButtonWithText = text => {
+const clickButtonWithText = async text => {
   const toolbar = document.querySelector('.toolbar')
   const toolbarButtons = toolbar.querySelectorAll('button')
   const profileButton = toolbarButtons[toolbarButtons.length - 1]
 
   fireEvent.click(profileButton)
+  await sleep(50)
   const allButtons = document
     .querySelector('.toolbar')
     .querySelectorAll('button')
@@ -189,19 +190,18 @@ const clickButtonWithText = text => {
       break
     }
   }
+  await sleep(50)
 }
 
 test.serial('Edit my account', async t => {
-  clickButtonWithText('My account')
-  await sleep(100)
+  await clickButtonWithText('My account')
   t.truthy(document.querySelector('form'))
 })
 
 test.serial('Edit preferences', async t => {
-  clickButtonWithText('Preferences')
-  await sleep(100)
+  await clickButtonWithText('Preferences')
   const inputsLabel = document
-    .querySelector('.dashboard')
+    .querySelector('.workspace')
     .querySelectorAll('label')
   t.is(inputsLabel.length, 2)
   t.is(inputsLabel[0].textContent, 'ThemeSystem')

@@ -51,7 +51,7 @@ const Workspace = props => {
   const drawer = <Drawer />
   return (
     <React.Fragment>
-      <div className="dashboard h-screen font-sans bg-default text-default">
+      <div className="workspace h-screen font-sans bg-default text-default">
         <div className="toolbar flex shadow-lg bg-toolbar text-toolbar p-2 sm:p-4">
           <button
             type="button"
