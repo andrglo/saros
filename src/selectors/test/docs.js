@@ -1230,10 +1230,53 @@ test('Expand budget', t => {
   ])
 })
 
-test('Get transactions by day', t => {
+test('Get transfers transactions', t => {
   const localState = {...state, atlas: {holidays}}
-  const {getTransactionsByDay} = t.context
-  const transactions = getTransactionsByDay(localState, {
+  const {getTransfersTransactions} = t.context
+  const transactions = getTransfersTransactions(localState)
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(transactions, [
+    {
+      id: 'lGzJl4KiYINF',
+      type: 'in',
+      dueDate: '2019-08-05',
+      account: 'AHIhOdX7cxo',
+      amount: 3.3
+    },
+    {
+      id: 'gZxGMyv47-np',
+      type: 'tranfer',
+      dueDate: '2019-08-06',
+      account: 'CYbteYpzdA6',
+      amount: -900,
+      counterpart: 'AHIhOdX7cxo'
+    },
+    {
+      id: '9YXiZnWpqf8k',
+      type: 'tranfer',
+      dueDate: '2019-08-23',
+      account: 'CYbteYpzdA6',
+      amount: -50,
+      counterpart: 'AHIhOdX7cxo'
+    },
+    {
+      id: 'HqoeVnU7yapt',
+      type: 'tranfer',
+      dueDate: '2019-08-23',
+      account: 'AHIhOdX7cxo',
+      amount: -366,
+      counterpart: 'CYbteYpzdA6'
+    }
+  ])
+})
+
+test('Get budgets transactions', t => {
+  const localState = {...state, atlas: {holidays}}
+  const {getBudgetsTransactions} = t.context
+  const transactions = getBudgetsTransactions(localState, {
     from: '2019-01-10',
     to: '2019-01-20'
   })
@@ -1265,76 +1308,26 @@ test('Get transactions by day', t => {
       amount: -308.82,
       account: 'CYbteYpzdA6',
       id: 'hDnW3lo-cTTg@2019-01-10'
-    },
-    {
-      createdAt: 1547574801666,
-      updatedAt: 1547574836234,
-      flow: 'in',
-      place: 'pnyN4ivgRJL',
-      notes: 'Sold old stuff',
-      issueDate: '2019-01-14',
-      amount: 0.03,
-      dueDate: '2019-01-14',
-      payDate: '2019-01-14',
-      paidAmount: 0.03,
-      status: 'paid',
-      account: 'AHIhOdX7cxo',
-      partitions: [
-        {
-          costCenter: 'eBhqeuMtrBu',
-          category: 'Xo3z0jNPJvQ',
-          description: 'My pen',
-          amount: 0.01
-        },
-        {
-          costCenter: 'eBhqeuMtrBu',
-          category: 'Xo3z0jNPJvQ',
-          description: 'My pencil',
-          amount: 0.02
-        }
-      ],
-      id: '1hn9Vgjmpjon'
-    },
-    {
-      issuer: '-ssZsPnhWoo',
-      createdAt: 1548789013380,
-      updatedAt: 1548791898760,
-      flow: 'out',
-      issueDate: '2019-01-18',
-      amount: -2849.73,
-      dueDate: '2019-01-18',
-      payDate: '2019-01-18',
-      paidAmount: -2849.73,
-      status: 'paid',
-      account: 'pXuNLYMCZZ3',
-      id: 'LdfdmhY7wZMr',
-      partitions: [
-        {
-          costCenter: 'd4hS3Qb9E5O',
-          category: '2ASvvWRLha',
-          description: 'Canal de música',
-          amount: -16.9
-        },
-        {
-          costCenter: 'd4hS3Qb9E5O',
-          category: 'c8H31KdYqn8',
-          description: 'Faculdade',
-          amount: -232.52
-        },
-        {
-          costCenter: 'hgtbIUhE-lB',
-          category: 'c8H31KdYqn8',
-          description: 'Matrícula',
-          amount: -563
-        },
-        {
-          costCenter: 'd4hS3Qb9E5O',
-          category: 'FUv4lDrdTYL',
-          description: 'Toys',
-          amount: -89.7
-        },
-        {amount: -1947.61}
-      ]
     }
   ])
+})
+
+test('Get transactions by day', t => {
+  const localState = {...state, atlas: {holidays}}
+  const {getTransactionsByDay} = t.context
+  const calendar = getTransactionsByDay(localState, {
+    from: '2019-01-10',
+    to: '2019-01-20'
+  })
+  // console.log('TCL: calendar', util.inspect(calendar, {depth: null}))
+  const dates = Object.keys(calendar)
+  t.is(dates.length, 3)
+  t.deepEqual(dates, ['2019-01-10', '2019-01-14', '2019-01-18'])
+  t.deepEqual(
+    dates.map(date => {
+      t.is(calendar[date].length, 1)
+      return calendar[date][0].amount
+    }),
+    [-308.82, 0.03, -2849.73]
+  )
 })
