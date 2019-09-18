@@ -3,6 +3,10 @@
     "en": "and",
     "pt-BR": "e"
   },
+  "balance_adjustment": {
+    "en": "Balance adjustment",
+    "pt-BR": "Ajuste de saldo"
+  },
   "by_using": {
     "en": "By using",
     "pt-BR": "Ao usar"
@@ -182,6 +186,14 @@
   "this_is_a_work_in_progress": {
     "en": "This is a work in progress...",
     "pt-BR": "Em desenvolvimento..."
+  },
+  "to": {
+    "en": "to",
+    "pt-BR": "para"
+  },
+  "transfer_from": {
+    "en": "Transfer from",
+    "pt-BR": "Transferência de"
   },
   "update_available": {
     "en": "Update available!",

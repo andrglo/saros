@@ -13,7 +13,7 @@ const TransactionList = props => {
   const {dispatch, transactions, className, ...rest} = props
   // log('render', props)
   return (
-    <ul {...rest} className={cn('bg-blue-800', className)}>
+    <ul {...rest} className={cn(className)}>
       {transactions.map(transaction => {
         return (
           <TransactionView

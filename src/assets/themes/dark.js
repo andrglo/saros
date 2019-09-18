@@ -7,7 +7,7 @@ module.exports = {
 
     // shades: default hover active
     'text-default': [colors.gray, 300, 900, 200],
-    'bg-default': [colors.gray, 900, 600, 700],
+    'bg-default': [colors.gray, 900, 800, 700],
 
     'text-error': colors.red[900],
     'bg-error': colors.red[500],

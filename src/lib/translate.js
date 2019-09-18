@@ -4,6 +4,10 @@ import normalize from './normalize'
 
 let translations = {}
 
+let currentLocale
+
+export const getCurrentLocale = () => currentLocale
+
 export const fetchLocale = locale =>
   axios
     .get(`/locale/${locale}.json`, {
@@ -11,6 +15,7 @@ export const fetchLocale = locale =>
     })
     .then(result => {
       setTranlations(result.data)
+      currentLocale = locale
       return true // changed
     })
     .catch(err => {

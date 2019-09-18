@@ -11,23 +11,37 @@ import {getTransactionsByDay} from '../selectors/docs'
 const log = debug('transaction:panel')
 
 const TransactionPanel = props => {
-  const {transactions} = props
+  const {className, calendar} = props
   // log('render', props)
-  // todo Create a list for each day
-  return <TransactionList transactions={transactions} />
+  return (
+    <div className={className}>
+      {Object.keys(calendar)
+        .sort()
+        .map(date => {
+          return (
+            <div key={date}>
+              {date}
+              <br />
+              <TransactionList transactions={calendar[date]} />
+            </div>
+          )
+        })}
+    </div>
+  )
 }
 
 TransactionPanel.propTypes = {
-  transactions: PropTypes.array
+  className: PropTypes.string,
+  calendar: PropTypes.object.isRequired
 }
 
 export default connect((state, props) => {
   const {from, to} = props
-  const transactions = getTransactionsByDay(state, {
+  const calendar = getTransactionsByDay(state, {
     from,
     to
   })
   return {
-    transactions
+    calendar
   }
 })(TransactionPanel)
