@@ -110,9 +110,10 @@ export const getBudgets = state =>
     collection: `dbs/${getDb(state)}/budgets`
   })
 
-export const getTransfers = state =>
+export const getTransfers = (state, {from, to} = {}) =>
   getCollection(state, {
-    collection: `dbs/${getDb(state)}/transfers`
+    collection: `dbs/${getDb(state)}/transfers`,
+    monthSpan: getMonthSpan(from, to, getCurrentMonth())
   })
 
 export const getAccounts = state =>
