@@ -38,6 +38,7 @@ const config = {
               ident: 'postcss',
               plugins: () => [
                 require('tailwindcss'),
+                require('postcss-nested'),
                 require('autoprefixer'),
                 ...(production
                   ? [
