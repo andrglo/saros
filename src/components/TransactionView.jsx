@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 import {connect} from 'react-redux'
@@ -11,21 +11,39 @@ const log = debug('transaction:view')
 
 const TransactionView = props => {
   const {dispatch, transaction, className, ...rest} = props
-  const {type, description, amount} = transaction
-  // log('render', transaction.type)
+  const {id, type, description, amount} = transaction
+  const [opened, open] = useState({})
   const isTranfer = type === 'transfer'
   const isOutflow = Math.isNegative(amount)
   return (
-    <div {...rest} className={cn('text-sm flex', className)}>
-      <p className="truncate flex-1">{description}</p>
-      <p
-        className={cn({
-          'text-expense': isOutflow && !isTranfer,
-          'text-income': !isOutflow && !isTranfer
-        })}
+    <div className="px-1 ">
+      <button
+        {...rest}
+        className={cn(
+          'py-1 sm:py-0 text-sm hover:bg-highlight flex w-full text-left rounded-sm',
+          className
+        )}
+        onClick={() => {
+          open({...opened, [id]: !opened[id]})
+        }}
       >
-        {formatCurrency(Math.abs(amount))}
-      </p>
+        <p
+          className={cn('flex-1', {
+            truncate: !opened[id]
+          })}
+        >
+          {description}
+        </p>
+        <p>{type}</p>
+        <p
+          className={cn({
+            'text-expense': isOutflow && !isTranfer,
+            'text-income': !isOutflow && !isTranfer
+          })}
+        >
+          {formatCurrency(Math.abs(amount))}
+        </p>
+      </button>
     </div>
   )
 }

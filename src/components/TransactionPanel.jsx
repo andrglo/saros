@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import cn from 'classnames'
+import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
 
@@ -14,14 +14,13 @@ const TransactionPanel = props => {
   const {className, calendar} = props
   // log('render', props)
   return (
-    <div className={className}>
+    <div className={cn(className)}>
       {Object.keys(calendar)
         .sort()
         .map(date => {
           return (
-            <div key={date}>
-              {date}
-              <br />
+            <div key={date} className="border-b pb-1">
+              <p className="p-1 italic font-bold">{date}</p>
               <TransactionList transactions={calendar[date]} />
             </div>
           )

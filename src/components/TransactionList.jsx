@@ -13,7 +13,7 @@ const TransactionList = props => {
   const {dispatch, transactions, className, ...rest} = props
   // log('render', props)
   return (
-    <ul {...rest} className={cn(className)}>
+    <div {...rest} className={cn(className)}>
       {transactions.map(transaction => {
         return (
           <TransactionView
@@ -22,7 +22,7 @@ const TransactionList = props => {
           />
         )
       })}
-    </ul>
+    </div>
   )
 }
 

@@ -56,6 +56,10 @@ const controller = {
 
 const mapTransactionsDueDates = map('dueDate')
 const mapDueDates = map('1')
+const removeDescriptions = map(transaction => {
+  const {description, ...rest} = transaction
+  return rest
+})
 
 test.before(async t => {
   mockery.enable({warnOnUnregistered: false})
@@ -516,7 +520,12 @@ test('Get remaining payments for credit cards', t => {
 })
 
 test('Expand invoice', t => {
-  const {expandInvoice, getAccounts} = t.context
+  const {
+    expandInvoice,
+    getAccounts,
+    getCategories,
+    getPlaces
+  } = t.context
   const invoices = {
     '1': {
       amount: 10,
@@ -667,11 +676,15 @@ test('Expand invoice', t => {
       ]
     }
   }
-  let list = expandInvoice('9', {invoices})
+  let list = expandInvoice('9', {
+    invoices,
+    categories: {},
+    places: {}
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   // .38+1.52+.24+1.19+.05+.19+.41+.02=4
   // .41+1.64+.26+1.28+.05+.2+.45+.01=4.3
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       amount: 4,
       id: '9',
@@ -709,9 +722,9 @@ test('Expand invoice', t => {
       ]
     }
   ])
-  list = expandInvoice('4', {invoices})
+  list = expandInvoice('4', {invoices, categories: {}, places: {}})
   // console.log('TCL: list', util.inspect(list, {depth: null}))
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       amount: 1,
       id: '4',
@@ -721,9 +734,9 @@ test('Expand invoice', t => {
       ]
     }
   ])
-  list = expandInvoice('2', {invoices})
+  list = expandInvoice('2', {invoices, categories: {}, places: {}})
   // console.log('TCL: list', util.inspect(list, {depth: null}))
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       partitions: [
         {category: 'A', amount: 0.8},
@@ -741,9 +754,9 @@ test('Expand invoice', t => {
       id: '2/1'
     }
   ])
-  list = expandInvoice('1', {invoices})
+  list = expandInvoice('1', {invoices, categories: {}, places: {}})
   // console.log('TCL: list', util.inspect(list, {depth: null}))
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       partitions: [
         {category: 'X', amount: 2, description: 'category X'},
@@ -755,9 +768,17 @@ test('Expand invoice', t => {
   ])
 
   const accounts = getAccounts(state)
-  list = expandInvoice('3', {invoices, holidays, accounts})
+  const categories = getCategories(state)
+  const places = getPlaces(state)
+  list = expandInvoice('3', {
+    invoices,
+    holidays,
+    accounts,
+    categories,
+    places
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       type: 'ccard',
       installments: 3,
@@ -770,7 +791,7 @@ test('Expand invoice', t => {
     {
       id: '3@2019-07-31',
       billedFrom: '3',
-      type: 'ccardBill',
+      type: 'bill',
       amount: 33.33,
       status: 'draft',
       issueDate: '2019-07-31',
@@ -785,7 +806,7 @@ test('Expand invoice', t => {
     {
       id: '3@2019-08-31',
       billedFrom: '3',
-      type: 'ccardBill',
+      type: 'bill',
       amount: 33.33,
       status: 'draft',
       issueDate: '2019-08-31',
@@ -800,7 +821,7 @@ test('Expand invoice', t => {
     {
       id: '3@2019-09-30',
       billedFrom: '3',
-      type: 'ccardBill',
+      type: 'bill',
       amount: 33.34,
       status: 'draft',
       issueDate: '2019-09-30',
@@ -814,9 +835,15 @@ test('Expand invoice', t => {
     }
   ])
 
-  list = expandInvoice('5', {invoices, holidays, accounts})
+  list = expandInvoice('5', {
+    invoices,
+    holidays,
+    accounts,
+    categories,
+    places
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       type: 'ccard',
       installments: 10,
@@ -829,7 +856,7 @@ test('Expand invoice', t => {
     {
       id: '5@2019-03-31',
       billedFrom: '5',
-      type: 'ccardBill',
+      type: 'bill',
       amount: 5,
       status: 'draft',
       issueDate: '2019-03-31',
@@ -844,7 +871,7 @@ test('Expand invoice', t => {
     {
       id: '5@2019-04-30',
       billedFrom: '5',
-      type: 'ccardBill',
+      type: 'bill',
       amount: 5,
       status: 'draft',
       issueDate: '2019-04-30',
@@ -858,9 +885,15 @@ test('Expand invoice', t => {
     }
   ])
 
-  list = expandInvoice('6', {invoices, holidays, accounts})
+  list = expandInvoice('6', {
+    invoices,
+    holidays,
+    accounts,
+    categories,
+    places
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
-  t.deepEqual(list, [
+  t.deepEqual(removeDescriptions(list), [
     {
       type: 'ccard',
       installments: 10,
@@ -1076,7 +1109,7 @@ test('Expand budget', t => {
         amount: -105.42
       }
     ],
-    flow: 'out',
+    type: 'pbud',
     place: 'vxbJp9WfTu0',
     account: '1',
     frequency: 'monthly',
@@ -1089,6 +1122,8 @@ test('Expand budget', t => {
     budget,
     holidays,
     accounts,
+    categories: {},
+    places: {},
     invoices: {
       ehv: {
         budget: 'b',
@@ -1100,9 +1135,9 @@ test('Expand budget', t => {
   //   'TCL: transactions',
   //   util.inspect(transactions, {depth: null})
   // )
-  t.deepEqual(transactions, [
+  t.deepEqual(removeDescriptions(transactions), [
     {
-      flow: 'out',
+      type: 'pbud',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       partitions: [
@@ -1137,15 +1172,17 @@ test('Expand budget', t => {
   transactions = expandBudget('b', '2019-02-24', '2019-03-31', {
     budget,
     holidays,
+    categories: {},
+    places: {},
     accounts
   })
   // console.log(
   //   'TCL: transactions',
   //   util.inspect(transactions, {depth: null})
   // )
-  t.deepEqual(transactions, [
+  t.deepEqual(removeDescriptions(transactions), [
     {
-      flow: 'out',
+      type: 'pbud',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       partitions: [
@@ -1174,7 +1211,7 @@ test('Expand budget', t => {
     {
       id: 'b@2019-03-10@2019-04-08',
       billedFrom: 'b@2019-03-10',
-      type: 'ccardBill',
+      type: 'bill',
       amount: -154.41,
       status: 'draft',
       issueDate: '2019-04-08',
@@ -1202,7 +1239,7 @@ test('Expand budget', t => {
     {
       id: 'b@2019-03-10@2019-05-08',
       billedFrom: 'b@2019-03-10',
-      type: 'ccardBill',
+      type: 'bill',
       amount: -154.41,
       status: 'draft',
       issueDate: '2019-05-08',
@@ -1238,12 +1275,11 @@ test('Get transfers transactions', t => {
   //   'TCL: transactions',
   //   util.inspect(transactions, {depth: null})
   // )
-  t.deepEqual(transactions, [
+  t.deepEqual(removeDescriptions(transactions), [
     {
       id: 'lGzJl4KiYINF',
       type: 'balance-in',
       createdAt: 1565005449218,
-      description: 'Balance adjustment',
       dueDate: '2019-08-05',
       account: 'AHIhOdX7cxo',
       amount: 3.3
@@ -1252,7 +1288,6 @@ test('Get transfers transactions', t => {
       id: 'gZxGMyv47-np',
       type: 'transfer',
       createdAt: 1565111084553,
-      description: 'Transfer from Itaú to Wallet',
       dueDate: '2019-08-06',
       account: 'CYbteYpzdA6',
       amount: -900,
@@ -1262,7 +1297,6 @@ test('Get transfers transactions', t => {
       id: '9YXiZnWpqf8k',
       type: 'transfer',
       createdAt: 1566818367284,
-      description: 'Transfer from Itaú to Wallet',
       dueDate: '2019-08-23',
       account: 'CYbteYpzdA6',
       amount: -50,
@@ -1272,7 +1306,6 @@ test('Get transfers transactions', t => {
       id: 'HqoeVnU7yapt',
       type: 'transfer',
       createdAt: 1566818794912,
-      description: 'Transfer from Wallet to Itaú; Refund',
       dueDate: '2019-08-23',
       account: 'AHIhOdX7cxo',
       amount: -366,
@@ -1292,9 +1325,9 @@ test('Get budgets transactions', t => {
   //   'TCL: transactions',
   //   util.inspect(transactions, {depth: null})
   // )
-  t.deepEqual(transactions, [
+  t.deepEqual(removeDescriptions(transactions), [
     {
-      flow: 'out',
+      type: 'pbud',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       partitions: [

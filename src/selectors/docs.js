@@ -1,3 +1,5 @@
+import get from 'lodash/get'
+import uniq from 'lodash/uniq'
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
 import round from 'lodash/round'
@@ -159,6 +161,58 @@ export const areAllCollectionsReady = allCollections => {
     }
   }
   return true
+}
+
+export const getDocProp = (id, path, collection, defaultValue = '') =>
+  get(collection[id], path) || defaultValue
+
+export const getName = (id, collection) =>
+  getDocProp(id, 'name', collection) ||
+  getDocProp(id, 'description', collection) // todo remove-me
+
+const concatDescription = (
+  description,
+  complement,
+  separator = '; '
+) =>
+  `${description || ''}${
+    description && complement ? separator : ''
+  }${complement || ''}`
+
+const buildTransactionDescription = (
+  transaction,
+  {categories, places}
+) => {
+  let description = transaction.description
+  if (transaction.partitions) {
+    let lastCategory = null
+    const descriptions = []
+    for (const partition of transaction.partitions) {
+      const description =
+        partition.description && partition.description.trim()
+      if (description) {
+        descriptions.push(description)
+        lastCategory = partition.category
+      } else if (partition.category !== lastCategory) {
+        lastCategory = partition.category
+        descriptions.push(getName(partition.category, categories))
+      }
+    }
+    description = concatDescription(
+      description,
+      uniq(descriptions).join('; ')
+    )
+  }
+  description = concatDescription(description, transaction.notes)
+  if (transaction.place) {
+    description = concatDescription(
+      description,
+      getName(transaction.place, places),
+      ' ▪ ',
+      ' •▪ '
+    )
+  }
+  return description
 }
 
 export const getTotal = recordset =>
@@ -361,7 +415,7 @@ export const getRemainingPaymentsForCreditcard = ({
     payments.push({
       id: `${transaction.id}@${issueDate}`,
       billedFrom: transaction.id,
-      type: 'ccardBill',
+      type: 'bill',
       amount,
       status: 'draft',
       issueDate,
@@ -377,11 +431,16 @@ export const getRemainingPaymentsForCreditcard = ({
   return payments
 }
 
-export const expandInvoice = (id, {invoices, holidays, accounts}) => {
+export const expandInvoice = (id, collections) => {
   let transactions = []
+  const {invoices, holidays, accounts} = collections
   const {parcels = [], billedFrom, ...invoice} = invoices[id]
 
   const addTransaction = transaction => {
+    transaction.description = buildTransactionDescription(
+      transaction,
+      collections
+    )
     transactions.push(transaction)
     if (transaction.type === 'ccard') {
       transactions = [
@@ -550,13 +609,9 @@ const getInvoicesByBudget = memoize(invoices => {
   return invoicesByBudget
 })
 
-export const expandBudget = (
-  id,
-  from,
-  to,
-  {budget, holidays, accounts, invoices}
-) => {
+export const expandBudget = (id, from, to, collections) => {
   let transactions = []
+  const {budget, holidays, accounts, invoices} = collections
   const reviews = sortBy(
     [
       budget,
@@ -617,7 +672,7 @@ export const expandBudget = (
       }
       const amount = getTotal(review.partitions)
       const invoice = {
-        flow: review.flow,
+        type: review.type,
         place: review.place,
         notes: review.notes,
         partitions: review.partitions,
@@ -636,11 +691,10 @@ export const expandBudget = (
       transactions = [
         ...transactions,
         ...expandInvoice(invoiceId, {
+          ...collections,
           invoices: {
             [invoiceId]: invoice
-          },
-          holidays,
-          accounts
+          }
         })
       ]
     }
@@ -652,16 +706,20 @@ export const getInvoicesTransactions = createSelector(
   createStructuredSelector({
     invoices: getInvoices,
     holidays: getHolidaysForAccounts,
-    accounts: getAccounts
+    accounts: getAccounts,
+    categories: getCategories,
+    places: getPlaces
   }),
   params => {
-    const {holidays, invoices, accounts} = params
+    const {holidays, invoices, accounts, categories, places} = params
     let transactions = []
     if (
       !areAllCollectionsReady({
         invoices,
         accounts,
-        holidays
+        holidays,
+        categories,
+        places
       })
     ) {
       return transactions
@@ -670,20 +728,18 @@ export const getInvoicesTransactions = createSelector(
     for (const id of Object.keys(invoices)) {
       transactions = [
         ...transactions,
-        ...expandInvoice(id, {invoices, holidays, accounts})
+        ...expandInvoice(id, {
+          invoices,
+          holidays,
+          accounts,
+          categories,
+          places
+        })
       ]
     }
     return transactions
   }
 )
-
-export const getAccountName = (id, accounts) =>
-  (accounts[id] || {}).name || ''
-
-const concatDescription = (description, complement) =>
-  `${description || ''}${
-    description && complement ? '; ' : ''
-  }${complement || ''}`
 
 export const getTransfersTransactions = createSelector(
   getTransfers,
@@ -718,18 +774,19 @@ export const getTransfersTransactions = createSelector(
         let from
         let to
         if (Math.isNegative(amount)) {
-          from = getAccountName(account, accounts)
-          to = getAccountName(counterpart, accounts)
+          from = getName(account, accounts)
+          to = getName(counterpart, accounts)
         } else {
-          from = getAccountName(counterpart, accounts)
-          to = getAccountName(account, accounts)
+          from = getName(counterpart, accounts)
+          to = getName(account, accounts)
         }
         description = concatDescription(
           t`Transfer from` + ' ' + from + ' ' + t`to` + ' ' + to,
           description
         )
       } else if (!description) {
-        description = t`Balance adjustment`
+        description =
+          t`Balance adjustment` + ' ' + getName(account, accounts)
       }
       const transaction = {
         id,
@@ -760,17 +817,30 @@ export const getBudgetsTransactions = createSelector(
     invoices: getInvoices,
     budgets: getBudgets,
     holidays: getHolidaysForAccounts,
-    accounts: getAccounts
+    accounts: getAccounts,
+    categories: getCategories,
+    places: getPlaces
   }),
   params => {
-    let {from, to, holidays, invoices, budgets, accounts} = params
+    let {
+      from,
+      to,
+      holidays,
+      invoices,
+      budgets,
+      accounts,
+      categories,
+      places
+    } = params
     let transactions = []
     if (
       !areAllCollectionsReady({
         budgets,
         invoices,
         accounts,
-        holidays
+        holidays,
+        categories,
+        places
       })
     ) {
       return transactions
@@ -784,7 +854,9 @@ export const getBudgetsTransactions = createSelector(
           budget: budgets[id],
           invoices,
           holidays,
-          accounts
+          accounts,
+          categories,
+          places
         })
       ]
     }

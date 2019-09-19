@@ -2,7 +2,7 @@
   "income": {
     "id": "income",
     "children": ["Xo3z0jNPJvQ", "97azP0KF19_"],
-    "description": "All income",
+    "name": "All income",
     "flow": "in",
     "updatedAt": "2019-09-04T14:32:13.161Z"
   },
@@ -14,43 +14,43 @@
       "_iAneiGru-p",
       "apo8kLEuaJ"
     ],
-    "description": "Expenses",
+    "name": "Expenses",
     "flow": "out",
     "updatedAt": "2019-09-04T14:32:13.161Z"
   },
   "InYNor0Si": {
-    "description": "Home",
+    "name": "Home",
     "createdAt": "2018-07-17T14:30:40.342Z",
     "updatedAt": "2018-07-17T14:30:40.342Z",
     "flow": "out"
   },
   "i7vJFZCrp1k": {
-    "description": "Health",
+    "name": "Health",
     "createdAt": "2018-07-17T14:30:40.342Z",
     "updatedAt": "2018-07-17T14:30:40.342Z",
     "flow": "out"
   },
   "_iAneiGru-p": {
-    "description": "Bank",
+    "name": "Bank",
     "createdAt": "2018-07-17T14:30:40.342Z",
     "updatedAt": "2018-07-17T14:30:40.342Z",
     "flow": "out"
   },
   "apo8kLEuaJ": {
-    "description": "Leisure",
+    "name": "Leisure",
     "createdAt": "2018-07-17T14:30:40.342Z",
     "updatedAt": "2018-07-17T14:30:40.342Z",
     "flow": "out"
   },
   "Xo3z0jNPJvQ": {
-    "description": "Detachment",
+    "name": "Detachment",
     "createdAt": "2018-07-17T14:30:40.342Z",
     "updatedAt": "2018-07-17T14:30:40.342Z",
     "shopTypes": ["pawn_store"],
     "flow": "in"
   },
   "97azP0KF19_": {
-    "description": "Salary",
+    "name": "Salary",
     "createdAt": "2018-07-17T14:30:40.342Z",
     "updatedAt": "2018-07-17T14:30:40.342Z",
     "shopTypes": ["salary"],
