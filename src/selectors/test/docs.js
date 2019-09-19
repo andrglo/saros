@@ -1241,14 +1241,18 @@ test('Get transfers transactions', t => {
   t.deepEqual(transactions, [
     {
       id: 'lGzJl4KiYINF',
-      type: 'in',
+      type: 'balance-in',
+      createdAt: 1565005449218,
+      description: 'Balance adjustment',
       dueDate: '2019-08-05',
       account: 'AHIhOdX7cxo',
       amount: 3.3
     },
     {
       id: 'gZxGMyv47-np',
-      type: 'tranfer',
+      type: 'transfer',
+      createdAt: 1565111084553,
+      description: 'Transfer from Itaú to Wallet',
       dueDate: '2019-08-06',
       account: 'CYbteYpzdA6',
       amount: -900,
@@ -1256,7 +1260,9 @@ test('Get transfers transactions', t => {
     },
     {
       id: '9YXiZnWpqf8k',
-      type: 'tranfer',
+      type: 'transfer',
+      createdAt: 1566818367284,
+      description: 'Transfer from Itaú to Wallet',
       dueDate: '2019-08-23',
       account: 'CYbteYpzdA6',
       amount: -50,
@@ -1264,7 +1270,9 @@ test('Get transfers transactions', t => {
     },
     {
       id: 'HqoeVnU7yapt',
-      type: 'tranfer',
+      type: 'transfer',
+      createdAt: 1566818794912,
+      description: 'Transfer from Wallet to Itaú; Refund',
       dueDate: '2019-08-23',
       account: 'AHIhOdX7cxo',
       amount: -366,

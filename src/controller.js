@@ -45,6 +45,7 @@ const PENDENT_STORE_NAME = 'pendent'
 const INTERVAL_TO_SAVE_IN_CLOUD = 20000
 const INTERVAL_TO_SAVE_IN_LOCAL_DB = 500
 const REHYDRATE_STATE_KEY = 'REHYDRATE_STATE_KEY'
+const REHYDRATE_BUNDLE = 'REHYDRATE_BUNDLE'
 const SET_FORM = 'forma/SET_FORM'
 const CLEAR_STATE = 'CLEAR_STATE'
 const APP_REDUCER_NAME = 'app'
@@ -66,7 +67,11 @@ const reducers = new Map()
 const middleware = [thunk]
 
 if (process.env.NODE_ENV === 'development') {
-  const actionsBlacklist = ['IDLE', 'REHYDRATE_STATE_KEY']
+  const actionsBlacklist = [
+    'IDLE',
+    REHYDRATE_STATE_KEY,
+    REHYDRATE_BUNDLE
+  ]
   const {createLogger} = require('redux-logger')
   middleware.push(
     createLogger({
@@ -303,16 +308,38 @@ const rootReducer = (state, action) => {
         state[root][key] =
           action.data === null
             ? {}
-            : action.replace
-            ? action.data
             : merge({}, state[root][key], action.data)
       } else {
         state[root] =
           action.data === null
             ? {}
-            : action.replace
-            ? action.data
             : merge({}, state[root], action.data)
+      }
+      return state
+    }
+    case REHYDRATE_BUNDLE: {
+      const {collection, bundle} = action
+      const docs = state[DOC_STORE_NAME]
+      const previousBundle = docs[collection] || {
+        data: {}
+      }
+      const previousLastUpdatedAt = previousBundle.lastUpdatedAt || 0
+      const lastUpdatedAt = bundle.lastUpdatedAt || 0
+      state = {
+        ...state,
+        [DOC_STORE_NAME]: {
+          ...docs,
+          [collection]: {
+            data: {
+              ...(previousBundle.data || {}),
+              ...(bundle.data || {})
+            },
+            lastUpdatedAt:
+              lastUpdatedAt > previousLastUpdatedAt
+                ? lastUpdatedAt
+                : previousLastUpdatedAt
+          }
+        }
       }
       return state
     }
@@ -628,12 +655,11 @@ const saveStateChanges = async (before, after, path, key = '') => {
   saveInCloud()
 }
 
-const updateDocState = (path, doc) => {
+const updateBundle = (path, bundle) => {
   store.dispatch({
-    type: REHYDRATE_STATE_KEY,
-    key: `${DOC_STORE_NAME}.${path}`,
-    data: doc,
-    replace: true
+    type: REHYDRATE_BUNDLE,
+    collection: path,
+    bundle
   })
 }
 
@@ -832,7 +858,7 @@ export const subscribeCollection = async (path, options) => {
         bundle.lastUpdatedAt > 0 &&
         !stateUpdated
       ) {
-        updateDocState(path, bundle)
+        updateBundle(path, bundle)
         log(
           'subscribeCollection state updated when disconnected',
           path
@@ -871,7 +897,7 @@ export const subscribeCollection = async (path, options) => {
         bundle.data = {...bundle.data, ...monthBundle.data}
       }
       if (bundle.lastUpdatedAt > 0) {
-        updateDocState(path, bundle)
+        updateBundle(path, bundle)
       }
     } else if (!bundle && !isSingleDocument) {
       bundle = bundle || {data: {}}
@@ -882,10 +908,10 @@ export const subscribeCollection = async (path, options) => {
         transform
       })
       if (bundle.lastUpdatedAt > 0) {
-        updateDocState(path, bundle)
+        updateBundle(path, bundle)
       }
     } else if (bundle && bundle.lastUpdatedAt > 0 && !stateUpdated) {
-      updateDocState(path, bundle)
+      updateBundle(path, bundle)
     }
 
     if (isSubscribed) {
@@ -917,7 +943,7 @@ export const subscribeCollection = async (path, options) => {
             }
             bundle.lastUpdatedAt = data.updatedAt
             bundle.data = data
-            updateDocState(path, bundle)
+            updateBundle(path, bundle)
             localDb.save(DOC_STORE_NAME, path, bundle)
           },
           err => {
@@ -974,7 +1000,7 @@ export const subscribeCollection = async (path, options) => {
               }
               changes.push({id, doc, monthSpan})
             })
-            updateDocState(path, bundle)
+            updateBundle(path, bundle)
             saveDocChangesToLocalDb({
               collection: path,
               changes,
@@ -1083,7 +1109,7 @@ export const seekDoc = async (path, keyword, options = {}) => {
       }
       recordset.push({id: doc.id, ...record})
     })
-    updateDocState(path, bundle)
+    updateBundle(path, bundle)
   }
   return [recordset, startAfter]
 }

@@ -681,7 +681,9 @@ export const getAccountName = (id, accounts) =>
   (accounts[id] || {}).name || ''
 
 const concatDescription = (description, complement) =>
-  `${description || ''}${description ? '; ' : ''}${complement}`
+  `${description || ''}${
+    description && complement ? '; ' : ''
+  }${complement || ''}`
 
 export const getTransfersTransactions = createSelector(
   getTransfers,
@@ -723,8 +725,8 @@ export const getTransfersTransactions = createSelector(
           to = getAccountName(account, accounts)
         }
         description = concatDescription(
-          description,
-          t`Transfer from` + ' ' + from + ' ' + t`to` + ' ' + to
+          t`Transfer from` + ' ' + from + ' ' + t`to` + ' ' + to,
+          description
         )
       } else if (!description) {
         description = t`Balance adjustment`

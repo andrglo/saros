@@ -19,6 +19,7 @@ import completion from '../../test/lib/completion'
 const db = 'solar'
 const getCollectionPath = collection => `dbs/${db}/${collection}`
 const DOC_STORE_NAME = 'docs'
+const FETCH_TIMEOUT = 50
 
 let storeIsReady
 
@@ -80,15 +81,19 @@ const getDocsFromFile = (file, query, payload) => () => {
       recordset.push({id, doc: {...collection[id]}})
     })
   }
-  return Promise.resolve({
-    forEach: f => {
-      for (const {id, doc} of recordset) {
-        f({
-          id,
-          data: () => doc
-        })
-      }
-    }
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve({
+        forEach: f => {
+          for (const {id, doc} of recordset) {
+            f({
+              id,
+              data: () => doc
+            })
+          }
+        }
+      })
+    }, FETCH_TIMEOUT)
   })
 }
 
@@ -186,6 +191,41 @@ test.serial('Check initialization', t => {
   t.deepEqual(state.app.dbs, [db])
 })
 
+test.serial(
+  'Subscribe many months in parallel a monthly cached collection',
+  async t => {
+    const {getStore, getCollection, invoiceTransform} = t.context
+    const invoicesPath = getCollectionPath('invoices')
+    let options = {
+      collection: invoicesPath,
+      transform: invoiceTransform
+    }
+    options = {...options, monthSpan: ['2019-01']}
+    let invoices = getCollection(getStore().getState(), options)
+    t.is(invoices, undefined) // when empty return undefined
+    options = {...options, monthSpan: ['*']}
+    getCollection(getStore().getState(), options)
+    options = {...options, monthSpan: ['2019-02']}
+    getCollection(getStore().getState(), options)
+    await sleep(FETCH_TIMEOUT * 8) // wait all months to load after subscription
+    invoices = getStore().getState().docs[invoicesPath].data
+    // console.log(
+    //   'TCL: invoices',
+    //   util.inspect(Object.keys(invoices).sort(), {depth: null})
+    // )
+    t.deepEqual(Object.keys(invoices).sort(), [
+      '1hn9Vgjmpjon',
+      '6zzwHBvMRmmm',
+      'BFMTePgome85',
+      'LdfdmhY7wZMr',
+      'RIo6Y1IwJO9',
+      'XrE2xUBgkjPj',
+      'ai8H2bFxt4jv',
+      'tjuWBgnG42Rd'
+    ])
+  }
+)
+
 const tabs = [1, 2]
 for (const tab of tabs) {
   test(`Subscribe (via selector) a fully cached collection - Tab ${tab}`, async t => {
@@ -193,7 +233,7 @@ for (const tab of tabs) {
     let state = getStore().getState()
     let budgets = getBudgets(state)
     t.is(budgets, undefined) // when empty return undefined
-    await sleep(100) // wait collection load after subscription
+    await sleep(FETCH_TIMEOUT + 100) // wait collection load after subscription
     state = getStore().getState()
     budgets = getBudgets(state)
     t.is(Object.keys(budgets).length > 0, true)
@@ -216,15 +256,14 @@ for (const tab of tabs) {
     const invoicesPath = getCollectionPath('invoices')
     const options = {from: '2019-02', to: '2019-02'}
     let state = getStore().getState()
-    let invoices = getInvoices(state, options)
-    t.is(invoices, undefined) // when empty return undefined
-    await sleep(100) // wait collection load after subscription
+    getInvoices(state, options)
+    await sleep(FETCH_TIMEOUT * 8) // wait collection load after subscription
 
     unsubscribeCollection(invoicesPath)
     getInvoices({app: state.app, docs: {}}, options) // simulate a subscription with index already populated
 
     state = getStore().getState()
-    invoices = getInvoices(state, options)
+    let invoices = getInvoices(state, options)
     t.truthy(Object.keys(invoices).length > 0)
 
     const keys = (await localDb.getKeys(DOC_STORE_NAME))
@@ -326,7 +365,7 @@ for (const tab of tabs) {
         }
       })
     })
-    await sleep(100)
+    await sleep(FETCH_TIMEOUT + 100)
     localDbPath = invoicesPath
     record = await localDb.get(DOC_STORE_NAME, localDbPath)
     t.deepEqual(record, {lastUpdatedAt: 1562942782788})
