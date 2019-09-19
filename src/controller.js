@@ -1062,10 +1062,10 @@ export const seekDoc = async (path, keyword, options = {}) => {
       : null
   const recordset = []
   if (snapshot.size) {
-    const doc = {
+    const bundle = {
       ...(store.getState().docs[path] || {data: {}})
     }
-    const data = doc.data
+    const data = bundle.data
     const subscription = subscribedCollections.get(path)
     const transform =
       subscription &&
@@ -1083,7 +1083,7 @@ export const seekDoc = async (path, keyword, options = {}) => {
       }
       recordset.push({id: doc.id, ...record})
     })
-    updateDocState(path, doc)
+    updateDocState(path, bundle)
   }
   return [recordset, startAfter]
 }
