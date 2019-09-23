@@ -191,6 +191,10 @@
     "en": "to",
     "pt-BR": "para"
   },
+  "today": {
+    "en": "Today",
+    "pt-BR": "Hoje"
+  },
   "transfer_from": {
     "en": "Transfer from",
     "pt-BR": "Transferência de"

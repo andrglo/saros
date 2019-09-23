@@ -8,6 +8,8 @@ import {
 } from '@js-joda/core'
 import easter from 'date-easter'
 
+import {getCurrentLocale} from './translate'
+
 export const isYearMonth = date => date && date.length === 7
 export const extractYearMonth = date => date && date.substring(0, 7)
 export const extractYear = date => date && date.substring(0, 4)
@@ -212,3 +214,9 @@ export const getWeeksUntil = (from, to) => {
   }
   return interval
 }
+
+export const toDateString = (date, options = {}) =>
+  new Date(`${date}T00:00`).toLocaleDateString(
+    getCurrentLocale(),
+    options
+  )

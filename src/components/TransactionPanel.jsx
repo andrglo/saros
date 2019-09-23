@@ -6,6 +6,8 @@ import debug from 'debug'
 
 import TransactionList from './TransactionList'
 import {getTransactionsByDay} from '../selectors/docs'
+import {toDateString, getCurrentDate} from '../lib/date'
+import t from '../lib/translate'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('transaction:panel')
@@ -20,7 +22,11 @@ const TransactionPanel = props => {
         .map(date => {
           return (
             <div key={date} className="border-b pb-1">
-              <p className="p-1 italic font-bold">{date}</p>
+              <p className="p-1 italic font-semibold tracking-wider">
+                {date === getCurrentDate()
+                  ? t`Today`
+                  : toDateString(date)}
+              </p>
               <TransactionList transactions={calendar[date]} />
             </div>
           )
