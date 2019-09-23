@@ -50,7 +50,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-nested": "^4.1.2",
     "prettier": "^1.18.2",
-    "react-hot-loader": "^4.12.12",
+    "react-hot-loader": "^4.12.14",
     "redux-logger": "^3.0.6",
     "style-loader": "^1.0.0",
     "stylelint-config-recommended": "^3.0.0",
@@ -67,7 +67,7 @@
     "classnames": "^2.2.6",
     "date-easter": "^0.2.4",
     "debug": "^4.1.1",
-    "firebase": "^6.6.1",
+    "firebase": "^6.6.2",
     "lodash": "^4.17.15",
     "memoizee": "^0.4.14",
     "prop-types": "^15.7.2",
@@ -78,6 +78,6 @@
     "react-redux": "^7.1.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "serialize-error": "^4.1.0"
+    "serialize-error": "^5.0.0"
   }
 }

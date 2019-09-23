@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
-import serializeError from 'serialize-error'
+import {serializeError} from 'serialize-error'
 
 import './index.css'
 import './lib/polyfill'
