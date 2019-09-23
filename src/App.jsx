@@ -23,9 +23,6 @@ import t, {fetchLocale} from './lib/translate'
 import getView from './loaders/router'
 import {getQuery} from './lib/history'
 
-// eslint-disable-next-line import/order
-import {hot} from 'react-hot-loader/root' // should be positioned after loaders
-
 const log = debug('app')
 
 const Workspace = React.lazy(() => import('./Workspace.jsx'))
@@ -265,4 +262,4 @@ export default connect(state => {
     locale: getLocale(state),
     browserLocation
   }
-})(hot(App))
+})(App)
