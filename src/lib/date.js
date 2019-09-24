@@ -32,6 +32,24 @@ export const toYearMonth = date => {
   return result
 }
 
+export const addYears = (date, years) => {
+  try {
+    date = date || getCurrentDate()
+    if (isYearMonth(date)) {
+      date = YearMonth.parse(date)
+        .plusYears(years)
+        .toString()
+    } else {
+      date = LocalDate.parse(date)
+        .plusYears(years)
+        .toString()
+    }
+  } catch (err) {
+    console.error('addYears', {date, years}, err)
+  }
+  return date
+}
+
 export const addMonths = (date, months) => {
   try {
     date = date || getCurrentDate()
