@@ -48,7 +48,14 @@ const state = {
 
 const controller = {
   subscribeCollection: noop,
-  convertRecordTimestamps: noop,
+  convertRecordTimestamps: record => {
+    if (record.updatedAt) {
+      record.updatedAt = new Date(record.updatedAt).getTime()
+    }
+    if (record.createdAt) {
+      record.createdAt = new Date(record.createdAt).getTime()
+    }
+  },
   getStore: () => ({
     dispatch: noop
   })
@@ -68,21 +75,32 @@ test.before(async t => {
   Object.keys(selectors).forEach(p => {
     t.context[p] = selectors[p]
   })
-  const {getInvoices, invoiceTransform} = selectors
-  const invoices = getInvoices(state)
-  for (const id of Object.keys(invoices)) {
-    invoiceTransform(invoices, id, invoices[id])
-  }
 })
 
 test.after(() => {
   mockery.deregisterAll()
 })
 
-test('Check model', t => {
-  const {getAllCollections} = t.context
+test.serial('Check model', t => {
+  const {getAllCollections, invoiceTransform} = t.context
   const allCollections = getAllCollections(state)
   t.is(Object.keys(allCollections).length, 7)
+  const {invoices} = allCollections
+  for (const id of Object.keys(invoices)) {
+    invoiceTransform(invoices, id, invoices[id])
+  }
+  Object.keys(invoices).forEach(id => {
+    t.is(
+      typeof invoices[id].createdAt,
+      'number',
+      'invoiceTransform did not convert createdAt'
+    )
+    t.is(
+      typeof invoices[id].updatedAt,
+      'number',
+      'invoiceTransform did not convert updatedAt'
+    )
+  })
 })
 
 test('Redistribute amount', t => {

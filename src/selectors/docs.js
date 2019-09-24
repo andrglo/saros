@@ -90,9 +90,11 @@ const getIdAndParcelIndex = id => {
 export const invoiceTransform = (data, id, doc) => {
   if (doc.billedFrom) {
     doc.billedFrom = doc.billedFrom.map(item => {
-      const {id, doc, ...rest} = item
+      let {id, doc, ...rest} = item
       if (id && doc) {
         const [invoiceId] = getIdAndParcelIndex(id)
+        doc = {...doc}
+        convertRecordTimestamps(doc)
         data[invoiceId] = doc
       }
       return {id, ...rest}
