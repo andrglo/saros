@@ -327,7 +327,7 @@ export const getInvoicesLastBill = memoize(invoices => {
     for (const item of invoice.billedFrom || []) {
       if (item.id) {
         const lastBill = invoicesLastBill[item.id]
-        if (!lastBill || lastBill.issueDate < invoice.issueDate) {
+        if (!lastBill || item.installment > lastBill.installment) {
           invoicesLastBill[item.id] = item
         }
       }

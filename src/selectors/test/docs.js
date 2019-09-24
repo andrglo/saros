@@ -241,6 +241,33 @@ test('Get invoices last bill', t => {
   })
 })
 
+test('Get invoices last bill after more than 1 payment', t => {
+  const {getInvoicesLastBill} = t.context
+  const invoicesLastBill = getInvoicesLastBill({
+    sed1: {
+      issueDate: '2019-01-01',
+      billedFrom: [
+        {
+          id: 'a',
+          installment: 1
+        }
+      ]
+    },
+    sed2: {
+      issueDate: '2019-01-02',
+      billedFrom: [
+        {
+          id: 'a',
+          installment: 2
+        }
+      ]
+    }
+  })
+  t.deepEqual(invoicesLastBill, {
+    a: {id: 'a', installment: 2}
+  })
+})
+
 test('Get remaining payments for credit cards', t => {
   const {
     getRemainingPaymentsForCreditcard,
