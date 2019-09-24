@@ -1182,7 +1182,6 @@ test('Expand budget', t => {
   // )
   t.deepEqual(removeDescriptions(transactions), [
     {
-      type: 'pbud',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       partitions: [
@@ -1371,4 +1370,47 @@ test('Get transactions by day', t => {
     }),
     [-308.82, 0.03, -2849.73]
   )
+})
+
+test('Get invoices by budget check budget issueDate and budget dueDate to match invoice issueDate', t => {
+  const {getInvoicesByBudget, getBudgetsTransactions} = t.context
+  const invoices = {
+    asd: {
+      budget: 'f70e6',
+      issueDate: '2019-09-23'
+    }
+  }
+  const invoicesByBudget = getInvoicesByBudget(invoices)
+  t.deepEqual([...invoicesByBudget], ['f70e6@2019-09-23'])
+  const transactions = getBudgetsTransactions(
+    {
+      ...state,
+      atlas: {holidays},
+      docs: {
+        ...state.docs,
+        [`dbs/${state.app.db}/invoices`]: {data: invoices},
+        [`dbs/${state.app.db}/budgets`]: {
+          data: {
+            f70e6: {
+              partitions: [
+                {
+                  amount: 1
+                }
+              ],
+              account: 'CYbteYpzdA6',
+              frequency: 'monthly',
+              dayOfMonth: 22,
+              onlyInBusinessDays: 'next',
+              date: '2017-04-18'
+            }
+          }
+        }
+      }
+    },
+    {
+      from: '2019-09-01',
+      to: '2019-09-30'
+    }
+  )
+  t.deepEqual(transactions, [])
 })

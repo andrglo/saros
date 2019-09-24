@@ -208,8 +208,7 @@ const buildTransactionDescription = (
     description = concatDescription(
       description,
       getName(transaction.place, places),
-      ' ▪ ',
-      ' •▪ '
+      ' ▪ '
     )
   }
   return description
@@ -598,7 +597,7 @@ export const getWeeklyDueDates = (
   return dueDates
 }
 
-const getInvoicesByBudget = memoize(invoices => {
+export const getInvoicesByBudget = memoize(invoices => {
   const invoicesByBudget = new Set()
   for (const id of Object.keys(invoices || {})) {
     if (invoices[id].budget) {
@@ -665,9 +664,12 @@ export const expandBudget = (id, from, to, collections) => {
       startedAt
     })
     const invoicesByBudget = getInvoicesByBudget(invoices)
-    for (const [date, dueDate] of dueDates) {
-      const invoiceId = `${id}@${date}`
-      if (invoicesByBudget.has(invoiceId)) {
+    for (const [issueDate, dueDate] of dueDates) {
+      const issueId = `${id}@${issueDate}`
+      if (
+        invoicesByBudget.has(issueId) ||
+        invoicesByBudget.has(`${id}@${dueDate}`)
+      ) {
         continue
       }
       const amount = getTotal(review.partitions)
@@ -676,7 +678,7 @@ export const expandBudget = (id, from, to, collections) => {
         place: review.place,
         notes: review.notes,
         partitions: review.partitions,
-        issueDate: date,
+        issueDate,
         dueDate,
         amount,
         account: review.account
@@ -690,10 +692,10 @@ export const expandBudget = (id, from, to, collections) => {
       }
       transactions = [
         ...transactions,
-        ...expandInvoice(invoiceId, {
+        ...expandInvoice(issueId, {
           ...collections,
           invoices: {
-            [invoiceId]: invoice
+            [issueId]: invoice
           }
         })
       ]
