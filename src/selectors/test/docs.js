@@ -1414,3 +1414,35 @@ test('Get invoices by budget check budget issueDate and budget dueDate to match 
   )
   t.deepEqual(transactions, [])
 })
+
+test('Budgets with no due date define yield no transactions', t => {
+  const {getBudgetsTransactions} = t.context
+  const transactions = getBudgetsTransactions(
+    {
+      ...state,
+      atlas: {holidays},
+      docs: {
+        ...state.docs,
+        [`dbs/${state.app.db}/budgets`]: {
+          data: {
+            f70e6: {
+              partitions: [
+                {
+                  amount: 1
+                }
+              ],
+              account: 'CYbteYpzdA6',
+              frequency: 'monthly',
+              date: '2017-04-18'
+            }
+          }
+        }
+      }
+    },
+    {
+      from: '2019-09-01',
+      to: '2019-09-30'
+    }
+  )
+  t.deepEqual(transactions, [])
+})

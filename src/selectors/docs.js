@@ -495,6 +495,9 @@ const getActualDueDate = (
   return dueDate
 }
 
+const isVariableExpense = budget =>
+  !budget.dayOfMonth && !budget.dayOfWeek
+
 export const getMonthlyDueDates = (
   from,
   to,
@@ -623,6 +626,9 @@ export const expandBudget = (id, from, to, collections) => {
   )
   const startedAt = budget.date
   for (const [index, review] of reviews.entries()) {
+    if (isVariableExpense(review)) {
+      continue
+    }
     const {date, endedAt} = review
     const reviewStartsAt = date
     let reviewEndsAt = endedAt
