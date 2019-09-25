@@ -2,7 +2,8 @@ import get from 'lodash/get'
 import {
   setCountries,
   setCountry,
-  setHolidays
+  setHolidays,
+  setCurrencies
 } from '../reducers/atlas'
 import {getStore} from '../controller'
 import {
@@ -195,3 +196,39 @@ export const isBusinessDay = (date, region, holidays) => {
   }
   return true
 }
+
+export const getCurrencies = createSelector(
+  state => state.atlas.currencies,
+  currencies => {
+    if (!currencies && !isLoading.currencies) {
+      isLoading.currencies = true
+      import('../assets/atlas/currencies.json')
+        .then(({default: data}) => {
+          getStore().dispatch(setCurrencies({currencies: data}))
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    }
+    return currencies
+  }
+)
+
+const getCountriesCurrency = createSelector(
+  getCurrencies,
+  currencies => {
+    const countriesCurrency = {}
+    for (const currency of Object.keys(currencies)) {
+      countriesCurrency[currencies[currency].country] = currency
+    }
+    return countriesCurrency
+  }
+)
+
+export const getCountryCurrency = createSelector(
+  getCountriesCurrency,
+  (state, {country}) => country,
+  (countriesCurrency, country) => {
+    return countriesCurrency && countriesCurrency[country]
+  }
+)

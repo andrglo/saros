@@ -4,6 +4,7 @@ import createAction from '../lib/createAction'
 export const setCountries = createAction('SET_COUNTRIES')
 export const setCountry = createAction('SET_COUNTRY')
 export const setHolidays = createAction('SET_HOLIDAYS')
+export const setCurrencies = createAction('SET_CURRENCIES')
 
 const initialState = {}
 
@@ -19,6 +20,10 @@ const actionHandlers = {
   [setHolidays]: (state, action) => ({
     ...state,
     holidays: action.holidays
+  }),
+  [setCurrencies]: (state, action) => ({
+    ...state,
+    currencies: action.currencies
   })
 }
 

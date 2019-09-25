@@ -8,7 +8,7 @@ import {
   subscribeCollection,
   convertRecordTimestamps
 } from '../controller'
-import {getDb} from './app'
+import {getDb, getUid} from './app'
 import {
   toYearMonth,
   addMonths,
@@ -31,7 +31,13 @@ import {
   createStructuredSelector,
   memoize
 } from '../lib/reselect'
-import {getHolidays, loadHolidays, isBusinessDay} from './atlas'
+import {
+  getHolidays,
+  loadHolidays,
+  isBusinessDay,
+  getCountryCurrency,
+  getCurrencies
+} from './atlas'
 import t from '../lib/translate'
 import {formatCurrency} from '../lib/format'
 
@@ -167,6 +173,21 @@ export const areAllCollectionsReady = allCollections => {
     }
   }
   return true
+}
+
+export const getUser = state =>
+  getCollection(state, {
+    collection: `users/${getUid(state)}`
+  })
+
+export const getCurrencyRates = state =>
+  getCollection(state, {
+    collection: 'atlas/currencyRates'
+  })
+
+export const getDefaultCurrency = state => {
+  const user = getUser(state)
+  return user && getCountryCurrency(state, {country: user.country})
 }
 
 export const getDocProp = (id, path, collection, defaultValue = '') =>
