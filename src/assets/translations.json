@@ -23,6 +23,10 @@
     "en": "Country",
     "pt-BR": "País"
   },
+  "credit_card_purchases": {
+    "en": "Credit card purchases",
+    "pt-BR": "Compras no cartão de crédito"
+  },
   "delete": {
     "en": "Delete",
     "pt-BR": "Excluir"

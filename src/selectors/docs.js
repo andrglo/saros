@@ -23,7 +23,8 @@ import {
   addWeeks,
   getMonthsUntil,
   getWeeksUntil,
-  getCurrentMonth
+  getCurrentMonth,
+  toDateString
 } from '../lib/date'
 import {
   createSelector,
@@ -32,6 +33,7 @@ import {
 } from '../lib/reselect'
 import {getHolidays, loadHolidays, isBusinessDay} from './atlas'
 import t from '../lib/translate'
+import {formatCurrency} from '../lib/format'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('selectors:docs')
@@ -171,8 +173,7 @@ export const getDocProp = (id, path, collection, defaultValue = '') =>
   get(collection[id], path) || defaultValue
 
 export const getName = (id, collection) =>
-  getDocProp(id, 'name', collection) ||
-  getDocProp(id, 'description', collection) // todo remove-me
+  getDocProp(id, 'name', collection)
 
 const concatDescription = (
   description,
@@ -209,13 +210,21 @@ const buildTransactionDescription = (
     }
   }
   description = concatDescription(description, transaction.notes)
-  if (transaction.parcel) {
-    const [index, lastIndex] = transaction.parcel
-      .split('/')
-      .map(Number)
+  if (transaction.installments > 1) {
+    const {installment, installments} = transaction
     description = concatDescription(
       description,
-      t`Installment` + ` ${index + 1} ` + t`of` + ` ${lastIndex + 1}`
+      t`Installment` + ` ${installment} ` + t`of` + ` ${installments}`
+    )
+  }
+  if (
+    transaction.payDate &&
+    transaction.payDate !== transaction.dueDate
+  ) {
+    description = concatDescription(
+      description,
+      toDateString(transaction.payDate),
+      ' - '
     )
   }
   if (transaction.place) {
@@ -450,12 +459,14 @@ export const getRemainingPaymentsForCreditcard = ({
     balance = round(balance - amount, 2)
     const issueDate = getInstallmentIssueDate(installment)
     payments.push({
+      ...transaction,
       id: `${transaction.id}@${issueDate}`,
       billedFrom: transaction.id,
       type: 'bill',
       amount,
       status: 'draft',
       issueDate,
+      payDate: billedDate,
       dueDate: getDueDate(issueDate),
       account: account.payAccount || transaction.account,
       issuer: transaction.account,
@@ -475,28 +486,39 @@ export const expandInvoice = (id, collections) => {
   let parcelIndex = 0
   const addTransaction = transaction => {
     transaction.id = id
-    if (parcels.length > 0) {
-      transaction.parcel = `${parcelIndex}/${parcels.length}`
-      if (parcelIndex > 0) {
-        transaction.id = `${id}/${parcelIndex}`
-      }
-      parcelIndex++
-    }
-    transaction.description = buildTransactionDescription(
-      transaction,
-      collections
-    )
-    transactions.push(transaction)
     if (transaction.type === 'ccard') {
       transactions = [
         ...transactions,
-        ...getRemainingPaymentsForCreditcard({
+        ...[
           transaction,
-          accounts,
-          holidays,
-          invoicesLastBill: getInvoicesLastBill(invoices)
-        })
+          ...getRemainingPaymentsForCreditcard({
+            transaction,
+            accounts,
+            holidays,
+            invoicesLastBill: getInvoicesLastBill(invoices)
+          })
+        ].map(transaction => ({
+          ...transaction,
+          description: buildTransactionDescription(
+            transaction,
+            collections
+          )
+        }))
       ]
+    } else {
+      if (parcels.length > 0) {
+        transaction.installment = parcelIndex + 1
+        transaction.installments = parcels.length + 1
+        if (parcelIndex > 0) {
+          transaction.id = `${id}/${parcelIndex}`
+        }
+        parcelIndex++
+      }
+      transaction.description = buildTransactionDescription(
+        transaction,
+        collections
+      )
+      transactions.push(transaction)
     }
   }
 
@@ -964,7 +986,46 @@ export const getTransactionsByDay = createSelector(
     for (const transaction of transactions) {
       const date = transaction.dueDate
       calendar[date] = calendar[date] || []
-      calendar[date].push(transaction)
+      if (
+        transaction.type === 'bill' &&
+        transaction.status === 'draft' &&
+        transaction.issuer
+      ) {
+        const draft = calendar[date].find(
+          t => t.issuer === transaction.issuer
+        )
+        if (draft) {
+          draft.amount = round(draft.amount + transaction.amount, 2)
+          draft.description = concatDescription(
+            draft.description,
+            `${transaction.description} $ ${formatCurrency(
+              Math.abs(transaction.amount)
+            )}`,
+            ' / '
+          )
+          draft.payments.push(transaction)
+        } else {
+          calendar[date].push({
+            id: `${transaction.issuer}@${date}`,
+            type: 'bill',
+            status: 'draft',
+            description: concatDescription(
+              t`Credit card purchases`,
+              `${transaction.description} $ ${formatCurrency(
+                Math.abs(transaction.amount)
+              )}`,
+              ': '
+            ),
+            issuer: transaction.issuer,
+            issueDate: transaction.issueDate,
+            dueDate: date,
+            amount: transaction.amount,
+            payments: [transaction]
+          })
+        }
+      } else {
+        calendar[date].push(transaction)
+      }
     }
     log('getTransactionsByDay result', calendar)
     return calendar

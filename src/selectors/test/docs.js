@@ -744,7 +744,8 @@ test('Expand invoice', t => {
     {
       amount: 4,
       id: '9',
-      parcel: '0/1',
+      installment: 1,
+      installments: 2,
       partitions: [
         {category: 'X', description: 'category X', amount: 0.38},
         {category: 'Y', amount: 1.52},
@@ -763,7 +764,8 @@ test('Expand invoice', t => {
     {
       amount: 4.3,
       id: '9/1',
-      parcel: '1/1',
+      installment: 2,
+      installments: 2,
       partitions: [
         {category: 'X', description: 'category X', amount: 0.41},
         {category: 'Y', amount: 1.64},
@@ -801,7 +803,8 @@ test('Expand invoice', t => {
         {category: 'B', amount: 3.2}
       ],
       amount: 4,
-      parcel: '0/1',
+      installment: 1,
+      installments: 2,
       id: '2'
     },
     {
@@ -810,7 +813,8 @@ test('Expand invoice', t => {
         {category: 'C', amount: 5}
       ],
       amount: 6,
-      parcel: '1/1',
+      installment: 2,
+      installments: 2,
       id: '2/1'
     }
   ])
@@ -858,6 +862,7 @@ test('Expand invoice', t => {
       dueDate: '2019-07-31',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
+      payDate: '2019-07-10',
       partitions: [{category: 'X', amount: 33.33}],
       installment: 1,
       installments: 3,
@@ -873,6 +878,7 @@ test('Expand invoice', t => {
       dueDate: '2019-09-02',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
+      payDate: '2019-07-10',
       partitions: [{category: 'X', amount: 33.33}],
       installment: 2,
       installments: 3,
@@ -888,6 +894,7 @@ test('Expand invoice', t => {
       dueDate: '2019-09-30',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
+      payDate: '2019-07-10',
       partitions: [{category: 'X', amount: 33.34}],
       installment: 3,
       installments: 3,
@@ -923,6 +930,7 @@ test('Expand invoice', t => {
       dueDate: '2019-04-01',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
+      payDate: '2018-07-10',
       partitions: [{category: 'X', amount: 5}],
       installment: 9,
       installments: 10,
@@ -938,6 +946,7 @@ test('Expand invoice', t => {
       dueDate: '2019-04-30',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
+      payDate: '2018-07-10',
       partitions: [{category: 'X', amount: 5}],
       installment: 10,
       installments: 10,
@@ -1272,6 +1281,9 @@ test('Expand budget', t => {
       id: 'b@2019-03-10@2019-04-08',
       billedFrom: 'b@2019-03-10',
       type: 'bill',
+      place: 'vxbJp9WfTu0',
+      notes: 'Health plan',
+      payDate: '2019-03-08',
       amount: -154.41,
       status: 'draft',
       issueDate: '2019-04-08',
@@ -1300,6 +1312,9 @@ test('Expand budget', t => {
       id: 'b@2019-03-10@2019-05-08',
       billedFrom: 'b@2019-03-10',
       type: 'bill',
+      place: 'vxbJp9WfTu0',
+      notes: 'Health plan',
+      payDate: '2019-03-08',
       amount: -154.41,
       status: 'draft',
       issueDate: '2019-05-08',
