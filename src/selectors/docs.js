@@ -1,5 +1,4 @@
 import get from 'lodash/get'
-import uniq from 'lodash/uniq'
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
 import round from 'lodash/round'
@@ -178,7 +177,7 @@ export const getName = (id, collection) =>
 const concatDescription = (
   description,
   complement,
-  separator = '; '
+  separator = '. '
 ) =>
   `${description || ''}${
     description && complement ? separator : ''
@@ -191,24 +190,34 @@ const buildTransactionDescription = (
   let description = transaction.description
   if (transaction.partitions) {
     let lastCategory = null
-    const descriptions = []
     for (const partition of transaction.partitions) {
-      const description =
+      const partitionDescription =
         partition.description && partition.description.trim()
-      if (description) {
-        descriptions.push(description)
+      if (partitionDescription) {
+        description = concatDescription(
+          description,
+          partitionDescription
+        )
         lastCategory = partition.category
       } else if (partition.category !== lastCategory) {
         lastCategory = partition.category
-        descriptions.push(getName(partition.category, categories))
+        description = concatDescription(
+          description,
+          getName(partition.category, categories)
+        )
       }
     }
-    description = concatDescription(
-      description,
-      uniq(descriptions).join('; ')
-    )
   }
   description = concatDescription(description, transaction.notes)
+  if (transaction.parcel) {
+    const [index, lastIndex] = transaction.parcel
+      .split('/')
+      .map(Number)
+    description = concatDescription(
+      description,
+      t`Installment` + ` ${index + 1} ` + t`of` + ` ${lastIndex + 1}`
+    )
+  }
   if (transaction.place) {
     description = concatDescription(
       description,
@@ -463,8 +472,16 @@ export const expandInvoice = (id, collections) => {
   let transactions = []
   const {invoices, holidays, accounts} = collections
   const {parcels = [], billedFrom, ...invoice} = invoices[id]
-
+  let parcelIndex = 0
   const addTransaction = transaction => {
+    transaction.id = id
+    if (parcels.length > 0) {
+      transaction.parcel = `${parcelIndex}/${parcels.length}`
+      if (parcelIndex > 0) {
+        transaction.id = `${id}/${parcelIndex}`
+      }
+      parcelIndex++
+    }
     transaction.description = buildTransactionDescription(
       transaction,
       collections
@@ -495,12 +512,11 @@ export const expandInvoice = (id, collections) => {
       invoice.paidAmount || invoice.amount
     )
   })
-  for (const [parcelIndex, parcel] of parcels.entries()) {
+  for (const parcel of parcels) {
     partitions = parcel.partitions || partitions
     addTransaction({
       ...invoice,
       ...parcel,
-      id: `${id}/${parcelIndex + 1}`,
       partitions: redistributeAmount(
         partitions,
         parcel.paidAmount || parcel.amount

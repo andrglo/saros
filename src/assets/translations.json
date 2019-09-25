@@ -39,6 +39,10 @@
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
   },
+  "installment": {
+    "en": "Installment",
+    "pt-BR": "Parcela"
+  },
   "language": {
     "en": "Language",
     "pt-BR": "Língua"
@@ -98,6 +102,10 @@
   "now": {
     "en": "Now",
     "pt-BR": "Agora"
+  },
+  "of": {
+    "en": "of",
+    "pt-BR": "de"
   },
   "or": {
     "en": "or",

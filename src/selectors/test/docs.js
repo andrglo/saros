@@ -744,6 +744,7 @@ test('Expand invoice', t => {
     {
       amount: 4,
       id: '9',
+      parcel: '0/1',
       partitions: [
         {category: 'X', description: 'category X', amount: 0.38},
         {category: 'Y', amount: 1.52},
@@ -762,6 +763,7 @@ test('Expand invoice', t => {
     {
       amount: 4.3,
       id: '9/1',
+      parcel: '1/1',
       partitions: [
         {category: 'X', description: 'category X', amount: 0.41},
         {category: 'Y', amount: 1.64},
@@ -799,6 +801,7 @@ test('Expand invoice', t => {
         {category: 'B', amount: 3.2}
       ],
       amount: 4,
+      parcel: '0/1',
       id: '2'
     },
     {
@@ -807,6 +810,7 @@ test('Expand invoice', t => {
         {category: 'C', amount: 5}
       ],
       amount: 6,
+      parcel: '1/1',
       id: '2/1'
     }
   ])
