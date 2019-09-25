@@ -5,7 +5,10 @@ import sortBy from 'lodash/sortBy'
 import round from 'lodash/round'
 import debug from 'debug'
 
-import {subscribeCollection} from '../controller'
+import {
+  subscribeCollection,
+  convertRecordTimestamps
+} from '../controller'
 import {getDb} from './app'
 import {
   toYearMonth,
@@ -323,14 +326,25 @@ export const getPartitions = (id, invoices) => {
 }
 
 export const getInvoicesLastBill = memoize(invoices => {
-  const invoicesLastBill = {}
+  const invoicesLastBill = {issuers: {}, invoices: {}}
   for (const id of Object.keys(invoices)) {
-    const invoice = invoices[id]
-    for (const item of invoice.billedFrom || []) {
-      if (item.id) {
-        const lastBill = invoicesLastBill[item.id]
-        if (!lastBill || item.installment > lastBill.installment) {
-          invoicesLastBill[item.id] = item
+    if (invoices[id].billedFrom) {
+      const {issuer, issueDate, billedFrom} = invoices[id]
+      if (issuer) {
+        const lastBill = invoicesLastBill.issuers[issuer]
+        if (!lastBill || issueDate > lastBill.issueDate) {
+          invoicesLastBill.issuers[issuer] = {issueDate}
+        }
+      }
+      for (const invoice of billedFrom) {
+        if (invoice.id) {
+          const lastBill = invoicesLastBill.invoices[invoice.id]
+          if (
+            !lastBill ||
+            invoice.installment > lastBill.installment
+          ) {
+            invoicesLastBill.invoices[invoice.id] = invoice
+          }
         }
       }
     }
@@ -344,13 +358,18 @@ export const getRemainingPaymentsForCreditcard = ({
   holidays,
   invoicesLastBill
 }) => {
-  const {payDate, installments = 1} = transaction
+  const {installments = 1} = transaction
+  const billedDate =
+    transaction.payDate ||
+    transaction.dueDate ||
+    transaction.issueDate
   const account = accounts[transaction.account]
   const {bestDay, dueDay} = account
+  const lastIssuerBill = invoicesLastBill.issuers[transaction.account]
 
   let firstPayment
 
-  const getIssueDate = month => {
+  const getDueDateInMonth = month => {
     const lengthOfMonth = getLengthOfMonth(month)
     const dueDayInThisMonth =
       dueDay > lengthOfMonth ? lengthOfMonth : dueDay
@@ -359,9 +378,9 @@ export const getRemainingPaymentsForCreditcard = ({
 
   const getFirstPayment = () => {
     if (!firstPayment) {
-      firstPayment = getIssueDate(payDate)
-      if (firstPayment <= payDate) {
-        firstPayment = getIssueDate(addMonths(firstPayment, 1))
+      firstPayment = getDueDateInMonth(billedDate)
+      if (firstPayment <= billedDate) {
+        firstPayment = getDueDateInMonth(addMonths(firstPayment, 1))
       }
       let bestDate
       if (bestDay > dueDay) {
@@ -369,7 +388,7 @@ export const getRemainingPaymentsForCreditcard = ({
       } else {
         bestDate = setDayOfMonth(firstPayment, bestDay)
       }
-      if (payDate >= bestDate) {
+      if (billedDate >= bestDate) {
         firstPayment = addMonths(firstPayment, 1)
       }
     }
@@ -377,7 +396,15 @@ export const getRemainingPaymentsForCreditcard = ({
   }
 
   const getInstallmentIssueDate = installment => {
-    return getIssueDate(addMonths(getFirstPayment(), installment - 1))
+    let issueDate = getDueDateInMonth(
+      addMonths(getFirstPayment(), installment - 1)
+    )
+    if (lastIssuerBill) {
+      while (issueDate <= lastIssuerBill.issueDate) {
+        issueDate = getDueDateInMonth(addMonths(issueDate, 1))
+      }
+    }
+    return issueDate
   }
 
   const payAccount = accounts[transaction.payAccount] || account
@@ -389,10 +416,10 @@ export const getRemainingPaymentsForCreditcard = ({
     return dueDate
   }
 
-  const lastBill = invoicesLastBill[transaction.id]
   let balance
   let installment
   const payments = []
+  const lastBill = invoicesLastBill.invoices[transaction.id]
   if (lastBill) {
     balance =
       typeof lastBill.balance === 'number' ? lastBill.balance : 0
@@ -685,6 +712,7 @@ export const expandBudget = (id, from, to, collections) => {
         type: review.type,
         place: review.place,
         notes: review.notes,
+        status: 'due',
         partitions: review.partitions,
         issueDate,
         dueDate,
@@ -693,7 +721,6 @@ export const expandBudget = (id, from, to, collections) => {
       }
       if (account.type === 'creditcard') {
         invoice.type = 'ccard'
-        invoice.payDate = invoice.dueDate
         if (review.installments) {
           invoice.installments = review.installments
         }
@@ -878,6 +905,7 @@ export const getTransactionsByDay = createSelector(
   createStructuredSelector({
     from: getFrom,
     to: getTo,
+    filter: (state, {filter}) => filter,
     invoicesTransactions: getInvoicesTransactions,
     transfersTransactions: getTransfersTransactions,
     budgetsTransactions: getBudgetsTransactions,
@@ -890,6 +918,7 @@ export const getTransactionsByDay = createSelector(
     const {
       from,
       to,
+      filter = () => true,
       invoicesTransactions,
       transfersTransactions,
       budgetsTransactions
@@ -908,7 +937,10 @@ export const getTransactionsByDay = createSelector(
             )}`
           )
         }
-        return date >= from && date <= to
+        if (date >= from && date <= to) {
+          return filter(transaction)
+        }
+        return false
       }),
       ['dueDate', 'createdAt']
     )

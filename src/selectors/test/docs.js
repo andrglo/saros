@@ -75,6 +75,11 @@ test.before(async t => {
   Object.keys(selectors).forEach(p => {
     t.context[p] = selectors[p]
   })
+  const {getInvoices, invoiceTransform} = selectors
+  const invoices = getInvoices(state)
+  for (const id of Object.keys(invoices)) {
+    invoiceTransform(invoices, id, invoices[id])
+  }
 })
 
 test.after(() => {
@@ -82,13 +87,10 @@ test.after(() => {
 })
 
 test.serial('Check model', t => {
-  const {getAllCollections, invoiceTransform} = t.context
+  const {getAllCollections} = t.context
   const allCollections = getAllCollections(state)
   t.is(Object.keys(allCollections).length, 7)
   const {invoices} = allCollections
-  for (const id of Object.keys(invoices)) {
-    invoiceTransform(invoices, id, invoices[id])
-  }
   Object.keys(invoices).forEach(id => {
     t.is(
       typeof invoices[id].createdAt,
@@ -246,7 +248,11 @@ test.serial('Get holidays for accounts', async t => {
 test('Get invoices last bill', t => {
   const {getInvoicesLastBill, getInvoices} = t.context
   const invoicesLastBill = getInvoicesLastBill(getInvoices(state))
-  t.deepEqual(invoicesLastBill, {
+  t.is(
+    invoicesLastBill.issuers['-ssZsPnhWoo'].issueDate,
+    '2019-01-18'
+  )
+  t.deepEqual(invoicesLastBill.invoices, {
     ai8H2bFxt4jv: {id: 'ai8H2bFxt4jv', amount: -16.9},
     '6zzwHBvMRmmm': {
       id: '6zzwHBvMRmmm',
@@ -263,7 +269,8 @@ test('Get invoices last bill after more than 1 payment', t => {
   const {getInvoicesLastBill} = t.context
   const invoicesLastBill = getInvoicesLastBill({
     sed1: {
-      issueDate: '2019-01-01',
+      issuer: 'vis',
+      issueDate: '2019-01-05',
       billedFrom: [
         {
           id: 'a',
@@ -272,7 +279,8 @@ test('Get invoices last bill after more than 1 payment', t => {
       ]
     },
     sed2: {
-      issueDate: '2019-01-02',
+      issuer: 'vis',
+      issueDate: '2019-02-05',
       billedFrom: [
         {
           id: 'a',
@@ -281,7 +289,8 @@ test('Get invoices last bill after more than 1 payment', t => {
       ]
     }
   })
-  t.deepEqual(invoicesLastBill, {
+  t.deepEqual(invoicesLastBill.issuers.vis.issueDate, '2019-02-05')
+  t.deepEqual(invoicesLastBill.invoices, {
     a: {id: 'a', installment: 2}
   })
 })
@@ -308,7 +317,7 @@ test('Get remaining payments for credit cards', t => {
     transaction: {
       id: 'zero',
       amount: total,
-      payDate: '2019-08-30',
+      issueDate: '2019-08-30',
       installments: 16,
       account: '1',
       partitions: [
@@ -405,7 +414,7 @@ test('Get remaining payments for credit cards', t => {
     transaction: {
       id: 'zero',
       amount: total,
-      payDate: '2018-11-09',
+      issueDate: '2018-11-09',
       installments: 8,
       account: '1',
       partitions: [
@@ -441,7 +450,7 @@ test('Get remaining payments for credit cards', t => {
     transaction: {
       id: 'zero',
       amount: total,
-      payDate: '2019-01-20',
+      issueDate: '2019-01-20',
       installments: 3,
       account: '1',
       partitions: [
@@ -465,7 +474,7 @@ test('Get remaining payments for credit cards', t => {
     transaction: {
       id: 'zero',
       amount: total,
-      payDate: '2019-01-21',
+      issueDate: '2019-01-21',
       installments: 3,
       account: '1',
       partitions: [
@@ -495,7 +504,7 @@ test('Get remaining payments for credit cards', t => {
     transaction: {
       id: 'zero',
       amount: total,
-      payDate: '2018-12-30',
+      issueDate: '2018-12-30',
       installments: 3,
       account: '1',
       partitions: [
@@ -618,7 +627,7 @@ test('Expand invoice', t => {
       type: 'ccard',
       installments: 3,
       amount: 100,
-      payDate: '2019-07-10',
+      issueDate: '2019-07-10',
       partitions: [
         {
           category: 'X',
@@ -640,7 +649,7 @@ test('Expand invoice', t => {
       type: 'ccard',
       installments: 10,
       amount: 99,
-      payDate: '2018-07-10',
+      issueDate: '2018-07-10',
       partitions: [
         {
           category: 'X',
@@ -653,7 +662,7 @@ test('Expand invoice', t => {
       type: 'ccard',
       installments: 10,
       amount: 99,
-      payDate: '2018-07-10',
+      issueDate: '2018-07-10',
       partitions: [
         {
           category: 'X',
@@ -663,6 +672,7 @@ test('Expand invoice', t => {
       account: '-ssZsPnhWoo'
     },
     '7': {
+      issuer: '-ssZsPnhWoo',
       billedFrom: [
         {
           id: '6',
@@ -674,6 +684,7 @@ test('Expand invoice', t => {
       amount: 9.9
     },
     '8': {
+      issuer: '-ssZsPnhWoo',
       billedFrom: [
         {
           id: '5',
@@ -830,7 +841,7 @@ test('Expand invoice', t => {
       partitions: [{category: 'X', amount: 100}],
       account: '-ssZsPnhWoo',
       amount: 100,
-      payDate: '2019-07-10',
+      issueDate: '2019-07-10',
       id: '3'
     },
     {
@@ -895,7 +906,7 @@ test('Expand invoice', t => {
       partitions: [{category: 'X', amount: 99}],
       account: '-ssZsPnhWoo',
       amount: 99,
-      payDate: '2018-07-10',
+      issueDate: '2018-07-10',
       id: '5'
     },
     {
@@ -945,7 +956,7 @@ test('Expand invoice', t => {
       partitions: [{category: 'X', amount: 99}],
       account: '-ssZsPnhWoo',
       amount: 99,
-      payDate: '2018-07-10',
+      issueDate: '2018-07-10',
       id: '6'
     }
   ])
@@ -1185,6 +1196,7 @@ test('Expand budget', t => {
       type: 'pbud',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
+      status: 'due',
       partitions: [
         {
           costCenter: 'A',
@@ -1246,7 +1258,7 @@ test('Expand budget', t => {
       issueDate: '2019-03-10',
       type: 'ccard',
       installments: 2,
-      payDate: '2019-03-08',
+      status: 'due',
       dueDate: '2019-03-08',
       amount: -308.82,
       account: '2',
@@ -1374,6 +1386,7 @@ test('Get budgets transactions', t => {
       type: 'pbud',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
+      status: 'due',
       partitions: [
         {
           costCenter: 'eBhqeuMtrBu',
