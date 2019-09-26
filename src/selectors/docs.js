@@ -772,6 +772,7 @@ export const expandBudget = (id, from, to, collections) => {
         place: review.place,
         notes: review.notes,
         status: 'due',
+        currency: review.currency,
         partitions: review.partitions,
         issueDate,
         dueDate,
@@ -960,6 +961,71 @@ export const getBudgetsTransactions = createSelector(
   }
 )
 
+const getCurrencyRate = (currencyRates = {}, from, to) => {
+  const rates = currencyRates.rates || {}
+  let rate
+  if (from !== currencyRates.base) {
+    if (rates[from] && rates[to]) {
+      const k = 1 / rates[from]
+      rate = rates[to] * k
+    }
+  } else {
+    rate = rates[to]
+  }
+  return rate
+}
+
+export const convertTransactionCurrency = (
+  transaction,
+  {
+    currencies,
+    currencyRates,
+    defaultCurrency,
+    toCurrency = defaultCurrency
+  }
+) => {
+  if (!currencies || !currencyRates || !defaultCurrency) {
+    return transaction
+  }
+  transaction = {...transaction}
+  transaction.currency = transaction.currency || defaultCurrency
+  const attachCurrency = () => {
+    transaction.currency = toCurrency
+    transaction.currencySymbol =
+      currencies[toCurrency].symbol || toCurrency
+  }
+  if (transaction.currency === toCurrency) {
+    attachCurrency()
+    return transaction
+  }
+  transaction.currency = transaction.currency || defaultCurrency
+  if (transaction.rate) {
+    transaction.amount = round(
+      transaction.amount * transaction.rate,
+      2
+    )
+    transaction.currency = defaultCurrency
+    delete transaction.rate
+  }
+  if (transaction.currency !== toCurrency) {
+    transaction.amount = round(
+      transaction.amount *
+        getCurrencyRate(
+          currencyRates,
+          transaction.currency,
+          toCurrency
+        ),
+      2
+    )
+  }
+  transaction.partitions = redistributeAmount(
+    transaction.partitions,
+    transaction.amount
+  )
+  attachCurrency()
+  return transaction
+}
+
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
     from: getFrom,
@@ -968,10 +1034,9 @@ export const getTransactionsByDay = createSelector(
     invoicesTransactions: getInvoicesTransactions,
     transfersTransactions: getTransfersTransactions,
     budgetsTransactions: getBudgetsTransactions,
-    invoices: getInvoices,
-    budgets: getBudgets,
-    holidays: getHolidaysForAccounts,
-    accounts: getAccounts
+    currencies: getCurrencies,
+    currencyRates: getCurrencyRates,
+    defaultCurrency: getDefaultCurrency
   }),
   params => {
     const {
@@ -980,7 +1045,8 @@ export const getTransactionsByDay = createSelector(
       filter = () => true,
       invoicesTransactions,
       transfersTransactions,
-      budgetsTransactions
+      budgetsTransactions,
+      ...currenciesConversionData
     } = params
     const transactions = sortBy(
       [
@@ -1004,7 +1070,11 @@ export const getTransactionsByDay = createSelector(
       ['dueDate', 'createdAt']
     )
     const calendar = {}
-    for (const transaction of transactions) {
+    for (let transaction of transactions) {
+      transaction = convertTransactionCurrency(
+        transaction,
+        currenciesConversionData
+      )
       const date = transaction.dueDate
       calendar[date] = calendar[date] || []
       if (

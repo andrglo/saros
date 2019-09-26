@@ -8,12 +8,22 @@ import map from 'lodash/fp/map'
 // eslint-disable-next-line no-unused-vars
 import util from 'util'
 
+import currencies from '../../assets/atlas/currencies.json'
 import loadDb from '../../../test/data/loadDb'
 import completion from '../../../test/lib/completion'
 import sleep from '../../../test/lib/sleep'
 import '../../lib/polyfill'
 
 const db = 'solar'
+
+const currencyRates = {
+  base: 'EUR',
+  rates: {
+    BRL: 4.539491,
+    EUR: 1,
+    USD: 1.094223
+  }
+}
 
 const holidays = {
   BR: {
@@ -1164,6 +1174,7 @@ test('Expand budget', t => {
     }
   }
   const budget = {
+    currency: 'USD',
     partitions: [
       {
         costCenter: 'A',
@@ -1210,6 +1221,7 @@ test('Expand budget', t => {
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       status: 'due',
+      currency: 'USD',
       partitions: [
         {
           costCenter: 'A',
@@ -1254,6 +1266,7 @@ test('Expand budget', t => {
     {
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
+      currency: 'USD',
       partitions: [
         {
           costCenter: 'A',
@@ -1290,6 +1303,7 @@ test('Expand budget', t => {
       dueDate: '2019-04-08',
       issuer: '2',
       account: '1',
+      currency: 'USD',
       partitions: [
         {
           costCenter: 'A',
@@ -1321,6 +1335,7 @@ test('Expand budget', t => {
       dueDate: '2019-05-08',
       issuer: '2',
       account: '1',
+      currency: 'USD',
       partitions: [
         {
           costCenter: 'A',
@@ -1406,6 +1421,7 @@ test('Get budgets transactions', t => {
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       status: 'due',
+      currency: undefined,
       partitions: [
         {
           costCenter: 'eBhqeuMtrBu',
@@ -1522,4 +1538,56 @@ test('Budgets with no due date define yield no transactions', t => {
     }
   )
   t.deepEqual(transactions, [])
+})
+
+test('Convert transaction currency', t => {
+  const {convertTransactionCurrency} = t.context
+  const transaction = {
+    amount: 1,
+    partitions: [{amount: 0.5}, {amount: 0.5}]
+  }
+  const currenciesData = {
+    currencyRates,
+    currencies,
+    defaultCurrency: 'BRL'
+  }
+  let result = convertTransactionCurrency(transaction, currenciesData)
+  t.deepEqual(result, {
+    amount: 1,
+    partitions: [{amount: 0.5}, {amount: 0.5}],
+    currency: 'BRL',
+    currencySymbol: 'R$'
+  })
+  transaction.currency = 'USD'
+  result = convertTransactionCurrency(transaction, currenciesData)
+  t.deepEqual(result, {
+    amount: 4.15,
+    partitions: [{amount: 2.08}, {amount: 2.07}],
+    currency: 'BRL',
+    currencySymbol: 'R$'
+  })
+  transaction.currency = 'EUR'
+  result = convertTransactionCurrency(transaction, currenciesData)
+  t.deepEqual(result, {
+    amount: 4.54,
+    partitions: [{amount: 2.27}, {amount: 2.27}],
+    currency: 'BRL',
+    currencySymbol: 'R$'
+  })
+  currenciesData.toCurrency = 'USD'
+  result = convertTransactionCurrency(transaction, currenciesData)
+  t.deepEqual(result, {
+    amount: 1.09,
+    partitions: [{amount: 0.55}, {amount: 0.54}],
+    currency: 'USD',
+    currencySymbol: '$'
+  })
+  transaction.rate = 1
+  result = convertTransactionCurrency(transaction, currenciesData)
+  t.deepEqual(result, {
+    amount: 0.24,
+    partitions: [{amount: 0.12}, {amount: 0.12}],
+    currency: 'USD',
+    currencySymbol: '$'
+  })
 })
