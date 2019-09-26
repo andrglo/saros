@@ -94,7 +94,7 @@
         "amount": -1728
       }
     ],
-    "type": "ccard",
+    "type": "pyb",
     "monthSpan": [
       "2019-01"
     ]
@@ -132,7 +132,7 @@
               "amount": -16.9
             }
           ],
-          "type": "ccard"
+          "type": "pyb"
         },
         "amount": -16.9
       },
@@ -156,7 +156,7 @@
               "amount": -465.04
             }
           ],
-          "type": "ccard"
+          "type": "pyb"
         },
         "installment": 1,
         "amount": -232.52,
@@ -182,7 +182,7 @@
               "amount": -563
             }
           ],
-          "type": "ccard"
+          "type": "pyb"
         },
         "amount": -563
       },
@@ -206,7 +206,7 @@
               "amount": -89.7
             }
           ],
-          "type": "ccard"
+          "type": "pyb"
         },
         "amount": -89.7
       },

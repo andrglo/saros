@@ -190,6 +190,9 @@ export const getDefaultCurrency = state => {
   return user && getCountryCurrency(state, {country: user.country})
 }
 
+export const isCreditcardAccount = (account, accounts = {}) =>
+  (accounts[account] || {}).type === 'creditcard'
+
 export const getDocProp = (id, path, collection, defaultValue = '') =>
   get(collection[id], path) || defaultValue
 
@@ -507,7 +510,7 @@ export const expandInvoice = (id, collections) => {
   let parcelIndex = 0
   const addTransaction = transaction => {
     transaction.id = id
-    if (transaction.type === 'ccard') {
+    if (isCreditcardAccount(transaction.account, accounts)) {
       transactions = [
         ...transactions,
         ...[
@@ -780,7 +783,6 @@ export const expandBudget = (id, from, to, collections) => {
         account: review.account
       }
       if (account.type === 'creditcard') {
-        invoice.type = 'ccard'
         if (review.installments) {
           invoice.installments = review.installments
         }
@@ -1111,6 +1113,7 @@ export const getTransactionsByDay = createSelector(
             issueDate: transaction.issueDate,
             dueDate: date,
             amount: transaction.amount,
+            account: transaction.account,
             payments: [transaction]
           })
         }

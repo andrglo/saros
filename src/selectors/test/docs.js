@@ -634,7 +634,7 @@ test('Expand invoice', t => {
       ]
     },
     '3': {
-      type: 'ccard',
+      type: 'pyb',
       installments: 3,
       amount: 100,
       issueDate: '2019-07-10',
@@ -656,7 +656,7 @@ test('Expand invoice', t => {
       ]
     },
     '5': {
-      type: 'ccard',
+      type: 'pyb',
       installments: 10,
       amount: 99,
       issueDate: '2018-07-10',
@@ -669,7 +669,7 @@ test('Expand invoice', t => {
       account: '-ssZsPnhWoo'
     },
     '6': {
-      type: 'ccard',
+      type: 'pyb',
       installments: 10,
       amount: 99,
       issueDate: '2018-07-10',
@@ -854,7 +854,7 @@ test('Expand invoice', t => {
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
-      type: 'ccard',
+      type: 'pyb',
       installments: 3,
       partitions: [{category: 'X', amount: 100}],
       account: '-ssZsPnhWoo',
@@ -922,7 +922,7 @@ test('Expand invoice', t => {
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
-      type: 'ccard',
+      type: 'pyb',
       installments: 10,
       partitions: [{category: 'X', amount: 99}],
       account: '-ssZsPnhWoo',
@@ -974,7 +974,7 @@ test('Expand invoice', t => {
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
-      type: 'ccard',
+      type: 'pyb',
       installments: 10,
       partitions: [{category: 'X', amount: 99}],
       account: '-ssZsPnhWoo',
@@ -1282,7 +1282,7 @@ test('Expand budget', t => {
         }
       ],
       issueDate: '2019-03-10',
-      type: 'ccard',
+      type: 'pbud',
       installments: 2,
       status: 'due',
       dueDate: '2019-03-08',
