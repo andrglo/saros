@@ -1355,6 +1355,56 @@ test('Expand budget', t => {
       balance: 0
     }
   ])
+
+  transactions = expandBudget('b', '2000-01-01', '2019-12-31', {
+    budget: {
+      partitions: [
+        {
+          costCenter: '93',
+          category: '197',
+          amount: 35.99
+        }
+      ],
+      endedAt: '2017-09-08',
+      type: 'rbud',
+      place: '11',
+      account: '1',
+      frequency: 'unique',
+      dayOfMonth: 8,
+      onlyInBusinessDays: 'next',
+      date: '2017-09-08'
+    },
+    holidays,
+    categories: {},
+    places: {},
+    accounts
+  })
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(
+    transactions,
+    [
+      {
+        type: 'rbud',
+        place: '11',
+        notes: undefined,
+        status: 'due',
+        currency: undefined,
+        partitions: [
+          {costCenter: '93', category: '197', amount: 35.99}
+        ],
+        issueDate: '2017-09-08',
+        dueDate: '2017-09-08',
+        amount: 35.99,
+        account: '1',
+        id: 'b@2017-09-08',
+        description: ''
+      }
+    ],
+    'Error expanding single due date budget'
+  )
 })
 
 test('Get transfers transactions', t => {

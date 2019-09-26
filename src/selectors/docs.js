@@ -752,7 +752,7 @@ export const expandBudget = (id, from, to, collections) => {
         f = getYearlyDueDates
         break
       default:
-        f = () => [endedAt, endedAt]
+        f = () => [[endedAt, endedAt]]
     }
     const dueDates = f(startsAt, endsAt, {
       ...budget,
