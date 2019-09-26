@@ -7,6 +7,10 @@
     "en": "Account balance adjustment:",
     "pt-BR": "Ajuste de saldo em"
   },
+  "bank": {
+    "en": "Bank",
+    "pt-BR": "Banco"
+  },
   "by_using": {
     "en": "By using",
     "pt-BR": "Ao usar"
@@ -22,6 +26,10 @@
   "country": {
     "en": "Country",
     "pt-BR": "País"
+  },
+  "credit_card": {
+    "en": "Credit card",
+    "pt-BR": "Cartão de crédito"
   },
   "credit_card_purchases": {
     "en": "Credit card purchases",
@@ -226,6 +234,10 @@
   "version": {
     "en": "Version",
     "pt-BR": "Versão"
+  },
+  "wallet": {
+    "en": "Wallet",
+    "pt-BR": "Carteira"
   },
   "yes": {
     "en": "Yes",
