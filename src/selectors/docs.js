@@ -1028,6 +1028,33 @@ export const convertTransactionCurrency = (
   return transaction
 }
 
+export const getTimePeriods = memoize(today => {
+  const tomorrow = addDays(today, 1)
+  const nextWeek = addDays(today, 7)
+  const nextMonth = addMonths(today, 1)
+  const yesterday = addDays(today, -1)
+  const lastWeek = addDays(today, -7)
+  const lastMonth = addMonths(today, -1)
+  return [
+    {name: t`In a month`, from: addDays(nextWeek, 1), to: nextMonth},
+    {name: t`In a week`, from: addDays(tomorrow, 1), to: nextWeek},
+    {name: t`Tomorrow`, from: tomorrow, to: tomorrow},
+    {name: t`Today`, from: today, to: today},
+    {name: t`Yesterday`, from: yesterday, to: yesterday},
+    {
+      name: t`From a week`,
+      from: lastWeek,
+      to: addDays(yesterday, -1)
+    },
+    {
+      name: t`From a month`,
+      from: lastMonth,
+      to: addDays(lastWeek, -1)
+    },
+    {name: t`Older`, to: addDays(lastMonth, -1)}
+  ]
+})
+
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
     from: (state, {from} = {}) =>

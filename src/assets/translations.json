@@ -51,6 +51,22 @@
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
   },
+  "from_a_month": {
+    "en": "From a month",
+    "pt-BR": "Até um mês"
+  },
+  "from_a_week": {
+    "en": "From a week",
+    "pt-BR": "Até uma semana"
+  },
+  "in_a_month": {
+    "en": "In a month",
+    "pt-BR": "Em um mês"
+  },
+  "in_a_week": {
+    "en": "In a week",
+    "pt-BR": "Em uma semana"
+  },
   "installment": {
     "en": "Installment",
     "pt-BR": "Parcela"
@@ -118,6 +134,10 @@
   "of": {
     "en": "of",
     "pt-BR": "de"
+  },
+  "older": {
+    "en": "Older",
+    "pt-BR": "Mais antigo"
   },
   "or": {
     "en": "or",
@@ -215,6 +235,10 @@
     "en": "Today",
     "pt-BR": "Hoje"
   },
+  "tomorrow": {
+    "en": "Tomorrow",
+    "pt-BR": "Amanhã"
+  },
   "transfer_from": {
     "en": "Transfer from",
     "pt-BR": "Transferência de"
@@ -242,6 +266,10 @@
   "yes": {
     "en": "Yes",
     "pt-BR": "Sim"
+  },
+  "yesterday": {
+    "en": "Yesterday",
+    "pt-BR": "Ontem"
   },
   "you_agree_to_our": {
     "en": "you agree to our",

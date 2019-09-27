@@ -1670,3 +1670,24 @@ test('Convert transaction currency', t => {
     currencySymbol: '$'
   })
 })
+
+test('Get time periods', t => {
+  const {getTimePeriods} = t.context
+  const periods = getTimePeriods('2019-09-27')
+  const mapPeriods = map(period => {
+    const {name, ...rest} = period
+    return rest
+  })
+  // console.log('TCL: periods', mapPeriods(periods))
+  // console.log('TCL: periods', periods)
+  t.deepEqual(mapPeriods(periods), [
+    {from: '2019-10-05', to: '2019-10-27'},
+    {from: '2019-09-29', to: '2019-10-04'},
+    {from: '2019-09-28', to: '2019-09-28'},
+    {from: '2019-09-27', to: '2019-09-27'},
+    {from: '2019-09-26', to: '2019-09-26'},
+    {from: '2019-09-20', to: '2019-09-25'},
+    {from: '2019-08-27', to: '2019-09-19'},
+    {to: '2019-08-26'}
+  ])
+})
