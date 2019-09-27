@@ -92,22 +92,22 @@ export const addWeeks = (date, weeks) => {
   return date
 }
 
-export const startOfMonth = date => {
+export const getStartOfMonth = date => {
   try {
     date = date ? LocalDate.parse(date) : LocalDate.now()
     date = date.with(TemporalAdjusters.firstDayOfMonth()).toString()
   } catch (err) {
-    console.error('startOfMonth', date, err)
+    console.error('getStartOfMonth', date, err)
   }
   return date
 }
 
-export const endOfMonth = date => {
+export const getEndOfMonth = date => {
   try {
     date = date ? LocalDate.parse(date) : LocalDate.now()
     date = date.with(TemporalAdjusters.lastDayOfMonth()).toString()
   } catch (err) {
-    console.error('endOfMonth', date, err)
+    console.error('getEndOfMonth', date, err)
   }
   return date
 }
