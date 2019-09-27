@@ -1356,7 +1356,36 @@ test('Expand budget', t => {
     }
   ])
 
-  transactions = expandBudget('b', '2000-01-01', '2019-12-31', {
+  const allBudgetsTransactions = expandBudget(
+    'b',
+    '2000-01-01',
+    '2019-12-31',
+    {
+      budget,
+      holidays,
+      categories: {},
+      places: {},
+      accounts
+    }
+  )
+  transactions = expandBudget('b', null, '2019-12-31', {
+    budget,
+    holidays,
+    categories: {},
+    places: {},
+    accounts
+  })
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(
+    allBudgetsTransactions,
+    transactions,
+    'Error expanding budget since validity'
+  )
+
+  transactions = expandBudget('b', null, '2019-12-31', {
     budget: {
       partitions: [
         {

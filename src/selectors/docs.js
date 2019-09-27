@@ -45,6 +45,7 @@ import {formatCurrency} from '../lib/format'
 const log = debug('selectors:docs')
 
 const PREVIOUS_MONTHS_TO_BE_CACHED = 3
+const BUDGET_VALIDITY = PREVIOUS_MONTHS_TO_BE_CACHED
 
 export const getCollection = (state, options) => {
   const {collection, ...rest} = options
@@ -906,13 +907,13 @@ export const getTransfersTransactions = createSelector(
   }
 )
 
-const getFrom = (state, {from} = {}) => from || getCurrentDate()
-const getTo = (state, {to} = {}) => to
-
 export const getBudgetsTransactions = createSelector(
   createStructuredSelector({
-    from: getFrom,
-    to: getTo,
+    from: (state, {from} = {}) =>
+      from === null
+        ? addMonths(getCurrentDate(), -BUDGET_VALIDITY)
+        : from || getCurrentDate(),
+    to: (state, {to} = {}) => to,
     invoices: getInvoices,
     budgets: getBudgets,
     holidays: getHolidaysForAccounts,
@@ -921,7 +922,7 @@ export const getBudgetsTransactions = createSelector(
     places: getPlaces
   }),
   params => {
-    let {
+    const {
       from,
       to,
       holidays,
@@ -945,7 +946,6 @@ export const getBudgetsTransactions = createSelector(
       return transactions
     }
     log('getBudgetsTransactions started', params)
-    to = to && to >= from ? to : from
     for (const id of Object.keys(budgets)) {
       transactions = [
         ...transactions,
@@ -1030,8 +1030,9 @@ export const convertTransactionCurrency = (
 
 export const getTransactionsByDay = createSelector(
   createStructuredSelector({
-    from: getFrom,
-    to: getTo,
+    from: (state, {from} = {}) =>
+      from === undefined ? getCurrentDate() : from,
+    to: (state, {to} = {}) => to,
     filter: (state, {filter}) => filter,
     invoicesTransactions: getInvoicesTransactions,
     transfersTransactions: getTransfersTransactions,
@@ -1064,7 +1065,7 @@ export const getTransactionsByDay = createSelector(
             )}`
           )
         }
-        if (date >= from && date <= to) {
+        if ((!from || date >= from) && date <= to) {
           return filter(transaction)
         }
         return false
