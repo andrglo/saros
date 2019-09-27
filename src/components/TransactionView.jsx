@@ -5,16 +5,27 @@ import {connect} from 'react-redux'
 import debug from 'debug'
 
 import {formatCurrency} from '../lib/format'
+import {getAccounts} from '../selectors/docs'
+import {getBankIcon} from '../assets/banks'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('transaction:view')
 
 const TransactionView = props => {
-  const {dispatch, transaction, className, ...rest} = props
-  const {id, type, description, amount} = transaction
+  const {dispatch, transaction, className, accounts, ...rest} = props
+  const {
+    id,
+    type,
+    description,
+    amount,
+    account,
+    currencySymbol
+  } = transaction
   const [opened, open] = useState({})
   const isTranfer = type === 'transfer'
   const isOutflow = Math.isNegative(amount)
+  const accountDoc = accounts[account] || {}
+  const BankIcon = getBankIcon(accountDoc)
   return (
     <div className="px-1 ">
       <button
@@ -34,13 +45,19 @@ const TransactionView = props => {
         >
           {description}
         </p>
-        <p>{type}</p>
+        <div className="my-auto">
+          <BankIcon name={accountDoc.name} className="mx-1" />
+        </div>
         <p
-          className={cn({
+          className={cn('', {
             'text-expense': isOutflow && !isTranfer,
-            'text-income': !isOutflow && !isTranfer
+            'text-income': !isOutflow && !isTranfer,
+            'font-hairline italic': type === 'rbud' || type === 'pbud'
           })}
         >
+          <span className="text-xs tracking-tighter pr-1">
+            {currencySymbol}
+          </span>
           {formatCurrency(Math.abs(amount))}
         </p>
       </button>
@@ -51,7 +68,12 @@ const TransactionView = props => {
 TransactionView.propTypes = {
   dispatch: PropTypes.func.isRequired,
   className: PropTypes.string,
-  transaction: PropTypes.object.isRequired
+  transaction: PropTypes.object.isRequired,
+  accounts: PropTypes.object
 }
 
-export default connect()(TransactionView)
+export default connect(state => {
+  return {
+    accounts: getAccounts(state)
+  }
+})(TransactionView)

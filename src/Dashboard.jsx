@@ -1,71 +1,30 @@
 import React from 'react'
+// eslint-disable-next-line no-unused-vars
 import PropTypes from 'prop-types'
 import {hot} from 'react-hot-loader/root'
-import {connect} from 'react-redux'
 import debug from 'debug'
 
 import TransactionPanel from './components/TransactionPanel'
-import {
-  startOfMonth,
-  getCurrentDate,
-  addDays,
-  addMonths,
-  endOfMonth
-} from './lib/date'
 
+// eslint-disable-next-line no-unused-vars
 const log = debug('dashboard')
 
-const Dashboard = props => {
-  log('render', props)
-  const {
-    today,
-    yesterday,
-    tomorrow,
-    startOfPreviousMonth,
-    endOfNextMonth
-  } = props
+const Dashboard = () => {
+  // log('render', props)
   return (
     <div className="w-full h-full overflow-x-hidden p-4 sm:p-1">
       <div className="dashboard">
         <TransactionPanel
           className="dashboard-panel"
-          from={today}
-          to={today}
+          scope="overdue"
         />
-        <TransactionPanel
-          className="dashboard-panel"
-          from={startOfPreviousMonth}
-          to={yesterday}
-        />
-        <TransactionPanel
-          className="dashboard-panel"
-          from={tomorrow}
-          to={endOfNextMonth}
-        />
+        <TransactionPanel className="dashboard-panel" scope="due" />
+        <TransactionPanel className="dashboard-panel" scope="draft" />
       </div>
     </div>
   )
 }
 
-Dashboard.propTypes = {
-  today: PropTypes.string.isRequired,
-  yesterday: PropTypes.string.isRequired,
-  tomorrow: PropTypes.string.isRequired,
-  startOfPreviousMonth: PropTypes.string.isRequired,
-  endOfNextMonth: PropTypes.string.isRequired
-}
+Dashboard.propTypes = {}
 
-export default connect(() => {
-  const today = getCurrentDate()
-  const startOfPreviousMonth = startOfMonth(addMonths(today, -1))
-  const endOfNextMonth = endOfMonth(addMonths(today, 1))
-  const yesterday = addDays(today, -1)
-  const tomorrow = addDays(today, 1)
-  return {
-    today,
-    yesterday,
-    tomorrow,
-    startOfPreviousMonth,
-    endOfNextMonth
-  }
-})(hot(Dashboard))
+export default hot(Dashboard)
