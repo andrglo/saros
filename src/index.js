@@ -32,8 +32,8 @@ if (browserIsOk) {
   const boot = async () => {
     const {createStore} = await import('./controller')
     const store = await createStore()
-    const {default: App} = await import('./App')
     const {Provider} = await import('react-redux')
+    const {default: App} = await import('./App')
     ReactDOM.render(
       React.createElement(
         Provider,
