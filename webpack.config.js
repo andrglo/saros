@@ -10,7 +10,10 @@ const config = {
   mode: production ? 'production' : 'development',
   entry: './src/index.js',
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
+    }
   },
   output: {
     path: path.resolve(__dirname, 'public'),
