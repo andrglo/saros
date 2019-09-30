@@ -7,7 +7,9 @@ import createReducer from '../lib/createReducer'
 import createAction from '../lib/createAction'
 import t from '../lib/translate'
 
-export const setForm = createAction('SET_FORM')
+const SET_FORM = 'SET_FORM'
+
+export const setForm = createAction(SET_FORM)
 export const setFormValues = createAction('SET_FORM_VALUES')
 export const setFormValueTyped = createAction('SET_FORM_VALUE_TYPED')
 export const mergeDocInFormValues = createAction(
