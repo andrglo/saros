@@ -66,7 +66,7 @@ const Workspace = props => {
           <DirtyForms className="mr-2 pt-1 sm:pt-0" />
           {!isHome && (
             <button
-              className="pt-1 sm:pt-0 hover:bg-menuHover w-10 h-10 rounded-full hover:bg-highlight"
+              className="mt-1 sm:pt-0 hover:bg-menuHover w-10 h-10 rounded-full hover:bg-highlight"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation('/'))
