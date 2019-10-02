@@ -13,16 +13,15 @@ const TransactionList = props => {
   const {dispatch, transactions, className, ...rest} = props
   // log('render', props)
   return (
-    <div {...rest} className={cn(className)}>
+    <ol {...rest} className={cn('pl-3', className)}>
       {transactions.map(transaction => {
         return (
-          <TransactionView
-            key={transaction.id}
-            transaction={transaction}
-          />
+          <li key={transaction.id} className="">
+            <TransactionView transaction={transaction} />
+          </li>
         )
       })}
-    </div>
+    </ol>
   )
 }
 

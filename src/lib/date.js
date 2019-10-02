@@ -233,6 +233,18 @@ export const getWeeksUntil = (from, to) => {
   return interval
 }
 
+export const getDaysUntil = (from, to) => {
+  let interval = -1
+  try {
+    from = LocalDate.parse(from)
+    to = LocalDate.parse(to)
+    interval = from.until(to, ChronoUnit.DAYS)
+  } catch (err) {
+    console.error('getDaysUntil', from, to, err)
+  }
+  return interval
+}
+
 export const toDateString = (date, options = {}) =>
   new Date(`${date}T00:00`).toLocaleDateString(
     getCurrentLocale(),

@@ -67,6 +67,26 @@
     "en": "In a week",
     "pt-BR": "Em uma semana"
   },
+  "in_n_day": {
+    "en": [
+      "in * day",
+      "in * days"
+    ],
+    "pt-BR": [
+      "em * dia",
+      "em * dias"
+    ]
+  },
+  "in_n_month": {
+    "en": [
+      "in * month",
+      "in * months"
+    ],
+    "pt-BR": [
+      "em * mês",
+      "em * meses"
+    ]
+  },
   "installment": {
     "en": "Installment",
     "pt-BR": "Parcela"
@@ -118,6 +138,26 @@
   "my_account": {
     "en": "My account",
     "pt-BR": "Minha conta"
+  },
+  "n_day_ago": {
+    "en": [
+      "* day ago",
+      "* days ago"
+    ],
+    "pt-BR": [
+      "* dia atrás",
+      "* dias atrás"
+    ]
+  },
+  "n_month_ago": {
+    "en": [
+      "* month ago",
+      "* months ago"
+    ],
+    "pt-BR": [
+      "* mês atrás",
+      "* meses atrás"
+    ]
   },
   "name": {
     "en": "Name",

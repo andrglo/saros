@@ -1675,7 +1675,7 @@ test('Get time periods', t => {
   const {getTimePeriods} = t.context
   const periods = getTimePeriods('2019-09-27')
   const mapPeriods = map(period => {
-    const {name, ...rest} = period
+    const {name, scope, ...rest} = period
     return rest
   })
   // console.log('TCL: periods', mapPeriods(periods))
@@ -1689,5 +1689,58 @@ test('Get time periods', t => {
     {from: '2019-09-20', to: '2019-09-25'},
     {from: '2019-08-27', to: '2019-09-19'},
     {to: '2019-08-26'}
+  ])
+})
+
+test('Get transactions by time periods', t => {
+  const {getTransactionsByTimePeriods} = t.context
+  const localState = {...state, atlas: {holidays}}
+  let periods = getTransactionsByTimePeriods(localState, {
+    from: null,
+    to: '2019-12-31',
+    today: '2019-09-30',
+    filter: ({status}) => status === 'due'
+  })
+  const mapPeriods = map(period => {
+    const {from, to, calendar = {}} = period
+    return {
+      from,
+      to,
+      calendar: Object.keys(calendar)
+    }
+  })
+  periods = mapPeriods(periods)
+  // console.log('TCL: calendar', util.inspect(periods, {depth: null}))
+  t.deepEqual(periods, [
+    {
+      from: '2019-10-08',
+      to: '2019-10-30',
+      calendar: ['2019-10-10']
+    },
+    {
+      from: '2019-10-02',
+      to: '2019-10-07',
+      calendar: ['2019-10-03']
+    },
+    {from: '2019-10-01', to: '2019-10-01', calendar: []},
+    {from: '2019-09-30', to: '2019-09-30', calendar: []},
+    {from: '2019-09-29', to: '2019-09-29', calendar: []},
+    {from: '2019-09-23', to: '2019-09-28', calendar: []},
+    {
+      from: '2019-08-30',
+      to: '2019-09-22',
+      calendar: ['2019-09-03', '2019-09-10']
+    },
+    {
+      from: undefined,
+      to: '2019-08-29',
+      calendar: [
+        '2019-07-03',
+        '2019-07-10',
+        '2019-08-02',
+        '2019-08-03',
+        '2019-08-09'
+      ]
+    }
   ])
 })

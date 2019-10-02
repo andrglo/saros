@@ -49,7 +49,7 @@ const TransactionView = props => {
           <BankIcon name={accountDoc.name} className="mx-1" />
         </div>
         <p
-          className={cn('', {
+          className={cn('my-auto', {
             'text-expense': isOutflow && !isTranfer,
             'text-income': !isOutflow && !isTranfer,
             'font-hairline italic': type === 'rbud' || type === 'pbud'

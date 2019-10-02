@@ -1036,11 +1036,31 @@ export const getTimePeriods = memoize(today => {
   const lastWeek = addDays(today, -7)
   const lastMonth = addMonths(today, -1)
   return [
-    {name: t`In a month`, from: addDays(nextWeek, 1), to: nextMonth},
-    {name: t`In a week`, from: addDays(tomorrow, 1), to: nextWeek},
-    {name: t`Tomorrow`, from: tomorrow, to: tomorrow},
-    {name: t`Today`, from: today, to: today},
-    {name: t`Yesterday`, from: yesterday, to: yesterday},
+    {
+      name: t`In a month`,
+      from: addDays(nextWeek, 1),
+      to: nextMonth
+    },
+    {
+      name: t`In a week`,
+      from: addDays(tomorrow, 1),
+      to: nextWeek
+    },
+    {
+      name: t`Tomorrow`,
+      from: tomorrow,
+      to: tomorrow
+    },
+    {
+      name: t`Today`,
+      from: today,
+      to: today
+    },
+    {
+      name: t`Yesterday`,
+      from: yesterday,
+      to: yesterday
+    },
     {
       name: t`From a week`,
       from: lastWeek,
@@ -1051,7 +1071,10 @@ export const getTimePeriods = memoize(today => {
       from: lastMonth,
       to: addDays(lastWeek, -1)
     },
-    {name: t`Older`, to: addDays(lastMonth, -1)}
+    {
+      name: t`Older`,
+      to: addDays(lastMonth, -1)
+    }
   ]
 })
 
@@ -1151,5 +1174,29 @@ export const getTransactionsByDay = createSelector(
     }
     log('getTransactionsByDay result', calendar)
     return calendar
+  }
+)
+
+export const getTransactionsByTimePeriods = createSelector(
+  getTransactionsByDay,
+  (state, {today}) => getTimePeriods(today),
+  (calendar, timePeriods) => {
+    timePeriods = timePeriods.map(timePeriod => ({
+      ...timePeriod
+    }))
+    for (const date of Object.keys(calendar)) {
+      for (const timePeriod of timePeriods) {
+        if (
+          (!timePeriod.from || date >= timePeriod.from) &&
+          date <= timePeriod.to
+        ) {
+          timePeriod.calendar = {
+            ...(timePeriod.calendar || {}),
+            [date]: calendar[date]
+          }
+        }
+      }
+    }
+    return timePeriods
   }
 )
