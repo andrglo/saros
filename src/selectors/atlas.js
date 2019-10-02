@@ -218,7 +218,7 @@ const getCountriesCurrency = createSelector(
   getCurrencies,
   currencies => {
     const countriesCurrency = {}
-    for (const currency of Object.keys(currencies)) {
+    for (const currency of Object.keys(currencies || {})) {
       countriesCurrency[currencies[currency].country] = currency
     }
     return countriesCurrency
