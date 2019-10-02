@@ -17,6 +17,9 @@ import debug from 'debug'
 import {version, revision} from './loaders/version'
 import reducersConfig from './loaders/reducers'
 
+// pre-load others loaders to avoid hot loader errors
+import './loaders/themes'
+
 import openLocalDb from './lib/localDb'
 import firebase, {
   realTimeDb,
