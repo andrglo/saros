@@ -52,7 +52,7 @@ const Workspace = props => {
   return (
     <React.Fragment>
       <div className="workspace h-screen font-sans bg-default text-default">
-        <div className="toolbar flex shadow-lg bg-toolbar text-toolbar p-2 sm:p-4">
+        <div className="toolbar flex shadow-lg bg-toolbar text-toolbar p-2 sm:p-4 items-center">
           <button
             type="button"
             className="ml-2 h-4 self-center sm:hidden focus:outline-none"
@@ -66,7 +66,7 @@ const Workspace = props => {
           <DirtyForms className="mr-2 pt-1 sm:pt-0" />
           {!isHome && (
             <button
-              className="mt-1 sm:pt-0 hover:bg-menuHover w-10 h-10 rounded-full hover:bg-highlight"
+              className="sm:pt-0 hover:bg-menuHover w-10 h-10 rounded-full hover:bg-highlight"
               type="button"
               onClick={() => {
                 dispatch(pushBrowserLocation('/'))
@@ -78,7 +78,7 @@ const Workspace = props => {
           <button
             type="button"
             ref={menuButtonRef}
-            className="self-center ml-4 rounded-sm sm:rounded-full w-8 h-8 overflow-hidden"
+            className="ml-4 rounded-sm sm:rounded-full w-8 h-8 overflow-hidden"
             onClick={() => {
               setShowUserMenu(!showUserMenu)
             }}
