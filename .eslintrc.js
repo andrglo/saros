@@ -68,5 +68,6 @@ module.exports = {
     'react/state-in-constructor': 0,
     'react/no-array-index-key': 0,
     'react/button-has-type': 0,
+    'no-multi-assign': 0,
   }
 }
