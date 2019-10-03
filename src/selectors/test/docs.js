@@ -1586,7 +1586,27 @@ test('Get invoices by budget check budget issueDate and budget dueDate to match 
   t.deepEqual(transactions, [])
 })
 
-test('Budgets with no due date define yield no transactions', t => {
+test('Get variable expenses by month', t => {
+  const {getVariableExpensesByMonth} = t.context
+  const expenses = getVariableExpensesByMonth({
+    ...state,
+    atlas: {holidays}
+  })
+  // console.log('TCL: expenses', util.inspect(expenses, {depth: null}))
+  t.deepEqual(expenses, {
+    '2019-01': {
+      Xo3z0jNPJvQ: 3,
+      InYNor0Si: -345600,
+      '2ASvvWRLha': -1690,
+      c8H31KdYqn8: -205608,
+      FUv4lDrdTYL: -17940,
+      UNCLASSIFIED: -194761
+    },
+    '2019-07': {InYNor0Si: -300000}
+  })
+})
+
+test('Budgets with no due date are per category budgeting', t => {
   const {getBudgetsTransactions} = t.context
   const transactions = getBudgetsTransactions(
     {

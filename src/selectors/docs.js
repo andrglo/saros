@@ -899,6 +899,30 @@ export const getTransfersTransactions = createSelector(
   }
 )
 
+export const getVariableExpensesByMonth = createSelector(
+  getInvoicesTransactions,
+  transactions => {
+    const variableExpenses = {}
+    for (const transaction of transactions) {
+      if (!transaction.budget) {
+        const month = extractYearMonth(
+          transaction.payDate ||
+            transaction.dueDate ||
+            transaction.issueDate
+        )
+        const monthExpenses = (variableExpenses[month] =
+          variableExpenses[month] || {})
+        for (const partition of transaction.partitions) {
+          const {category = UNCLASSIFIED, amount} = partition
+          monthExpenses[category] = monthExpenses[category] || 0
+          monthExpenses[category] += amount
+        }
+      }
+    }
+    return variableExpenses
+  }
+)
+
 export const getBudgetsTransactions = createSelector(
   createStructuredSelector({
     from: (state, {from} = {}) =>
