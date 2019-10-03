@@ -5,7 +5,7 @@
      "costCenter": "LXrJM4zYSjJ",
      "category": "_iAneiGru-p",
      "description": "Bank tax",
-     "amount": -59.85
+     "amount": -5985
     }
    ],
    "createdAt": "2019-01-15T15:52:50.249Z",
@@ -24,13 +24,13 @@
      "costCenter": "eBhqeuMtrBu",
      "category": "i7vJFZCrp1k",
      "description": "Mine",
-     "amount": -203.4
+     "amount": -20340
     },
     {
      "costCenter": "BXE9vs32ZBA",
      "category": "i7vJFZCrp1k",
      "description": "My son",
-     "amount": -105.42
+     "amount": -10542
     }
    ],
    "createdAt": "2019-01-15T15:54:55.137Z",

@@ -58,7 +58,7 @@ const TransactionView = props => {
           <span className="text-xs tracking-tighter pr-1">
             {currencySymbol}
           </span>
-          {formatCurrency(Math.abs(amount))}
+          {formatCurrency(amount)}
         </p>
       </button>
     </div>

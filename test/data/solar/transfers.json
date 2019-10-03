@@ -4,7 +4,7 @@
     "updatedAt": "2019-08-05T11:45:09.218Z",
     "date": "2019-08-05",
     "account": "AHIhOdX7cxo",
-    "amount": 3.3,
+    "amount": 330,
     "monthSpan": ["2019-08"]
   },
   "gZxGMyv47-np": {
@@ -12,7 +12,7 @@
     "updatedAt": "2019-08-06T17:04:46.553Z",
     "date": "2019-08-06",
     "account": "CYbteYpzdA6",
-    "amount": -900,
+    "amount": -90000,
     "counterpart": "AHIhOdX7cxo",
     "monthSpan": ["2019-08"]
   },
@@ -21,7 +21,7 @@
     "updatedAt": "2019-08-26T11:19:28.284Z",
     "date": "2019-08-23",
     "account": "CYbteYpzdA6",
-    "amount": -50,
+    "amount": -5000,
     "counterpart": "AHIhOdX7cxo",
     "monthSpan": ["2019-08"]
   },
@@ -31,7 +31,7 @@
     "date": "2019-08-23",
     "account": "AHIhOdX7cxo",
     "description": "Refund",
-    "amount": -366,
+    "amount": -36600,
     "counterpart": "CYbteYpzdA6",
     "monthSpan": ["2019-08"]
   }

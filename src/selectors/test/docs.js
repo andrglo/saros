@@ -2,7 +2,6 @@ import test from 'ava'
 import mockery from 'mockery'
 import noop from 'lodash/noop'
 import sumBy from 'lodash/sumBy'
-import round from 'lodash/round'
 import map from 'lodash/fp/map'
 
 // eslint-disable-next-line no-unused-vars
@@ -120,26 +119,26 @@ test('Redistribute amount', t => {
   const list = redistributeAmount(
     [
       {
-        amount: 1
+        amount: 100
       },
       {
-        amount: 2
+        amount: 200
       },
       {
-        amount: 3
+        amount: 300
       }
     ],
-    10
+    1000
   )
   t.deepEqual(list, [
     {
-      amount: 1.67
+      amount: 167
     },
     {
-      amount: 3.33
+      amount: 333
     },
     {
-      amount: 5
+      amount: 500
     }
   ])
 })
@@ -148,31 +147,31 @@ test('Get partitions', t => {
   const {getPartitions} = t.context
   const list = getPartitions('9', {
     '1': {
-      amount: 10,
+      amount: 1000,
       partitions: [
         {
           category: 'X',
-          amount: 2
+          amount: 200
         },
         {
           category: 'Y',
-          amount: 8
+          amount: 800
         }
       ]
     },
     '2': {
-      amount: 4,
+      amount: 400,
       parcels: [
         {
-          amount: 6,
+          amount: 600,
           partitions: [
             {
               category: 'A',
-              amount: 1
+              amount: 100
             },
             {
               category: 'C',
-              amount: 5
+              amount: 500
             }
           ]
         }
@@ -180,20 +179,20 @@ test('Get partitions', t => {
       partitions: [
         {
           category: 'A',
-          amount: 2
+          amount: 200
         },
         {
           category: 'B',
-          amount: 8
+          amount: 800
         }
       ]
     },
     '4': {
-      amount: 2,
+      amount: 200,
       billedFrom: [
         {
           id: '2',
-          amount: 1
+          amount: 100
         }
       ]
     },
@@ -201,17 +200,17 @@ test('Get partitions', t => {
       billedFrom: [
         {
           id: '1',
-          amount: 4,
+          amount: 400,
           description: 'first'
         },
         {
           id: '2/1',
-          amount: 3,
+          amount: 300,
           description: 'second'
         },
         {
           id: '4',
-          amount: 0.5,
+          amount: 50,
           description: 'third'
         }
       ]
@@ -219,12 +218,12 @@ test('Get partitions', t => {
   })
   // console.log('TCL: list', list)
   t.deepEqual(list, [
-    {category: 'X', amount: 0.8},
-    {category: 'Y', amount: 3.2},
-    {category: 'A', amount: 0.5},
-    {category: 'C', amount: 2.5},
-    {category: 'A', amount: 0.1},
-    {category: 'B', amount: 0.4}
+    {category: 'X', amount: 80},
+    {category: 'Y', amount: 320},
+    {category: 'A', amount: 50},
+    {category: 'C', amount: 250},
+    {category: 'A', amount: 10},
+    {category: 'B', amount: 40}
   ])
 })
 
@@ -263,15 +262,15 @@ test('Get invoices last bill', t => {
     '2019-01-18'
   )
   t.deepEqual(invoicesLastBill.invoices, {
-    ai8H2bFxt4jv: {id: 'ai8H2bFxt4jv', amount: -16.9},
+    ai8H2bFxt4jv: {id: 'ai8H2bFxt4jv', amount: -1690},
     '6zzwHBvMRmmm': {
       id: '6zzwHBvMRmmm',
       installment: 1,
-      amount: -232.52,
-      balance: -232.52
+      amount: -23252,
+      balance: -23252
     },
-    XrE2xUBgkjPj: {id: 'XrE2xUBgkjPj', amount: -563},
-    tjuWBgnG42Rd: {id: 'tjuWBgnG42Rd', amount: -89.7}
+    XrE2xUBgkjPj: {id: 'XrE2xUBgkjPj', amount: -56300},
+    tjuWBgnG42Rd: {id: 'tjuWBgnG42Rd', amount: -8970}
   })
 })
 
@@ -322,7 +321,7 @@ test('Get remaining payments for credit cards', t => {
     }
   }
 
-  const total = 333.33
+  const total = 33333
   let remainingPayments = getRemainingPaymentsForCreditcard({
     transaction: {
       id: 'zero',
@@ -370,7 +369,7 @@ test('Get remaining payments for credit cards', t => {
         for (let k = i + 1; k < remainingPayments.length; k++) {
           remainingAmount -= remainingPayments[k].amount
         }
-        t.is(Math.abs(round(remainingAmount, 2)), 0)
+        t.is(remainingAmount, 0)
         return dueDate
       }
     ),
@@ -411,7 +410,7 @@ test('Get remaining payments for credit cards', t => {
     '2020-11-08',
     '2020-12-08'
   ])
-  t.is(round(sumBy(remainingPayments, 'amount'), 2), total)
+  t.is(sumBy(remainingPayments, 'amount'), total)
 
   accounts['1'] = {
     bestDay: 10,
@@ -592,32 +591,32 @@ test('Expand invoice', t => {
   } = t.context
   const invoices = {
     '1': {
-      amount: 10,
+      amount: 1000,
       partitions: [
         {
           category: 'X',
           description: 'category X',
-          amount: 2
+          amount: 200
         },
         {
           category: 'Y',
-          amount: 8
+          amount: 800
         }
       ]
     },
     '2': {
-      amount: 4,
+      amount: 400,
       parcels: [
         {
-          amount: 6,
+          amount: 600,
           partitions: [
             {
               category: 'A',
-              amount: 1
+              amount: 100
             },
             {
               category: 'C',
-              amount: 5
+              amount: 500
             }
           ]
         }
@@ -625,45 +624,45 @@ test('Expand invoice', t => {
       partitions: [
         {
           category: 'A',
-          amount: 2
+          amount: 200
         },
         {
           category: 'B',
-          amount: 8
+          amount: 800
         }
       ]
     },
     '3': {
       type: 'pyb',
       installments: 3,
-      amount: 100,
+      amount: 10000,
       issueDate: '2019-07-10',
       partitions: [
         {
           category: 'X',
-          amount: 100
+          amount: 10000
         }
       ],
       account: '-ssZsPnhWoo'
     },
     '4': {
-      amount: 1,
+      amount: 100,
       billedFrom: [
         {
           id: '2',
-          amount: 1
+          amount: 100
         }
       ]
     },
     '5': {
       type: 'pyb',
       installments: 10,
-      amount: 99,
+      amount: 9900,
       issueDate: '2018-07-10',
       partitions: [
         {
           category: 'X',
-          amount: 99
+          amount: 9900
         }
       ],
       account: '-ssZsPnhWoo'
@@ -671,12 +670,12 @@ test('Expand invoice', t => {
     '6': {
       type: 'pyb',
       installments: 10,
-      amount: 99,
+      amount: 9900,
       issueDate: '2018-07-10',
       partitions: [
         {
           category: 'X',
-          amount: 99
+          amount: 9900
         }
       ],
       account: '-ssZsPnhWoo'
@@ -686,58 +685,58 @@ test('Expand invoice', t => {
       billedFrom: [
         {
           id: '6',
-          amount: 9.9,
+          amount: 990,
           installment: 10,
-          balance: 10
+          balance: 1000
         }
       ],
-      amount: 9.9
+      amount: 990
     },
     '8': {
       issuer: '-ssZsPnhWoo',
       billedFrom: [
         {
           id: '5',
-          amount: 9.9,
+          amount: 990,
           installment: 8,
-          balance: 10
+          balance: 1000
         }
       ],
-      amount: 9.9
+      amount: 990
     },
     '9': {
       billedFrom: [
         {
           id: '1',
-          amount: 4
+          amount: 400
         },
         {
           id: '2/1',
-          amount: 3
+          amount: 300
         },
         {
           id: '4',
-          amount: 0.5
+          amount: 50
         },
         {
-          amount: 0.87,
+          amount: 87,
           description: 'dif',
           partitions: [
             {
               category: 'D',
-              amount: 0.87
+              amount: 87
             }
           ]
         },
         {
-          amount: 0.03,
+          amount: 3,
           description: 'extra dif'
         }
       ],
-      amount: 4,
+      amount: 400,
       parcels: [
         {
-          amount: 4.3
+          amount: 430
         }
       ]
     }
@@ -752,43 +751,43 @@ test('Expand invoice', t => {
   // .41+1.64+.26+1.28+.05+.2+.45+.01=4.3
   t.deepEqual(removeDescriptions(list), [
     {
-      amount: 4,
+      amount: 400,
       id: '9',
       installment: 1,
       installments: 2,
       partitions: [
-        {category: 'X', description: 'category X', amount: 0.38},
-        {category: 'Y', amount: 1.52},
-        {category: 'A', amount: 0.24},
-        {category: 'C', amount: 1.19},
-        {category: 'A', amount: 0.05},
-        {category: 'B', amount: 0.19},
+        {category: 'X', description: 'category X', amount: 38},
+        {category: 'Y', amount: 152},
+        {category: 'A', amount: 24},
+        {category: 'C', amount: 119},
+        {category: 'A', amount: 5},
+        {category: 'B', amount: 19},
         {
-          amount: 0.41,
+          amount: 41,
           description: 'dif',
           category: 'D'
         },
-        {amount: 0.02, description: 'extra dif'}
+        {amount: 2, description: 'extra dif'}
       ]
     },
     {
-      amount: 4.3,
+      amount: 430,
       id: '9/1',
       installment: 2,
       installments: 2,
       partitions: [
-        {category: 'X', description: 'category X', amount: 0.41},
-        {category: 'Y', amount: 1.64},
-        {category: 'A', amount: 0.26},
-        {category: 'C', amount: 1.28},
-        {category: 'A', amount: 0.05},
-        {category: 'B', amount: 0.2},
+        {category: 'X', description: 'category X', amount: 41},
+        {category: 'Y', amount: 164},
+        {category: 'A', amount: 26},
+        {category: 'C', amount: 128},
+        {category: 'A', amount: 5},
+        {category: 'B', amount: 20},
         {
-          amount: 0.45,
+          amount: 45,
           description: 'dif',
           category: 'D'
         },
-        {amount: 0.01, description: 'extra dif'}
+        {amount: 1, description: 'extra dif'}
       ]
     }
   ])
@@ -796,11 +795,11 @@ test('Expand invoice', t => {
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
-      amount: 1,
+      amount: 100,
       id: '4',
       partitions: [
-        {category: 'A', amount: 0.2},
-        {category: 'B', amount: 0.8}
+        {category: 'A', amount: 20},
+        {category: 'B', amount: 80}
       ]
     }
   ])
@@ -809,20 +808,20 @@ test('Expand invoice', t => {
   t.deepEqual(removeDescriptions(list), [
     {
       partitions: [
-        {category: 'A', amount: 0.8},
-        {category: 'B', amount: 3.2}
+        {category: 'A', amount: 80},
+        {category: 'B', amount: 320}
       ],
-      amount: 4,
+      amount: 400,
       installment: 1,
       installments: 2,
       id: '2'
     },
     {
       partitions: [
-        {category: 'A', amount: 1},
-        {category: 'C', amount: 5}
+        {category: 'A', amount: 100},
+        {category: 'C', amount: 500}
       ],
-      amount: 6,
+      amount: 600,
       installment: 2,
       installments: 2,
       id: '2/1'
@@ -833,10 +832,10 @@ test('Expand invoice', t => {
   t.deepEqual(removeDescriptions(list), [
     {
       partitions: [
-        {category: 'X', amount: 2, description: 'category X'},
-        {category: 'Y', amount: 8}
+        {category: 'X', amount: 200, description: 'category X'},
+        {category: 'Y', amount: 800}
       ],
-      amount: 10,
+      amount: 1000,
       id: '1'
     }
   ])
@@ -856,9 +855,9 @@ test('Expand invoice', t => {
     {
       type: 'pyb',
       installments: 3,
-      partitions: [{category: 'X', amount: 100}],
+      partitions: [{category: 'X', amount: 10000}],
       account: '-ssZsPnhWoo',
-      amount: 100,
+      amount: 10000,
       issueDate: '2019-07-10',
       id: '3'
     },
@@ -866,46 +865,46 @@ test('Expand invoice', t => {
       id: '3@2019-07-31',
       billedFrom: '3',
       type: 'bill',
-      amount: 33.33,
+      amount: 3333,
       status: 'draft',
       issueDate: '2019-07-31',
       dueDate: '2019-07-31',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
       payDate: '2019-07-10',
-      partitions: [{category: 'X', amount: 33.33}],
+      partitions: [{category: 'X', amount: 3333}],
       installment: 1,
       installments: 3,
-      balance: 66.67
+      balance: 6667
     },
     {
       id: '3@2019-08-31',
       billedFrom: '3',
       type: 'bill',
-      amount: 33.33,
+      amount: 3333,
       status: 'draft',
       issueDate: '2019-08-31',
       dueDate: '2019-09-02',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
       payDate: '2019-07-10',
-      partitions: [{category: 'X', amount: 33.33}],
+      partitions: [{category: 'X', amount: 3333}],
       installment: 2,
       installments: 3,
-      balance: 33.34
+      balance: 3334
     },
     {
       id: '3@2019-09-30',
       billedFrom: '3',
       type: 'bill',
-      amount: 33.34,
+      amount: 3334,
       status: 'draft',
       issueDate: '2019-09-30',
       dueDate: '2019-09-30',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
       payDate: '2019-07-10',
-      partitions: [{category: 'X', amount: 33.34}],
+      partitions: [{category: 'X', amount: 3334}],
       installment: 3,
       installments: 3,
       balance: 0
@@ -924,9 +923,9 @@ test('Expand invoice', t => {
     {
       type: 'pyb',
       installments: 10,
-      partitions: [{category: 'X', amount: 99}],
+      partitions: [{category: 'X', amount: 9900}],
       account: '-ssZsPnhWoo',
-      amount: 99,
+      amount: 9900,
       issueDate: '2018-07-10',
       id: '5'
     },
@@ -934,30 +933,30 @@ test('Expand invoice', t => {
       id: '5@2019-03-31',
       billedFrom: '5',
       type: 'bill',
-      amount: 5,
+      amount: 500,
       status: 'draft',
       issueDate: '2019-03-31',
       dueDate: '2019-04-01',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
       payDate: '2018-07-10',
-      partitions: [{category: 'X', amount: 5}],
+      partitions: [{category: 'X', amount: 500}],
       installment: 9,
       installments: 10,
-      balance: 5
+      balance: 500
     },
     {
       id: '5@2019-04-30',
       billedFrom: '5',
       type: 'bill',
-      amount: 5,
+      amount: 500,
       status: 'draft',
       issueDate: '2019-04-30',
       dueDate: '2019-04-30',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
       payDate: '2018-07-10',
-      partitions: [{category: 'X', amount: 5}],
+      partitions: [{category: 'X', amount: 500}],
       installment: 10,
       installments: 10,
       balance: 0
@@ -976,9 +975,9 @@ test('Expand invoice', t => {
     {
       type: 'pyb',
       installments: 10,
-      partitions: [{category: 'X', amount: 99}],
+      partitions: [{category: 'X', amount: 9900}],
       account: '-ssZsPnhWoo',
-      amount: 99,
+      amount: 9900,
       issueDate: '2018-07-10',
       id: '6'
     }
@@ -1180,13 +1179,13 @@ test('Expand budget', t => {
         costCenter: 'A',
         category: 'a',
         description: 'Mine',
-        amount: -203.4
+        amount: -20340
       },
       {
         costCenter: 'B',
         category: 'b',
         description: 'My son',
-        amount: -105.42
+        amount: -10542
       }
     ],
     type: 'pbud',
@@ -1227,18 +1226,18 @@ test('Expand budget', t => {
           costCenter: 'A',
           category: 'a',
           description: 'Mine',
-          amount: -203.4
+          amount: -20340
         },
         {
           costCenter: 'B',
           category: 'b',
           description: 'My son',
-          amount: -105.42
+          amount: -10542
         }
       ],
       issueDate: '2019-03-10',
       dueDate: '2019-03-08',
-      amount: -308.82,
+      amount: -30882,
       account: '1',
       id: 'b@2019-03-10'
     }
@@ -1272,13 +1271,13 @@ test('Expand budget', t => {
           costCenter: 'A',
           category: 'a',
           description: 'Mine',
-          amount: -203.4
+          amount: -20340
         },
         {
           costCenter: 'B',
           category: 'b',
           description: 'My son',
-          amount: -105.42
+          amount: -10542
         }
       ],
       issueDate: '2019-03-10',
@@ -1286,7 +1285,7 @@ test('Expand budget', t => {
       installments: 2,
       status: 'due',
       dueDate: '2019-03-08',
-      amount: -308.82,
+      amount: -30882,
       account: '2',
       id: 'b@2019-03-10'
     },
@@ -1297,7 +1296,7 @@ test('Expand budget', t => {
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       payDate: '2019-03-08',
-      amount: -154.41,
+      amount: -15441,
       status: 'draft',
       issueDate: '2019-04-08',
       dueDate: '2019-04-08',
@@ -1309,18 +1308,18 @@ test('Expand budget', t => {
           costCenter: 'A',
           category: 'a',
           description: 'Mine',
-          amount: -101.7
+          amount: -10170
         },
         {
           costCenter: 'B',
           category: 'b',
           description: 'My son',
-          amount: -52.71
+          amount: -5271
         }
       ],
       installment: 1,
       installments: 2,
-      balance: -154.41
+      balance: -15441
     },
     {
       id: 'b@2019-03-10@2019-05-08',
@@ -1329,7 +1328,7 @@ test('Expand budget', t => {
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       payDate: '2019-03-08',
-      amount: -154.41,
+      amount: -15441,
       status: 'draft',
       issueDate: '2019-05-08',
       dueDate: '2019-05-08',
@@ -1341,13 +1340,13 @@ test('Expand budget', t => {
           costCenter: 'A',
           category: 'a',
           description: 'Mine',
-          amount: -101.7
+          amount: -10170
         },
         {
           costCenter: 'B',
           category: 'b',
           description: 'My son',
-          amount: -52.71
+          amount: -5271
         }
       ],
       installment: 2,
@@ -1391,7 +1390,7 @@ test('Expand budget', t => {
         {
           costCenter: '93',
           category: '197',
-          amount: 35.99
+          amount: 3599
         }
       ],
       endedAt: '2017-09-08',
@@ -1422,11 +1421,11 @@ test('Expand budget', t => {
         status: 'due',
         currency: undefined,
         partitions: [
-          {costCenter: '93', category: '197', amount: 35.99}
+          {costCenter: '93', category: '197', amount: 3599}
         ],
         issueDate: '2017-09-08',
         dueDate: '2017-09-08',
-        amount: 35.99,
+        amount: 3599,
         account: '1',
         id: 'b@2017-09-08',
         description: ''
@@ -1451,7 +1450,7 @@ test('Get transfers transactions', t => {
       createdAt: 1565005449218,
       dueDate: '2019-08-05',
       account: 'AHIhOdX7cxo',
-      amount: 3.3
+      amount: 330
     },
     {
       id: 'gZxGMyv47-np',
@@ -1459,7 +1458,7 @@ test('Get transfers transactions', t => {
       createdAt: 1565111084553,
       dueDate: '2019-08-06',
       account: 'CYbteYpzdA6',
-      amount: -900,
+      amount: -90000,
       counterpart: 'AHIhOdX7cxo'
     },
     {
@@ -1468,7 +1467,7 @@ test('Get transfers transactions', t => {
       createdAt: 1566818367284,
       dueDate: '2019-08-23',
       account: 'CYbteYpzdA6',
-      amount: -50,
+      amount: -5000,
       counterpart: 'AHIhOdX7cxo'
     },
     {
@@ -1477,7 +1476,7 @@ test('Get transfers transactions', t => {
       createdAt: 1566818794912,
       dueDate: '2019-08-23',
       account: 'AHIhOdX7cxo',
-      amount: -366,
+      amount: -36600,
       counterpart: 'CYbteYpzdA6'
     }
   ])
@@ -1506,18 +1505,18 @@ test('Get budgets transactions', t => {
           costCenter: 'eBhqeuMtrBu',
           category: 'i7vJFZCrp1k',
           description: 'Mine',
-          amount: -203.4
+          amount: -20340
         },
         {
           costCenter: 'BXE9vs32ZBA',
           category: 'i7vJFZCrp1k',
           description: 'My son',
-          amount: -105.42
+          amount: -10542
         }
       ],
       issueDate: '2019-01-10',
       dueDate: '2019-01-10',
-      amount: -308.82,
+      amount: -30882,
       account: 'CYbteYpzdA6',
       id: 'hDnW3lo-cTTg@2019-01-10'
     }
@@ -1540,7 +1539,7 @@ test('Get transactions by day', t => {
       t.is(calendar[date].length, 1)
       return calendar[date][0].amount
     }),
-    [-308.82, 0.03, -2849.73]
+    [-30882, 3, -284973]
   )
 })
 
@@ -1566,7 +1565,7 @@ test('Get invoices by budget check budget issueDate and budget dueDate to match 
             f70e6: {
               partitions: [
                 {
-                  amount: 1
+                  amount: 100
                 }
               ],
               account: 'CYbteYpzdA6',
@@ -1600,7 +1599,7 @@ test('Budgets with no due date define yield no transactions', t => {
             f70e6: {
               partitions: [
                 {
-                  amount: 1
+                  amount: 100
                 }
               ],
               account: 'CYbteYpzdA6',
@@ -1622,8 +1621,8 @@ test('Budgets with no due date define yield no transactions', t => {
 test('Convert transaction currency', t => {
   const {convertTransactionCurrency} = t.context
   const transaction = {
-    amount: 1,
-    partitions: [{amount: 0.5}, {amount: 0.5}]
+    amount: 100,
+    partitions: [{amount: 50}, {amount: 50}]
   }
   const currenciesData = {
     currencyRates,
@@ -1632,40 +1631,40 @@ test('Convert transaction currency', t => {
   }
   let result = convertTransactionCurrency(transaction, currenciesData)
   t.deepEqual(result, {
-    amount: 1,
-    partitions: [{amount: 0.5}, {amount: 0.5}],
+    amount: 100,
+    partitions: [{amount: 50}, {amount: 50}],
     currency: 'BRL',
     currencySymbol: 'R$'
   })
   transaction.currency = 'USD'
   result = convertTransactionCurrency(transaction, currenciesData)
   t.deepEqual(result, {
-    amount: 4.15,
-    partitions: [{amount: 2.08}, {amount: 2.07}],
+    amount: 415,
+    partitions: [{amount: 208}, {amount: 207}],
     currency: 'BRL',
     currencySymbol: 'R$'
   })
   transaction.currency = 'EUR'
   result = convertTransactionCurrency(transaction, currenciesData)
   t.deepEqual(result, {
-    amount: 4.54,
-    partitions: [{amount: 2.27}, {amount: 2.27}],
+    amount: 454,
+    partitions: [{amount: 227}, {amount: 227}],
     currency: 'BRL',
     currencySymbol: 'R$'
   })
   currenciesData.toCurrency = 'USD'
   result = convertTransactionCurrency(transaction, currenciesData)
   t.deepEqual(result, {
-    amount: 1.09,
-    partitions: [{amount: 0.55}, {amount: 0.54}],
+    amount: 109,
+    partitions: [{amount: 55}, {amount: 54}],
     currency: 'USD',
     currencySymbol: '$'
   })
   transaction.rate = 1
   result = convertTransactionCurrency(transaction, currenciesData)
   t.deepEqual(result, {
-    amount: 0.24,
-    partitions: [{amount: 0.12}, {amount: 0.12}],
+    amount: 24,
+    partitions: [{amount: 12}, {amount: 12}],
     currency: 'USD',
     currencySymbol: '$'
   })

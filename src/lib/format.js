@@ -5,4 +5,11 @@ export const formatNumber = (number, decimals = 0) =>
     minimumFractionDigits: decimals
   })
 
-export const formatCurrency = number => formatNumber(number, 2)
+export const formatCurrency = (
+  number,
+  {absolute = true, integer = true} = {}
+) => {
+  number = integer ? number / 100 : number
+  number = absolute ? Math.abs(number) : number
+  return formatNumber(number, 2)
+}

@@ -6,10 +6,10 @@
     "place": "pnyN4ivgRJL",
     "notes": "Sold old stuff",
     "issueDate": "2019-01-14",
-    "amount": 0.03,
+    "amount": 3,
     "dueDate": "2019-01-14",
     "payDate": "2019-01-14",
-    "paidAmount": 0.03,
+    "paidAmount": 3,
     "status": "paid",
     "account": "AHIhOdX7cxo",
     "partitions": [
@@ -17,13 +17,13 @@
         "costCenter": "eBhqeuMtrBu",
         "category": "Xo3z0jNPJvQ",
         "description": "My pen",
-        "amount": 0.01
+        "amount": 1
       },
       {
         "costCenter": "eBhqeuMtrBu",
         "category": "Xo3z0jNPJvQ",
         "description": "My pencil",
-        "amount": 0.02
+        "amount": 2
       }
     ],
     "monthSpan": [
@@ -37,20 +37,20 @@
     "place": "plVeVNFlY6M",
     "issueDate": "2019-07-03",
     "account": "AHIhOdX7cxo",
-    "amount": -1000,
+    "amount": -100000,
     "dueDate": "2019-07-03",
     "payDate": "2019-07-03",
-    "paidAmount": -1000,
+    "paidAmount": -100000,
     "status": "paid",
     "parcels": [
       {
-        "amount": -1000,
+        "amount": -100000,
         "dueDate": "2019-08-03",
         "status": "due",
         "account": "CYbteYpzdA6"
       },
       {
-        "amount": -1000,
+        "amount": -100000,
         "dueDate": "2019-07-03",
         "status": "due",
         "account": "CYbteYpzdA6"
@@ -61,13 +61,13 @@
         "costCenter": "eBhqeuMtrBu",
         "category": "InYNor0Si",
         "description": "Oven",
-        "amount": -2000
+        "amount": -200000
       },
       {
         "costCenter": "LXrJM4zYSjJ",
         "category": "InYNor0Si",
         "description": "Freezer",
-        "amount": -1000
+        "amount": -100000
       }
     ]
     ,
@@ -82,7 +82,7 @@
     "place": "0VZ7Torc4p5",
     "notes": "Full HD 55 inches",
     "issueDate": "2019-01-01",
-    "amount": -1728,
+    "amount": -172800,
     "dueDate": "2019-01-01",
     "status": "billed",
     "account": "zi1OhUwoLhA",
@@ -91,7 +91,7 @@
         "costCenter": "eBhqeuMtrBu",
         "category": "InYNor0Si",
         "description": "TV",
-        "amount": -1728
+        "amount": -172800
       }
     ],
     "type": "pyb",
@@ -105,10 +105,10 @@
     "updatedAt": "2019-01-29T19:58:18.760Z",
     "type": "pyb",
     "issueDate": "2019-01-18",
-    "amount": -2849.73,
+    "amount": -284973,
     "dueDate": "2019-01-18",
     "payDate": "2019-01-18",
-    "paidAmount": -2849.73,
+    "paidAmount": -284973,
     "status": "paid",
     "account": "pXuNLYMCZZ3",
     "billedFrom": [
@@ -120,7 +120,7 @@
           "place": "_2tXMQjXzGF",
           "budget": "mjtC89p_hGOX",
           "issueDate": "2018-12-26",
-          "amount": -16.9,
+          "amount": -1690,
           "dueDate": "2018-12-26",
           "status": "billed",
           "account": "aCnwNryvhfp",
@@ -129,12 +129,12 @@
               "costCenter": "d4hS3Qb9E5O",
               "category": "2ASvvWRLha",
               "description": "Canal de música",
-              "amount": -16.9
+              "amount": -1690
             }
           ],
           "type": "pyb"
         },
-        "amount": -16.9
+        "amount": -1690
       },
       {
         "id": "6zzwHBvMRmmm",
@@ -144,7 +144,7 @@
           "updatedAt": "2019-01-16T19:28:10.364Z",
           "place": "mhTFuBW6d9b",
           "issueDate": "2019-01-01",
-          "amount": -465.04,
+          "amount": -46504,
           "dueDate": "2019-01-01",
           "status": "billed",
           "account": "aCnwNryvhfp",
@@ -153,14 +153,14 @@
               "costCenter": "d4hS3Qb9E5O",
               "category": "c8H31KdYqn8",
               "description": "Faculdade",
-              "amount": -465.04
+              "amount": -46504
             }
           ],
           "type": "pyb"
         },
         "installment": 1,
-        "amount": -232.52,
-        "balance": -232.52
+        "amount": -23252,
+        "balance": -23252
       },
       {
         "id": "XrE2xUBgkjPj",
@@ -170,7 +170,7 @@
           "updatedAt": "2019-01-16T19:28:28.345Z",
           "place": "o54UPfFU45S",
           "issueDate": "2019-01-01",
-          "amount": -563,
+          "amount": -56300,
           "dueDate": "2019-01-01",
           "status": "billed",
           "account": "aCnwNryvhfp",
@@ -179,12 +179,12 @@
               "costCenter": "hgtbIUhE-lB",
               "category": "c8H31KdYqn8",
               "description": "Matrícula",
-              "amount": -563
+              "amount": -56300
             }
           ],
           "type": "pyb"
         },
-        "amount": -563
+        "amount": -56300
       },
       {
         "id": "tjuWBgnG42Rd",
@@ -194,7 +194,7 @@
           "updatedAt": "2019-01-16T19:30:58.003Z",
           "place": "9T0DnXGXs4d",
           "issueDate": "2019-01-01",
-          "amount": -89.7,
+          "amount": -8970,
           "dueDate": "2019-01-01",
           "status": "billed",
           "account": "aCnwNryvhfp",
@@ -203,15 +203,15 @@
               "costCenter": "d4hS3Qb9E5O",
               "category": "FUv4lDrdTYL",
               "description": "Toys",
-              "amount": -89.7
+              "amount": -8970
             }
           ],
           "type": "pyb"
         },
-        "amount": -89.7
+        "amount": -8970
       },
       {
-        "amount": -1947.61
+        "amount": -194761
       }
     ],
     "monthSpan": [

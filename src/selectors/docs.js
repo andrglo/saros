@@ -1,7 +1,6 @@
 import get from 'lodash/get'
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
-import round from 'lodash/round'
 import debug from 'debug'
 
 import {
@@ -262,8 +261,7 @@ const buildTransactionDescription = (
   return description
 }
 
-export const getTotal = recordset =>
-  round(sumBy(recordset, 'amount'), 2)
+export const getTotal = recordset => sumBy(recordset, 'amount')
 
 export const getInvoiceTotal = ({amount = 0, parcels = []}) =>
   getTotal([{amount}, ...parcels])
@@ -274,19 +272,16 @@ export const redistributeAmount = (partitions, newAmount) => {
   let remainder = newAmount
   const result = []
   for (const partition of partitions) {
-    const partial = round(k * partition.amount, 2)
-    remainder = round(remainder - partial, 2)
+    const partial = Math.round(k * partition.amount)
+    remainder -= partial
     result.push({
       ...partition,
       amount: partial
     })
   }
-  if (!Math.isZero(remainder) && result.length) {
+  if (remainder !== 0 && result.length) {
     const lastIndex = result.length - 1
-    result[lastIndex].amount = round(
-      result[lastIndex].amount + remainder,
-      2
-    )
+    result[lastIndex].amount += remainder
   }
   return result
 }
@@ -476,12 +471,9 @@ export const getRemainingPaymentsForCreditcard = ({
     const amount =
       remainingInstallments === 1
         ? balance
-        : round(
-            Math.trunc((balance / remainingInstallments) * 100) / 100,
-            2
-          )
+        : Math.trunc(balance / remainingInstallments)
     installment++
-    balance = round(balance - amount, 2)
+    balance -= amount
     const issueDate = getInstallmentIssueDate(installment)
     payments.push({
       ...transaction,
@@ -1002,22 +994,20 @@ export const convertTransactionCurrency = (
   }
   transaction.currency = transaction.currency || defaultCurrency
   if (transaction.rate) {
-    transaction.amount = round(
-      transaction.amount * transaction.rate,
-      2
+    transaction.amount = Math.round(
+      transaction.amount * transaction.rate
     )
     transaction.currency = defaultCurrency
     delete transaction.rate
   }
   if (transaction.currency !== toCurrency) {
-    transaction.amount = round(
+    transaction.amount = Math.round(
       transaction.amount *
         getCurrencyRate(
           currencyRates,
           transaction.currency,
           toCurrency
-        ),
-      2
+        )
     )
   }
   transaction.partitions = redistributeAmount(
@@ -1139,11 +1129,11 @@ export const getTransactionsByDay = createSelector(
           t => t.issuer === transaction.issuer
         )
         if (draft) {
-          draft.amount = round(draft.amount + transaction.amount, 2)
+          draft.amount += transaction.amount
           draft.description = concatDescription(
             draft.description,
             `${transaction.description} $ ${formatCurrency(
-              Math.abs(transaction.amount)
+              transaction.amount
             )}`,
             ' / '
           )
@@ -1156,7 +1146,7 @@ export const getTransactionsByDay = createSelector(
             description: concatDescription(
               t`Credit card purchases`,
               `${transaction.description} $ ${formatCurrency(
-                Math.abs(transaction.amount)
+                transaction.amount
               )}`,
               ': '
             ),

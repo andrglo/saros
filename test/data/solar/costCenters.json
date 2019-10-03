@@ -13,24 +13,24 @@
    "name": "Personal",
    "createdAt": "2018-07-17T14:30:40.346Z",
    "updatedAt": "2019-08-28T15:48:11.786Z",
-   "balance": 12179.25419109289
+   "balance": 1217925.419109289
   },
   "BXE9vs32ZBA": {
    "name": "Son",
    "createdAt": "2019-01-06T17:42:00.180Z",
    "updatedAt": "2019-08-26T15:30:13.342Z",
-   "balance": -20720.53838218578
+   "balance": -2072053.838218578
   },
   "f_MMwRtJIfj": {
    "name": "Dad and mom",
    "createdAt": "2019-03-07T16:31:31.674Z",
    "updatedAt": "2019-08-26T11:26:22.766Z",
-   "balance": -3141.1458089071098
+   "balance": -314114.58089071098
   },
   "LXrJM4zYSjJ": {
    "name": "My project",
    "createdAt": "2019-05-20T14:04:01.759Z",
    "updatedAt": "2019-08-19T20:22:25.240Z",
-   "balance": 16954.63
+   "balance": 1695463
   }
  }
