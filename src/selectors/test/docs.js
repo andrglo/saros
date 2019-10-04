@@ -1679,6 +1679,7 @@ test('Budgets with no due date are per category budgeting', t => {
         }
       ],
       issueDate: '2019-01',
+      id: 'f70e6@2019-01:Xo3z0jNPJvQ^eBhqeuMtrBu',
       dueDate: '2019-01',
       amount: 97
     },
@@ -1693,6 +1694,7 @@ test('Budgets with no due date are per category budgeting', t => {
         }
       ],
       issueDate: '2019-01',
+      id: 'f70e8@2019-01:FUv4lDrdTYL^d4hS3Qb9E5O',
       dueDate: '2019-01',
       amount: -2060
     }

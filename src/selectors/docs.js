@@ -806,7 +806,7 @@ export const expandBudget = (id, from, to, collections) => {
           if (Math.abs(partition.amount) > Math.abs(cost)) {
             const amount = partition.amount - cost
             transactions.push({
-              id: `${issueId}>${category}>${costCenter}`,
+              id: `${issueId}:${category}^${costCenter}`,
               type: review.type,
               status: 'due',
               partitions: [{...partition, amount}],
