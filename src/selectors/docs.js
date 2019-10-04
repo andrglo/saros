@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import set from 'lodash/set'
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
 import debug from 'debug'
@@ -43,6 +44,7 @@ import {formatCurrency} from '../lib/format'
 // eslint-disable-next-line no-unused-vars
 const log = debug('selectors:docs')
 
+const UNCLASSIFIED = 'UNCLASSIFIED'
 const PREVIOUS_MONTHS_TO_BE_CACHED = 3
 const BUDGET_VALIDITY = PREVIOUS_MONTHS_TO_BE_CACHED
 
@@ -567,20 +569,17 @@ export const expandInvoice = (id, collections) => {
 
 const getActualDueDate = (
   dueDate,
-  {holidays, account, onlyInBusinessDays}
+  {holidays, region, onlyInBusinessDays}
 ) => {
   if (!onlyInBusinessDays) {
     return dueDate
   }
   const interval = onlyInBusinessDays === 'previous' ? -1 : 1
-  while (!isBusinessDay(dueDate, account, holidays)) {
+  while (!isBusinessDay(dueDate, region, holidays)) {
     dueDate = addDays(dueDate, interval)
   }
   return dueDate
 }
-
-const isVariableExpense = budget =>
-  !budget.dayOfMonth && !budget.dayOfWeek
 
 export const getMonthlyDueDates = (
   from,
@@ -589,7 +588,7 @@ export const getMonthlyDueDates = (
     dayOfMonth,
     onlyInBusinessDays,
     holidays,
-    account,
+    region,
     interval = 1,
     startedAt
   }
@@ -599,16 +598,30 @@ export const getMonthlyDueDates = (
   if (startedAt && interval > 1) {
     date = addMonths(date, getMonthsUntil(startedAt, date) % interval)
   }
+  const isMonthly = !dayOfMonth
+  let fromMonth
+  let toMonth
+  if (isMonthly) {
+    fromMonth = extractYearMonth(from)
+    toMonth = extractYearMonth(from)
+  }
   const scanUntil = addMonths(to, interval)
   while (date <= scanUntil) {
-    date = setDayOfMonth(date, dayOfMonth)
-    const dueDate = getActualDueDate(date, {
-      onlyInBusinessDays,
-      holidays,
-      account
-    })
-    if (dueDate >= from && dueDate <= to) {
-      dueDates.push([date, dueDate])
+    if (isMonthly) {
+      const month = extractYearMonth(date)
+      if (month >= fromMonth && month <= toMonth) {
+        dueDates.push([month, month])
+      }
+    } else {
+      date = setDayOfMonth(date, dayOfMonth)
+      const dueDate = getActualDueDate(date, {
+        onlyInBusinessDays,
+        holidays,
+        region
+      })
+      if (dueDate >= from && dueDate <= to) {
+        dueDates.push([date, dueDate])
+      }
     }
     date = extractYearMonth(addMonths(date, interval))
   }
@@ -623,7 +636,7 @@ export const getYearlyDueDates = (
     months,
     onlyInBusinessDays,
     holidays,
-    account,
+    region,
     interval = 1,
     startedAt
   }
@@ -633,17 +646,33 @@ export const getYearlyDueDates = (
   if (startedAt && interval > 1) {
     year += (year - Number(extractYear(startedAt))) % interval
   }
+  const isMonthly = !dayOfMonth
+  let fromMonth
+  let toMonth
+  if (isMonthly) {
+    fromMonth = extractYearMonth(from)
+    toMonth = extractYearMonth(from)
+  }
   const scanUntil = Number(extractYear(to)) + interval
   while (year <= scanUntil) {
     for (const month of months) {
-      const date = setMonthAndDayOfMonth(year, month, dayOfMonth)
-      const dueDate = getActualDueDate(date, {
-        onlyInBusinessDays,
-        holidays,
-        account
-      })
-      if (dueDate >= from && dueDate <= to) {
-        dueDates.push([date, dueDate])
+      if (isMonthly) {
+        const yearMonth = extractYearMonth(
+          setMonthAndDayOfMonth(year, month, 1)
+        )
+        if (yearMonth >= fromMonth && yearMonth <= toMonth) {
+          dueDates.push([yearMonth, yearMonth])
+        }
+      } else {
+        const date = setMonthAndDayOfMonth(year, month, dayOfMonth)
+        const dueDate = getActualDueDate(date, {
+          onlyInBusinessDays,
+          holidays,
+          region
+        })
+        if (dueDate >= from && dueDate <= to) {
+          dueDates.push([date, dueDate])
+        }
       }
     }
     year += interval
@@ -658,7 +687,7 @@ export const getWeeklyDueDates = (
     dayOfWeek,
     onlyInBusinessDays,
     holidays,
-    account,
+    region,
     interval = 1,
     startedAt
   }
@@ -674,7 +703,7 @@ export const getWeeklyDueDates = (
     const dueDate = getActualDueDate(date, {
       onlyInBusinessDays,
       holidays,
-      account
+      region
     })
     if (dueDate >= from && dueDate <= to) {
       dueDates.push([date, dueDate])
@@ -695,9 +724,18 @@ export const getInvoicesByBudget = memoize(invoices => {
   return invoicesByBudget
 })
 
+const isVariableCost = type => type === 'mbud'
+
 export const expandBudget = (id, from, to, collections) => {
   let transactions = []
-  const {budget, holidays, accounts, invoices} = collections
+  const {
+    budget,
+    holidays,
+    accounts,
+    invoices,
+    region,
+    variableCost
+  } = collections
   const reviews = sortBy(
     [
       budget,
@@ -710,10 +748,7 @@ export const expandBudget = (id, from, to, collections) => {
   )
   const startedAt = budget.date
   for (const [index, review] of reviews.entries()) {
-    if (isVariableExpense(review)) {
-      continue
-    }
-    const {date, endedAt} = review
+    const {type, date, endedAt} = review
     const reviewStartsAt = date
     let reviewEndsAt = endedAt
     const nextReviewIndex = index + 1
@@ -732,7 +767,6 @@ export const expandBudget = (id, from, to, collections) => {
     }
     const startsAt = from > reviewStartsAt ? from : reviewStartsAt
     const endsAt = to > reviewEndsAt ? reviewEndsAt : to
-    const account = accounts[review.account]
     let f
     switch (review.frequency) {
       case 'weekly':
@@ -750,13 +784,40 @@ export const expandBudget = (id, from, to, collections) => {
     const dueDates = f(startsAt, endsAt, {
       ...budget,
       holidays,
-      account,
+      region: review.account ? accounts[review.account] : region,
       startedAt
     })
     const invoicesByBudget = getInvoicesByBudget(invoices)
     for (const [issueDate, dueDate] of dueDates) {
       const issueId = `${id}@${issueDate}`
-      if (
+      if (isVariableCost(type)) {
+        const month = issueDate
+        for (const partition of review.partitions) {
+          const {
+            category = UNCLASSIFIED,
+            costCenter = UNCLASSIFIED
+          } = partition
+          const cost = get(
+            variableCost,
+            `${month}.${category}.${costCenter}`,
+            0
+          )
+          // should always have the same sign
+          if (Math.abs(partition.amount) > Math.abs(cost)) {
+            const amount = partition.amount - cost
+            transactions.push({
+              id: `${issueId}>${category}>${costCenter}`,
+              type: review.type,
+              status: 'due',
+              partitions: [{...partition, amount}],
+              issueDate,
+              dueDate,
+              amount
+            })
+          }
+        }
+        continue
+      } else if (
         invoicesByBudget.has(issueId) ||
         invoicesByBudget.has(`${id}@${dueDate}`)
       ) {
@@ -775,7 +836,7 @@ export const expandBudget = (id, from, to, collections) => {
         amount,
         account: review.account
       }
-      if (account.type === 'creditcard') {
+      if (isCreditcardAccount(review.account, accounts)) {
         if (review.installments) {
           invoice.installments = review.installments
         }
@@ -899,10 +960,10 @@ export const getTransfersTransactions = createSelector(
   }
 )
 
-export const getVariableExpensesByMonth = createSelector(
+export const getVariableCostByMonth = createSelector(
   getInvoicesTransactions,
   transactions => {
-    const variableExpenses = {}
+    const variableCost = {}
     for (const transaction of transactions) {
       if (!transaction.budget) {
         const month = extractYearMonth(
@@ -910,16 +971,24 @@ export const getVariableExpensesByMonth = createSelector(
             transaction.dueDate ||
             transaction.issueDate
         )
-        const monthExpenses = (variableExpenses[month] =
-          variableExpenses[month] || {})
+        const monthVariableCost = (variableCost[month] =
+          variableCost[month] || {})
         for (const partition of transaction.partitions) {
-          const {category = UNCLASSIFIED, amount} = partition
-          monthExpenses[category] = monthExpenses[category] || 0
-          monthExpenses[category] += amount
+          const {
+            category = UNCLASSIFIED,
+            costCenter = UNCLASSIFIED,
+            amount
+          } = partition
+          const key = `${category}.${costCenter}`
+          set(
+            monthVariableCost,
+            key,
+            get(monthVariableCost, key, 0) + amount
+          )
         }
       }
     }
-    return variableExpenses
+    return variableCost
   }
 )
 
@@ -935,7 +1004,9 @@ export const getBudgetsTransactions = createSelector(
     holidays: getHolidaysForAccounts,
     accounts: getAccounts,
     categories: getCategories,
-    places: getPlaces
+    places: getPlaces,
+    variableCost: getVariableCostByMonth,
+    region: getUser
   }),
   params => {
     const {
@@ -946,7 +1017,9 @@ export const getBudgetsTransactions = createSelector(
       budgets,
       accounts,
       categories,
-      places
+      places,
+      variableCost,
+      region
     } = params
     let transactions = []
     if (
@@ -970,8 +1043,10 @@ export const getBudgetsTransactions = createSelector(
           invoices,
           holidays,
           accounts,
+          region,
           categories,
-          places
+          places,
+          variableCost
         })
       ]
     }

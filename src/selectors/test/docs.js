@@ -986,7 +986,7 @@ test('Expand invoice', t => {
 
 test('Get monthly due dates', t => {
   const {getMonthlyDueDates} = t.context
-  const account = {
+  const region = {
     country: 'BR',
     state: 'MG',
     city: 'Belo Horizonte'
@@ -995,7 +995,7 @@ test('Get monthly due dates', t => {
     dayOfMonth: 31,
     onlyInBusinessDays: 'previous',
     holidays,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(dueDates, [
@@ -1017,7 +1017,7 @@ test('Get monthly due dates', t => {
     dayOfMonth: 1,
     onlyInBusinessDays: 'next',
     holidays,
-    account
+    region
   })
   t.deepEqual(mapDueDates(dueDates), ['2019-09-02', '2019-10-01'])
 
@@ -1027,7 +1027,7 @@ test('Get monthly due dates', t => {
     holidays,
     startedAt: '2019-10-01',
     interval: 3,
-    account
+    region
   })
   t.deepEqual(mapDueDates(dueDates), ['2019-10-01', '2019-12-30'])
 
@@ -1037,14 +1037,14 @@ test('Get monthly due dates', t => {
     holidays,
     startedAt: '2019-01-02',
     interval: 2,
-    account
+    region
   })
   t.deepEqual(mapDueDates(dueDates), ['2020-01-31', '2020-03-31'])
 })
 
 test('Get yearly due dates', t => {
   const {getYearlyDueDates} = t.context
-  const account = {
+  const region = {
     country: 'BR',
     state: 'MG',
     city: 'Belo Horizonte'
@@ -1054,7 +1054,7 @@ test('Get yearly due dates', t => {
     months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     onlyInBusinessDays: 'previous',
     holidays,
-    account
+    region
   })
   t.deepEqual(mapDueDates(dueDates), [
     '2019-01-31',
@@ -1076,7 +1076,7 @@ test('Get yearly due dates', t => {
     months: [9, 10],
     onlyInBusinessDays: 'next',
     holidays,
-    account
+    region
   })
   t.deepEqual(mapDueDates(dueDates), ['2019-09-02', '2019-10-01'])
 
@@ -1085,7 +1085,7 @@ test('Get yearly due dates', t => {
     months: [12],
     onlyInBusinessDays: 'previous',
     holidays,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(mapDueDates(dueDates), ['2019-11-29'])
@@ -1097,7 +1097,7 @@ test('Get yearly due dates', t => {
     months: ['1', '10'],
     startedAt: '2019-10-01',
     interval: 3,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(mapDueDates(dueDates), ['2019-10-01', '2021-12-30'])
@@ -1108,7 +1108,7 @@ test('Get yearly due dates', t => {
     months: ['1', '10'],
     startedAt: '1989-10-01',
     interval: 3,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(mapDueDates(dueDates), ['2019-10-01', '2021-12-30'])
@@ -1116,7 +1116,7 @@ test('Get yearly due dates', t => {
 
 test('Get weekly due dates', t => {
   const {getWeeklyDueDates} = t.context
-  const account = {
+  const region = {
     country: 'BR',
     state: 'MG',
     city: 'Belo Horizonte'
@@ -1126,7 +1126,7 @@ test('Get weekly due dates', t => {
     onlyInBusinessDays: 'next',
     interval: 2,
     holidays,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(mapDueDates(dueDates), ['2019-03-06', '2019-03-18'])
@@ -1137,7 +1137,7 @@ test('Get weekly due dates', t => {
     startedAt: '2019-11-20',
     interval: 3,
     holidays,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(mapDueDates(dueDates), ['2019-12-10', '2019-12-30'])
@@ -1148,7 +1148,7 @@ test('Get weekly due dates', t => {
     startedAt: '2018-12-30',
     interval: 2,
     holidays,
-    account
+    region
   })
   // console.log('TCL: dueDates', util.inspect(dueDates, {depth: null}))
   t.deepEqual(mapDueDates(dueDates), ['2019-03-06', '2019-03-18'])
@@ -1587,22 +1587,24 @@ test('Get invoices by budget check budget issueDate and budget dueDate to match 
 })
 
 test('Get variable expenses by month', t => {
-  const {getVariableExpensesByMonth} = t.context
-  const expenses = getVariableExpensesByMonth({
+  const {getVariableCostByMonth} = t.context
+  const expenses = getVariableCostByMonth({
     ...state,
     atlas: {holidays}
   })
   // console.log('TCL: expenses', util.inspect(expenses, {depth: null}))
   t.deepEqual(expenses, {
     '2019-01': {
-      Xo3z0jNPJvQ: 3,
-      InYNor0Si: -345600,
-      '2ASvvWRLha': -1690,
-      c8H31KdYqn8: -205608,
-      FUv4lDrdTYL: -17940,
-      UNCLASSIFIED: -194761
+      Xo3z0jNPJvQ: {eBhqeuMtrBu: 3},
+      InYNor0Si: {eBhqeuMtrBu: -345600},
+      '2ASvvWRLha': {d4hS3Qb9E5O: -1690},
+      c8H31KdYqn8: {d4hS3Qb9E5O: -93008, 'hgtbIUhE-lB': -112600},
+      FUv4lDrdTYL: {d4hS3Qb9E5O: -17940},
+      UNCLASSIFIED: {UNCLASSIFIED: -194761}
     },
-    '2019-07': {InYNor0Si: -300000}
+    '2019-07': {
+      InYNor0Si: {eBhqeuMtrBu: -200001, LXrJM4zYSjJ: -99999}
+    }
   })
 })
 
@@ -1617,12 +1619,38 @@ test('Budgets with no due date are per category budgeting', t => {
         [`dbs/${state.app.db}/budgets`]: {
           data: {
             f70e6: {
+              type: 'mbud',
               partitions: [
                 {
-                  amount: 100
+                  amount: 100,
+                  category: 'Xo3z0jNPJvQ',
+                  costCenter: 'eBhqeuMtrBu'
                 }
               ],
-              account: 'CYbteYpzdA6',
+              frequency: 'monthly',
+              date: '2017-04-18'
+            },
+            f70e7: {
+              type: 'mbud',
+              partitions: [
+                {
+                  amount: -608,
+                  category: 'c8H31KdYqn8',
+                  costCenter: 'd4hS3Qb9E5O'
+                }
+              ],
+              frequency: 'monthly',
+              date: '2017-04-18'
+            },
+            f70e8: {
+              type: 'mbud',
+              partitions: [
+                {
+                  amount: -20000,
+                  category: 'FUv4lDrdTYL',
+                  costCenter: 'd4hS3Qb9E5O'
+                }
+              ],
               frequency: 'monthly',
               date: '2017-04-18'
             }
@@ -1631,11 +1659,44 @@ test('Budgets with no due date are per category budgeting', t => {
       }
     },
     {
-      from: '2019-09-01',
-      to: '2019-09-30'
+      from: '2019-01-01',
+      to: '2019-01-30'
     }
   )
-  t.deepEqual(transactions, [])
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(transactions, [
+    {
+      type: 'mbud',
+      status: 'due',
+      partitions: [
+        {
+          amount: 97,
+          category: 'Xo3z0jNPJvQ',
+          costCenter: 'eBhqeuMtrBu'
+        }
+      ],
+      issueDate: '2019-01',
+      dueDate: '2019-01',
+      amount: 97
+    },
+    {
+      type: 'mbud',
+      status: 'due',
+      partitions: [
+        {
+          amount: -2060,
+          category: 'FUv4lDrdTYL',
+          costCenter: 'd4hS3Qb9E5O'
+        }
+      ],
+      issueDate: '2019-01',
+      dueDate: '2019-01',
+      amount: -2060
+    }
+  ])
 })
 
 test('Convert transaction currency', t => {
