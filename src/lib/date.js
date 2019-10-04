@@ -234,7 +234,7 @@ export const getWeeksUntil = (from, to) => {
 }
 
 export const getDaysUntil = (from, to) => {
-  let interval = -1
+  let interval = 0
   try {
     from = LocalDate.parse(from)
     to = LocalDate.parse(to)
