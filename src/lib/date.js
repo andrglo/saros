@@ -11,6 +11,7 @@ import easter from 'date-easter'
 import {getCurrentLocale} from './translate'
 
 export const isYearMonth = date => date && date.length === 7
+export const extractMonth = date => date && date.substring(5, 2)
 export const extractYearMonth = date => date && date.substring(0, 7)
 export const extractYear = date => date && date.substring(0, 4)
 export const getCurrentDate = () => LocalDate.now().toString()
