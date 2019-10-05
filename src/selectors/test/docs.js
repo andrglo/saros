@@ -1670,7 +1670,8 @@ test('Budgets with no due date are per category budgeting', t => {
   t.deepEqual(transactions, [
     {
       type: 'mbud',
-      status: 'due',
+      forecast: 100,
+      actual: 3,
       partitions: [
         {
           amount: 97,
@@ -1678,14 +1679,25 @@ test('Budgets with no due date are per category budgeting', t => {
           costCenter: 'eBhqeuMtrBu'
         }
       ],
-      issueDate: '2019-01',
       id: 'f70e6@2019-01:Xo3z0jNPJvQ^eBhqeuMtrBu',
-      dueDate: '2019-01',
-      amount: 97
+      month: '2019-01'
+    },
+    {
+      id: 'f70e7@2019-01:c8H31KdYqn8^d4hS3Qb9E5O',
+      type: 'mbud',
+      month: '2019-01',
+      forecast: -608,
+      actual: -93008,
+      partitions: [
+        {
+          amount: 92400,
+          category: 'c8H31KdYqn8',
+          costCenter: 'd4hS3Qb9E5O'
+        }
+      ]
     },
     {
       type: 'mbud',
-      status: 'due',
       partitions: [
         {
           amount: -2060,
@@ -1693,10 +1705,10 @@ test('Budgets with no due date are per category budgeting', t => {
           costCenter: 'd4hS3Qb9E5O'
         }
       ],
-      issueDate: '2019-01',
       id: 'f70e8@2019-01:FUv4lDrdTYL^d4hS3Qb9E5O',
-      dueDate: '2019-01',
-      amount: -2060
+      month: '2019-01',
+      forecast: -20000,
+      actual: -17940
     }
   ])
 })

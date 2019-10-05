@@ -24,7 +24,8 @@ import {
   getMonthsUntil,
   getWeeksUntil,
   getCurrentMonth,
-  toDateString
+  toDateString,
+  extractMonth
 } from '../lib/date'
 import {
   createSelector,
@@ -726,6 +727,67 @@ export const getInvoicesByBudget = memoize(invoices => {
 
 const isVariableCost = type => type === 'mbud'
 
+const expandMonthlyBudget = (id, from, to, reviews, variableCost) => {
+  const transactions = []
+  from = extractYearMonth(from)
+  to = extractYearMonth(to)
+  for (const [index, review] of reviews.entries()) {
+    const {date, endedAt} = review
+    const reviewStartsAt = extractYearMonth(date)
+    let reviewEndsAt = extractYearMonth(endedAt)
+    const nextReviewIndex = index + 1
+    if (reviews.length > nextReviewIndex) {
+      reviewEndsAt = extractYearMonth(
+        addMonths(reviews[nextReviewIndex].date, -1)
+      )
+      if (endedAt < reviewEndsAt) {
+        reviewEndsAt = endedAt
+      }
+    }
+    if (from > reviewEndsAt) {
+      continue
+    }
+    if (to < reviewStartsAt) {
+      break
+    }
+    const startsAt = from > reviewStartsAt ? from : reviewStartsAt
+    const endsAt = to > reviewEndsAt ? reviewEndsAt : to
+    for (
+      let month = startsAt;
+      month <= endsAt;
+      month = extractYearMonth(addMonths(month, 1))
+    ) {
+      if (
+        review.frequency === 'yearly' &&
+        !review.months.includes(Number(extractMonth(month)))
+      ) {
+        continue
+      }
+      for (const partition of review.partitions) {
+        const {
+          category = UNCLASSIFIED,
+          costCenter = UNCLASSIFIED
+        } = partition
+        const cost = get(
+          variableCost,
+          `${month}.${category}.${costCenter}`,
+          0
+        )
+        const result = partition.amount - cost
+        transactions.push({
+          id: `${id}@${month}:${category}^${costCenter}`,
+          type: review.type,
+          month,
+          forecast: partition.amount,
+          actual: cost,
+          partitions: [{...partition, amount: result}]
+        })
+      }
+    }
+  }
+  return transactions
+}
+
 export const expandBudget = (id, from, to, collections) => {
   let transactions = []
   const {
@@ -746,9 +808,12 @@ export const expandBudget = (id, from, to, collections) => {
     ],
     'date'
   )
+  if (isVariableCost(budget.type)) {
+    return expandMonthlyBudget(id, from, to, reviews, variableCost)
+  }
   const startedAt = budget.date
   for (const [index, review] of reviews.entries()) {
-    const {type, date, endedAt} = review
+    const {date, endedAt} = review
     const reviewStartsAt = date
     let reviewEndsAt = endedAt
     const nextReviewIndex = index + 1
@@ -758,7 +823,6 @@ export const expandBudget = (id, from, to, collections) => {
         reviewEndsAt = endedAt
       }
     }
-
     if (from > reviewEndsAt) {
       continue
     }
@@ -790,34 +854,7 @@ export const expandBudget = (id, from, to, collections) => {
     const invoicesByBudget = getInvoicesByBudget(invoices)
     for (const [issueDate, dueDate] of dueDates) {
       const issueId = `${id}@${issueDate}`
-      if (isVariableCost(type)) {
-        const month = issueDate
-        for (const partition of review.partitions) {
-          const {
-            category = UNCLASSIFIED,
-            costCenter = UNCLASSIFIED
-          } = partition
-          const cost = get(
-            variableCost,
-            `${month}.${category}.${costCenter}`,
-            0
-          )
-          // should always have the same sign
-          if (Math.abs(partition.amount) > Math.abs(cost)) {
-            const amount = partition.amount - cost
-            transactions.push({
-              id: `${issueId}:${category}^${costCenter}`,
-              type: review.type,
-              status: 'due',
-              partitions: [{...partition, amount}],
-              issueDate,
-              dueDate,
-              amount
-            })
-          }
-        }
-        continue
-      } else if (
+      if (
         invoicesByBudget.has(issueId) ||
         invoicesByBudget.has(`${id}@${dueDate}`)
       ) {
@@ -1198,13 +1235,14 @@ export const getTransactionsByDay = createSelector(
       ].filter(transaction => {
         const date = transaction.dueDate
         if (!date) {
-          throw new Error(
-            `Transaction has no due date: ${JSON.stringify(
-              transaction
-            )}`
-          )
-        }
-        if ((!from || date >= from) && date <= to) {
+          if (!isVariableCost(transaction.type)) {
+            throw new Error(
+              `Transaction has no due date: ${JSON.stringify(
+                transaction
+              )}`
+            )
+          }
+        } else if ((!from || date >= from) && date <= to) {
           return filter(transaction)
         }
         return false
