@@ -216,6 +216,7 @@ const buildTransactionDescription = (
   {categories, places}
 ) => {
   let description = transaction.description
+  description = concatDescription(description, transaction.notes)
   if (transaction.partitions) {
     let lastCategory = null
     for (const partition of transaction.partitions) {
@@ -236,7 +237,6 @@ const buildTransactionDescription = (
       }
     }
   }
-  description = concatDescription(description, transaction.notes)
   if (transaction.installments > 1) {
     const {installment, installments} = transaction
     description = concatDescription(
