@@ -12,14 +12,17 @@ const log = debug('dashboard')
 const Dashboard = () => {
   // log('render', props)
   return (
-    <div className="w-full h-full overflow-x-hidden p-4 sm:p-1">
+    <div className="w-full h-full overflow-x-hidden p-3 sm:p-1">
       <div className="dashboard">
         <TransactionPanel
           className="dashboard-panel"
           scope="overdue"
         />
         <TransactionPanel className="dashboard-panel" scope="due" />
-        <TransactionPanel className="dashboard-panel" scope="draft" />
+        <TransactionPanel
+          className="dashboard-panel"
+          scope="forecast"
+        />
       </div>
     </div>
   )

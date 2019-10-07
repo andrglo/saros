@@ -95,7 +95,7 @@ const selectPeriods = createSelector(
           return period.to < today
         case 'due':
           return period.from === today && period.to === today
-        case 'draft':
+        case 'forecast':
           return period.from > today
       }
       return true
@@ -103,7 +103,7 @@ const selectPeriods = createSelector(
     if (scope === 'due') {
       periods = sortBy(periods, 'to').reverse()
     }
-    if (scope === 'draft') {
+    if (scope === 'forecast') {
       periods = sortBy(periods, 'from')
     }
     return periods
