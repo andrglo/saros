@@ -41,6 +41,7 @@ import {
 } from './atlas'
 import t from '../lib/translate'
 import {formatCurrency} from '../lib/format'
+import {getHierarchy} from './tree'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('selectors:docs')
@@ -148,6 +149,39 @@ export const getCategories = state =>
   getCollection(state, {
     collection: `dbs/${getDb(state)}/categories`
   })
+
+export const getCategoriesWithDescription = createSelector(
+  getCategories,
+  categories => {
+    if (categories) {
+      categories = {...categories}
+      const roots = ['income', 'expense']
+      for (const id of Object.keys(categories)) {
+        const category = (categories[id] = {...categories[id]})
+        const hierarchy = (category.hierarchy = getHierarchy(
+          id,
+          categories,
+          roots
+        ))
+        category.description = category.name
+        if (hierarchy) {
+          category.type = hierarchy[hierarchy.length - 1]
+          category.description = concatDescription(
+            category.description,
+            hierarchy
+              .slice(0, -1)
+              .map(id => categories[id].name)
+              .join('; '),
+            ' ' + t`at` + ' '
+          )
+        } else {
+          category.type = category.id
+        }
+      }
+    }
+    return categories
+  }
+)
 
 export const getCostCenters = state =>
   getCollection(state, {
@@ -725,9 +759,10 @@ export const getInvoicesByBudget = memoize(invoices => {
   return invoicesByBudget
 })
 
-const isVariableCost = type => type === 'mbud'
+export const isVariableCost = type => type === 'mbud'
 
-const expandMonthlyBudget = (id, from, to, reviews, variableCost) => {
+const expandMonthlyBudget = (id, from, to, reviews, collections) => {
+  const {categories = {}, variableCost} = collections
   const transactions = []
   from = extractYearMonth(from)
   to = extractYearMonth(to)
@@ -763,26 +798,41 @@ const expandMonthlyBudget = (id, from, to, reviews, variableCost) => {
       ) {
         continue
       }
+      let transaction
+      let description
+      let amount = 0
+      let forecast = 0
       for (const partition of review.partitions) {
-        const {
-          category = UNCLASSIFIED,
-          costCenter = UNCLASSIFIED
-        } = partition
+        const {category, costCenter = UNCLASSIFIED} = partition
+        if (!transaction) {
+          transaction = {
+            id: `${id}@${month}:${category}`,
+            type: review.type,
+            month,
+            partitions: []
+          }
+          description = concatDescription(
+            description,
+            get(categories[category], 'description')
+          )
+        }
         const cost = get(
           variableCost,
           `${month}.${category}.${costCenter}`,
           0
         )
-        const result = partition.amount - cost
-        transactions.push({
-          id: `${id}@${month}:${category}^${costCenter}`,
-          type: review.type,
-          month,
+        transaction.partitions.push({
+          ...partition,
           forecast: partition.amount,
-          actual: cost,
-          partitions: [{...partition, amount: result}]
+          amount: cost
         })
+        amount += cost
+        forecast += partition.amount
       }
+      transaction.description = description
+      transaction.forecast = forecast
+      transaction.amount = amount
+      transactions.push(transaction)
     }
   }
   return transactions
@@ -790,14 +840,7 @@ const expandMonthlyBudget = (id, from, to, reviews, variableCost) => {
 
 export const expandBudget = (id, from, to, collections) => {
   let transactions = []
-  const {
-    budget,
-    holidays,
-    accounts,
-    invoices,
-    region,
-    variableCost
-  } = collections
+  const {budget, holidays, accounts, invoices, region} = collections
   const reviews = sortBy(
     [
       budget,
@@ -809,7 +852,7 @@ export const expandBudget = (id, from, to, collections) => {
     'date'
   )
   if (isVariableCost(budget.type)) {
-    return expandMonthlyBudget(id, from, to, reviews, variableCost)
+    return expandMonthlyBudget(id, from, to, reviews, collections)
   }
   const startedAt = budget.date
   for (const [index, review] of reviews.entries()) {
@@ -1040,7 +1083,7 @@ export const getBudgetsTransactions = createSelector(
     budgets: getBudgets,
     holidays: getHolidaysForAccounts,
     accounts: getAccounts,
-    categories: getCategories,
+    categories: getCategoriesWithDescription,
     places: getPlaces,
     variableCost: getVariableCostByMonth,
     region: getUser

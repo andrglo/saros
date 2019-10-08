@@ -1671,28 +1671,32 @@ test('Budgets with no due date are per category budgeting', t => {
     {
       type: 'mbud',
       forecast: 100,
-      actual: 3,
       partitions: [
         {
-          amount: 97,
+          amount: 3,
           category: 'Xo3z0jNPJvQ',
-          costCenter: 'eBhqeuMtrBu'
+          costCenter: 'eBhqeuMtrBu',
+          forecast: 100
         }
       ],
-      id: 'f70e6@2019-01:Xo3z0jNPJvQ^eBhqeuMtrBu',
+      description: 'Detachment',
+      amount: 3,
+      id: 'f70e6@2019-01:Xo3z0jNPJvQ',
       month: '2019-01'
     },
     {
-      id: 'f70e7@2019-01:c8H31KdYqn8^d4hS3Qb9E5O',
+      id: 'f70e7@2019-01:c8H31KdYqn8',
       type: 'mbud',
       month: '2019-01',
+      description: '',
       forecast: -608,
-      actual: -93008,
+      amount: -93008,
       partitions: [
         {
-          amount: 92400,
+          amount: -93008,
           category: 'c8H31KdYqn8',
-          costCenter: 'd4hS3Qb9E5O'
+          costCenter: 'd4hS3Qb9E5O',
+          forecast: -608
         }
       ]
     },
@@ -1700,15 +1704,17 @@ test('Budgets with no due date are per category budgeting', t => {
       type: 'mbud',
       partitions: [
         {
-          amount: -2060,
+          amount: -17940,
           category: 'FUv4lDrdTYL',
-          costCenter: 'd4hS3Qb9E5O'
+          costCenter: 'd4hS3Qb9E5O',
+          forecast: -20000
         }
       ],
-      id: 'f70e8@2019-01:FUv4lDrdTYL^d4hS3Qb9E5O',
+      id: 'f70e8@2019-01:FUv4lDrdTYL',
       month: '2019-01',
+      description: '',
       forecast: -20000,
-      actual: -17940
+      amount: -17940
     }
   ])
 })
