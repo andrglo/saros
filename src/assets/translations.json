@@ -3,6 +3,10 @@
     "en": "and",
     "pt-BR": "e"
   },
+  "at": {
+    "en": "at",
+    "pt-BR": "em"
+  },
   "balance_adjustment": {
     "en": "Account balance adjustment:",
     "pt-BR": "Ajuste de saldo em"
@@ -278,6 +282,10 @@
   "tomorrow": {
     "en": "Tomorrow",
     "pt-BR": "Amanhã"
+  },
+  "total": {
+    "en": "Total",
+    "pt-BR": "Total"
   },
   "transfer_from": {
     "en": "Transfer from",
