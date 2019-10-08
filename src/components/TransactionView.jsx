@@ -14,14 +14,13 @@ const log = debug('transaction:view')
 const TransactionView = props => {
   const {dispatch, transaction, className, accounts, ...rest} = props
   const {
-    id,
     type,
     description,
     amount,
     account,
     currencySymbol
   } = transaction
-  const [opened, open] = useState({})
+  const [isOpen, open] = useState()
   const isTranfer = type === 'transfer'
   const isOutflow = Math.isNegative(amount)
   const accountDoc = accounts[account] || {}
@@ -35,12 +34,12 @@ const TransactionView = props => {
           className
         )}
         onClick={() => {
-          open({...opened, [id]: !opened[id]})
+          open(!isOpen)
         }}
       >
         <p
           className={cn('flex-1', {
-            truncate: !opened[id]
+            truncate: !isOpen
           })}
         >
           {description}
