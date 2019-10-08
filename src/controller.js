@@ -403,16 +403,14 @@ export const createStore = async () => {
 }
 
 const processPendingTasks = async () => {
-  const pending = (await localDb.getKeys(PENDENT_STORE_NAME)).map(
-    Number
-  )
+  const pending = await localDb.getKeys(PENDENT_STORE_NAME)
   pending.sort()
   log('pending from last session', pending)
   for (const instant of pending) {
     // eslint-disable-next-line no-await-in-loop
     const {type, ...payload} = await localDb.get(
       PENDENT_STORE_NAME,
-      String(instant)
+      instant
     )
     switch (type) {
       case 'state':
