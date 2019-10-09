@@ -247,7 +247,6 @@ export const getDaysUntil = (from, to) => {
 }
 
 export const toDateString = (date, options = {}) =>
-  new Date(`${date}T00:00`).toLocaleDateString(
-    getCurrentLocale(),
-    options
-  )
+  new Date(
+    `${isYearMonth(date) ? date + '-01' : date}T00:00`
+  ).toLocaleDateString(getCurrentLocale(), options)
