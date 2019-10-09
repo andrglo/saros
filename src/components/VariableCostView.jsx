@@ -9,6 +9,7 @@ import {formatCurrency} from '../lib/format'
 import {getCurrencies} from '../selectors/atlas'
 import {getDefaultCurrency, getCostCenters} from '../selectors/docs'
 import t from '../lib/translate'
+import {getCurrentMonth} from '../lib/date'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('variableCost:view')
@@ -18,10 +19,11 @@ const DetailView = props => {
     className,
     amountClass,
     description,
-    isOutflow,
     amount,
     forecast
   } = props
+  const isInflow = amount > 0
+  const isOutflow = amount < 0
   return (
     <div className={cn('flex', className)}>
       <p className="w-2/6">{description}</p>
@@ -31,19 +33,21 @@ const DetailView = props => {
             'mr-1 font-hairline italic my-auto w-1/2 text-right',
             {
               'text-expense': isOutflow,
-              'text-income': !isOutflow
+              'text-income': isInflow
             },
             amountClass
           )}
         >
-          {formatCurrency(forecast)}
+          {typeof forecast === 'number'
+            ? formatCurrency(forecast)
+            : '⚠️'}
         </p>
         <p
           className={cn(
             'my-auto w-1/2 text-right',
             {
               'text-expense': isOutflow,
-              'text-income': !isOutflow
+              'text-income': isInflow
             },
             amountClass
           )}
@@ -59,9 +63,8 @@ DetailView.propTypes = {
   className: PropTypes.string,
   amountClass: PropTypes.string,
   description: PropTypes.string.isRequired,
-  isOutflow: PropTypes.bool.isRequired,
   amount: PropTypes.number.isRequired,
-  forecast: PropTypes.number.isRequired
+  forecast: PropTypes.number
 }
 
 const VariableCostView = props => {
@@ -75,16 +78,20 @@ const VariableCostView = props => {
     ...rest
   } = props
   const {description, amount, forecast} = transaction
-  log('transaction', description, transaction)
+  // log('transaction', description, transaction)
   const [isOpen, setIsOpen] = useState()
-  const isOutflow = Math.isNegative(amount)
+  const isInflow = amount > 0
+  const isOutflow = amount < 0
   const currencySymbol =
-    currencies[defaultCurrency].symbol || defaultCurrency
+    (currencies[defaultCurrency] || {}).symbol || defaultCurrency
   const toggleOpen = () => {
     setIsOpen(!isOpen)
   }
-  const isIncome = forecast > 0
-  const amountOverflow = Math.abs(amount) > Math.abs(forecast)
+  const amountOverflow =
+    typeof forecast !== 'number' ||
+    Math.abs(amount) > Math.abs(forecast)
+  const isPast = transaction.month < getCurrentMonth()
+  const showAmount = amountOverflow || isPast
   return (
     <div
       {...rest}
@@ -108,17 +115,18 @@ const VariableCostView = props => {
           {description}
         </p>
         <p
-          className={cn('my-auto font-hairline italic', {
+          className={cn('my-auto', {
             'text-expense': isOutflow,
-            'text-income': !isOutflow,
-            'bg-warning': amountOverflow && !isIncome,
-            'bg-info': amountOverflow && isIncome
+            'text-income': isInflow,
+            'bg-warning': amountOverflow && isOutflow,
+            'bg-info': amountOverflow && isInflow,
+            'font-hairline italic': !showAmount
           })}
         >
           <span className="text-xs tracking-tighter pr-1">
             {currencySymbol}
           </span>
-          {formatCurrency(amountOverflow ? amount : forecast)}
+          {formatCurrency(showAmount ? amount : forecast)}
         </p>
       </div>
       {isOpen && (
@@ -126,14 +134,13 @@ const VariableCostView = props => {
           {transaction.partitions.map(partition => {
             const {costCenter, forecast, amount} = partition
             return (
-              <React.Fragment key={costCenter}>
+              <React.Fragment key={costCenter || null}>
                 <DetailView
                   description={get(
                     costCenters,
                     `${costCenter}.name`,
                     ''
                   )}
-                  isOutflow={isOutflow}
                   forecast={forecast}
                   amount={amount}
                 />
@@ -144,7 +151,6 @@ const VariableCostView = props => {
             <DetailView
               amountClass="border-t"
               description={t`Total`}
-              isOutflow={isOutflow}
               forecast={forecast}
               amount={amount}
             />

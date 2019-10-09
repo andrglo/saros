@@ -871,7 +871,7 @@ test('Expand invoice', t => {
       dueDate: '2019-07-31',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
-      payDate: '2019-07-10',
+      billedDate: '2019-07-10',
       partitions: [{category: 'X', amount: 3333}],
       installment: 1,
       installments: 3,
@@ -887,7 +887,7 @@ test('Expand invoice', t => {
       dueDate: '2019-09-02',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
-      payDate: '2019-07-10',
+      billedDate: '2019-07-10',
       partitions: [{category: 'X', amount: 3333}],
       installment: 2,
       installments: 3,
@@ -903,7 +903,7 @@ test('Expand invoice', t => {
       dueDate: '2019-09-30',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
-      payDate: '2019-07-10',
+      billedDate: '2019-07-10',
       partitions: [{category: 'X', amount: 3334}],
       installment: 3,
       installments: 3,
@@ -939,7 +939,7 @@ test('Expand invoice', t => {
       dueDate: '2019-04-01',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
-      payDate: '2018-07-10',
+      billedDate: '2018-07-10',
       partitions: [{category: 'X', amount: 500}],
       installment: 9,
       installments: 10,
@@ -955,7 +955,7 @@ test('Expand invoice', t => {
       dueDate: '2019-04-30',
       account: 'AHIhOdX7cxo',
       issuer: '-ssZsPnhWoo',
-      payDate: '2018-07-10',
+      billedDate: '2018-07-10',
       partitions: [{category: 'X', amount: 500}],
       installment: 10,
       installments: 10,
@@ -1295,7 +1295,7 @@ test('Expand budget', t => {
       type: 'bill',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
-      payDate: '2019-03-08',
+      billedDate: '2019-03-08',
       amount: -15441,
       status: 'draft',
       issueDate: '2019-04-08',
@@ -1327,7 +1327,7 @@ test('Expand budget', t => {
       type: 'bill',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
-      payDate: '2019-03-08',
+      billedDate: '2019-03-08',
       amount: -15441,
       status: 'draft',
       issueDate: '2019-05-08',
@@ -1586,31 +1586,9 @@ test('Get invoices by budget check budget issueDate and budget dueDate to match 
   t.deepEqual(transactions, [])
 })
 
-test('Get variable expenses by month', t => {
-  const {getVariableCostByMonth} = t.context
-  const expenses = getVariableCostByMonth({
-    ...state,
-    atlas: {holidays}
-  })
-  // console.log('TCL: expenses', util.inspect(expenses, {depth: null}))
-  t.deepEqual(expenses, {
-    '2019-01': {
-      Xo3z0jNPJvQ: {eBhqeuMtrBu: 3},
-      InYNor0Si: {eBhqeuMtrBu: -345600},
-      '2ASvvWRLha': {d4hS3Qb9E5O: -1690},
-      c8H31KdYqn8: {d4hS3Qb9E5O: -93008, 'hgtbIUhE-lB': -112600},
-      FUv4lDrdTYL: {d4hS3Qb9E5O: -17940},
-      UNCLASSIFIED: {UNCLASSIFIED: -194761}
-    },
-    '2019-07': {
-      InYNor0Si: {eBhqeuMtrBu: -200001, LXrJM4zYSjJ: -99999}
-    }
-  })
-})
-
-test('Budgets with no due date are per category budgeting', t => {
-  const {getBudgetsTransactions} = t.context
-  const transactions = getBudgetsTransactions(
+test('Get variable cost transactions', t => {
+  const {getVariableCostTransactions} = t.context
+  let transactions = getVariableCostTransactions(
     {
       ...state,
       atlas: {holidays},
@@ -1667,54 +1645,59 @@ test('Budgets with no due date are per category budgeting', t => {
   //   'TCL: transactions',
   //   util.inspect(transactions, {depth: null})
   // )
+  transactions = transactions.map(t => ({
+    id: t.id,
+    month: t.month,
+    forecast: t.forecast,
+    amount: t.amount,
+    partitionsLength: t.partitions.length
+  }))
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
   t.deepEqual(transactions, [
     {
-      type: 'mbud',
-      forecast: 100,
-      partitions: [
-        {
-          amount: 3,
-          category: 'Xo3z0jNPJvQ',
-          costCenter: 'eBhqeuMtrBu',
-          forecast: 100
-        }
-      ],
-      description: 'Detachment',
-      amount: 3,
       id: 'f70e6@2019-01:Xo3z0jNPJvQ',
-      month: '2019-01'
+      month: '2019-01',
+      forecast: 100,
+      amount: 3,
+      partitionsLength: 1
     },
     {
       id: 'f70e7@2019-01:c8H31KdYqn8',
-      type: 'mbud',
       month: '2019-01',
-      description: '',
       forecast: -608,
-      amount: -93008,
-      partitions: [
-        {
-          amount: -93008,
-          category: 'c8H31KdYqn8',
-          costCenter: 'd4hS3Qb9E5O',
-          forecast: -608
-        }
-      ]
+      amount: -23252,
+      partitionsLength: 1
     },
     {
-      type: 'mbud',
-      partitions: [
-        {
-          amount: -17940,
-          category: 'FUv4lDrdTYL',
-          costCenter: 'd4hS3Qb9E5O',
-          forecast: -20000
-        }
-      ],
       id: 'f70e8@2019-01:FUv4lDrdTYL',
       month: '2019-01',
-      description: '',
       forecast: -20000,
-      amount: -17940
+      amount: -8970,
+      partitionsLength: 1
+    },
+    {
+      id: '2019-01:InYNor0Si',
+      month: '2019-01',
+      forecast: undefined,
+      amount: -19200,
+      partitionsLength: 1
+    },
+    {
+      id: '2019-01:2ASvvWRLha',
+      month: '2019-01',
+      forecast: undefined,
+      amount: -1690,
+      partitionsLength: 1
+    },
+    {
+      id: '2019-01:UNCLASSIFIED',
+      month: '2019-01',
+      forecast: undefined,
+      amount: -194761,
+      partitionsLength: 1
     }
   ])
 })

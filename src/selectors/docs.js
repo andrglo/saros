@@ -1,5 +1,4 @@
 import get from 'lodash/get'
-import set from 'lodash/set'
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
 import debug from 'debug'
@@ -235,6 +234,9 @@ export const getDocProp = (id, path, collection, defaultValue = '') =>
 
 export const getName = (id, collection) =>
   getDocProp(id, 'name', collection)
+
+export const isAcquittance = status =>
+  status === 'due' || status === 'paid' || status === 'draft'
 
 const concatDescription = (
   description,
@@ -512,15 +514,16 @@ export const getRemainingPaymentsForCreditcard = ({
     installment++
     balance -= amount
     const issueDate = getInstallmentIssueDate(installment)
+    const {payDate, ...relay} = transaction
     payments.push({
-      ...transaction,
+      ...relay,
       id: `${transaction.id}@${issueDate}`,
       billedFrom: transaction.id,
       type: 'bill',
       amount,
       status: 'draft',
       issueDate,
-      payDate: billedDate,
+      billedDate,
       dueDate: getDueDate(issueDate),
       account: account.payAccount || transaction.account,
       issuer: transaction.account,
@@ -590,8 +593,9 @@ export const expandInvoice = (id, collections) => {
   })
   for (const parcel of parcels) {
     partitions = parcel.partitions || partitions
+    const {payDate, ...relay} = invoice
     addTransaction({
-      ...invoice,
+      ...relay,
       ...parcel,
       partitions: redistributeAmount(
         partitions,
@@ -761,86 +765,14 @@ export const getInvoicesByBudget = memoize(invoices => {
 
 export const isVariableCost = type => type === 'mbud'
 
-const expandMonthlyBudget = (id, from, to, reviews, collections) => {
-  const {categories = {}, variableCost} = collections
-  const transactions = []
-  from = extractYearMonth(from)
-  to = extractYearMonth(to)
-  for (const [index, review] of reviews.entries()) {
-    const {date, endedAt} = review
-    const reviewStartsAt = extractYearMonth(date)
-    let reviewEndsAt = extractYearMonth(endedAt)
-    const nextReviewIndex = index + 1
-    if (reviews.length > nextReviewIndex) {
-      reviewEndsAt = extractYearMonth(
-        addMonths(reviews[nextReviewIndex].date, -1)
-      )
-      if (endedAt < reviewEndsAt) {
-        reviewEndsAt = endedAt
-      }
-    }
-    if (from > reviewEndsAt) {
-      continue
-    }
-    if (to < reviewStartsAt) {
-      break
-    }
-    const startsAt = from > reviewStartsAt ? from : reviewStartsAt
-    const endsAt = to > reviewEndsAt ? reviewEndsAt : to
-    for (
-      let month = startsAt;
-      month <= endsAt;
-      month = extractYearMonth(addMonths(month, 1))
-    ) {
-      if (
-        review.frequency === 'yearly' &&
-        !review.months.includes(Number(extractMonth(month)))
-      ) {
-        continue
-      }
-      let transaction
-      let description
-      let amount = 0
-      let forecast = 0
-      for (const partition of review.partitions) {
-        const {category, costCenter = UNCLASSIFIED} = partition
-        if (!transaction) {
-          transaction = {
-            id: `${id}@${month}:${category}`,
-            type: review.type,
-            month,
-            partitions: []
-          }
-          description = concatDescription(
-            description,
-            get(categories[category], 'description')
-          )
-        }
-        const cost = get(
-          variableCost,
-          `${month}.${category}.${costCenter}`,
-          0
-        )
-        transaction.partitions.push({
-          ...partition,
-          forecast: partition.amount,
-          amount: cost
-        })
-        amount += cost
-        forecast += partition.amount
-      }
-      transaction.description = description
-      transaction.forecast = forecast
-      transaction.amount = amount
-      transactions.push(transaction)
-    }
-  }
-  return transactions
-}
-
 export const expandBudget = (id, from, to, collections) => {
   let transactions = []
   const {budget, holidays, accounts, invoices, region} = collections
+  if (process.env.NOD_ENV !== 'production') {
+    if (isVariableCost(budget.type)) {
+      throw new Error('Variable cost budgets cannot be expanded')
+    }
+  }
   const reviews = sortBy(
     [
       budget,
@@ -851,9 +783,6 @@ export const expandBudget = (id, from, to, collections) => {
     ],
     'date'
   )
-  if (isVariableCost(budget.type)) {
-    return expandMonthlyBudget(id, from, to, reviews, collections)
-  }
   const startedAt = budget.date
   for (const [index, review] of reviews.entries()) {
     const {date, endedAt} = review
@@ -1040,35 +969,195 @@ export const getTransfersTransactions = createSelector(
   }
 )
 
-export const getVariableCostByMonth = createSelector(
-  getInvoicesTransactions,
-  transactions => {
-    const variableCost = {}
+export const getVariableCostTransactions = createSelector(
+  createStructuredSelector({
+    from: (state, {from} = {}) =>
+      from === null
+        ? addMonths(getCurrentDate(), -BUDGET_VALIDITY)
+        : from || getCurrentDate(),
+    to: (state, {to} = {}) => to,
+    transactions: getInvoicesTransactions,
+    budgets: getBudgets,
+    categories: getCategoriesWithDescription
+  }),
+  params => {
+    let {from, to, transactions, budgets, categories} = params
+    const vCostTransactions = []
+    if (
+      !areAllCollectionsReady({
+        budgets,
+        categories
+      })
+    ) {
+      return vCostTransactions
+    }
+    const vCost = {}
     for (const transaction of transactions) {
-      if (!transaction.budget) {
+      if (!transaction.budget && isAcquittance(transaction.status)) {
         const month = extractYearMonth(
           transaction.payDate ||
             transaction.dueDate ||
             transaction.issueDate
         )
-        const monthVariableCost = (variableCost[month] =
-          variableCost[month] || {})
         for (const partition of transaction.partitions) {
           const {
             category = UNCLASSIFIED,
             costCenter = UNCLASSIFIED,
             amount
           } = partition
-          const key = `${category}.${costCenter}`
-          set(
-            monthVariableCost,
-            key,
-            get(monthVariableCost, key, 0) + amount
+          const key = `${month}:${category}`
+          const budget = vCost[key] || {
+            partitions: [],
+            amount: 0,
+            month
+          }
+          const costCenterPartition = budget.partitions.find(
+            partition => partition.costCenter === costCenter
           )
+          if (costCenterPartition) {
+            costCenterPartition.amount += amount
+            costCenterPartition.transactions.push({
+              transaction,
+              partition
+            })
+          } else {
+            budget.partitions.push({
+              category,
+              costCenter,
+              amount,
+              transactions: [{transaction, partition}]
+            })
+          }
+          budget.amount += amount
+          vCost[key] = budget
         }
       }
     }
-    return variableCost
+
+    from = extractYearMonth(from)
+    to = extractYearMonth(to)
+    for (const id of Object.keys(budgets)) {
+      const budget = budgets[id]
+      if (!isVariableCost(budget.type)) {
+        continue
+      }
+      const reviews = sortBy(
+        [
+          budget,
+          ...(budget.reviews || []).map(review => ({
+            ...budget,
+            ...review
+          }))
+        ],
+        'date'
+      )
+      for (const [index, review] of reviews.entries()) {
+        const {date, endedAt} = review
+        const reviewStartsAt = extractYearMonth(date)
+        let reviewEndsAt = extractYearMonth(endedAt)
+        const nextReviewIndex = index + 1
+        if (reviews.length > nextReviewIndex) {
+          reviewEndsAt = extractYearMonth(
+            addMonths(reviews[nextReviewIndex].date, -1)
+          )
+          if (endedAt < reviewEndsAt) {
+            reviewEndsAt = endedAt
+          }
+        }
+        if (from > reviewEndsAt) {
+          continue
+        }
+        if (to < reviewStartsAt) {
+          break
+        }
+        const startsAt = from > reviewStartsAt ? from : reviewStartsAt
+        const endsAt = to > reviewEndsAt ? reviewEndsAt : to
+        for (
+          let month = startsAt;
+          month <= endsAt;
+          month = extractYearMonth(addMonths(month, 1))
+        ) {
+          if (
+            review.frequency === 'yearly' &&
+            !review.months.includes(Number(extractMonth(month)))
+          ) {
+            continue
+          }
+          let costKey
+          let cost
+          let transaction
+          let amount = 0
+          let forecast = 0
+          for (const partition of review.partitions) {
+            const {category, costCenter} = partition
+            if (partition.amount === 0) {
+              continue
+            }
+            if (!transaction) {
+              costKey = `${month}:${category}`
+              cost = vCost[costKey]
+              transaction = {
+                id: `${id}@${month}:${category}`,
+                type: get(categories[category], 'type'),
+                description: get(categories[category], 'description'),
+                month,
+                partitions: [],
+                cost
+              }
+            }
+            let costAmount = 0
+            if (cost) {
+              if (costCenter) {
+                const costPartition = cost.partitions.find(
+                  partition => partition.costCenter === costCenter
+                )
+                if (costPartition) {
+                  costAmount = costPartition.amount
+                }
+                transaction.partitions.push({
+                  ...partition,
+                  forecast: partition.amount,
+                  amount: costAmount
+                })
+              } else {
+                for (const costPartition of cost.partitions) {
+                  costAmount += costPartition.amount
+                  transaction.partitions.push({
+                    ...partition,
+                    costCenter: costPartition.costCenter,
+                    forecast: partition.amount,
+                    amount: costPartition.amount
+                  })
+                }
+              }
+            }
+            amount += costAmount
+            forecast += partition.amount
+          }
+          if (transaction) {
+            transaction.forecast = forecast
+            transaction.amount = amount
+            vCostTransactions.push(transaction)
+            if (cost) {
+              delete vCost[costKey]
+            }
+          }
+        }
+      }
+    }
+    for (const key of Object.keys(vCost)) {
+      const cost = vCost[key]
+      if (cost.month >= from && cost.month <= to) {
+        const [, category] = key.split(':')
+        vCostTransactions.push({
+          id: key,
+          ...cost,
+          type: get(categories[category], 'type'),
+          description: get(categories[category], 'description')
+        })
+      }
+    }
+    return vCostTransactions
   }
 )
 
@@ -1085,7 +1174,6 @@ export const getBudgetsTransactions = createSelector(
     accounts: getAccounts,
     categories: getCategoriesWithDescription,
     places: getPlaces,
-    variableCost: getVariableCostByMonth,
     region: getUser
   }),
   params => {
@@ -1098,7 +1186,6 @@ export const getBudgetsTransactions = createSelector(
       accounts,
       categories,
       places,
-      variableCost,
       region
     } = params
     let transactions = []
@@ -1116,19 +1203,21 @@ export const getBudgetsTransactions = createSelector(
     }
     log('getBudgetsTransactions started', params)
     for (const id of Object.keys(budgets)) {
-      transactions = [
-        ...transactions,
-        ...expandBudget(id, from, to, {
-          budget: budgets[id],
-          invoices,
-          holidays,
-          accounts,
-          region,
-          categories,
-          places,
-          variableCost
-        })
-      ]
+      const budget = budgets[id]
+      if (!isVariableCost(budget.type)) {
+        transactions = [
+          ...transactions,
+          ...expandBudget(id, from, to, {
+            budget,
+            invoices,
+            holidays,
+            accounts,
+            region,
+            categories,
+            places
+          })
+        ]
+      }
     }
     return transactions
   }
@@ -1277,15 +1366,16 @@ export const getTransactionsByDay = createSelector(
         ...budgetsTransactions
       ].filter(transaction => {
         const date = transaction.dueDate
-        if (!date) {
-          if (!isVariableCost(transaction.type)) {
+        if (process.env.NOD_ENV !== 'production') {
+          if (!date) {
             throw new Error(
               `Transaction has no due date: ${JSON.stringify(
                 transaction
               )}`
             )
           }
-        } else if ((!from || date >= from) && date <= to) {
+        }
+        if ((!from || date >= from) && date <= to) {
           return filter(transaction)
         }
         return false

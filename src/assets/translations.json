@@ -55,6 +55,10 @@
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
   },
+  "expenses": {
+    "en": "Expenses",
+    "pt-BR": "Despesas"
+  },
   "from_a_month": {
     "en": "From a month",
     "pt-BR": "Até um mês"
@@ -90,6 +94,10 @@
       "em * mês",
       "em * meses"
     ]
+  },
+  "incomes": {
+    "en": "Incomes",
+    "pt-BR": "Receitas"
   },
   "installment": {
     "en": "Installment",
