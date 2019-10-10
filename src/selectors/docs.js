@@ -226,8 +226,10 @@ export const getDefaultCurrency = state => {
   return user && getCountryCurrency(state, {country: user.country})
 }
 
-export const isCreditcardAccount = (account, accounts = {}) =>
-  (accounts[account] || {}).type === 'creditcard'
+export const isCreditcard = type => type === 'creditcard'
+
+export const isCreditcardAccount = (id, accounts = {}) =>
+  isCreditcard((accounts[id] || {}).type)
 
 export const getDocProp = (id, path, collection, defaultValue = '') =>
   get(collection[id], path) || defaultValue
@@ -237,6 +239,8 @@ export const getName = (id, collection) =>
 
 export const isAcquittance = status =>
   status === 'due' || status === 'paid' || status === 'draft'
+
+export const isDue = status => status === 'due' || status === 'draft'
 
 const concatDescription = (
   description,
@@ -1223,7 +1227,7 @@ export const getBudgetsTransactions = createSelector(
   }
 )
 
-const getCurrencyRate = (currencyRates = {}, from, to) => {
+export const getCurrencyRate = (currencyRates = {}, from, to) => {
   const rates = currencyRates.rates || {}
   let rate
   if (from !== currencyRates.base) {
@@ -1234,7 +1238,7 @@ const getCurrencyRate = (currencyRates = {}, from, to) => {
   } else {
     rate = rates[to]
   }
-  return rate
+  return typeof rate === 'number' ? rate : 1
 }
 
 export const convertTransactionCurrency = (
@@ -1458,5 +1462,96 @@ export const getTransactionsByTimePeriods = createSelector(
       }
     }
     return timePeriods
+  }
+)
+
+export const getAccountsBalance = createSelector(
+  createStructuredSelector({
+    accounts: getAccounts,
+    defaultCurrency: getDefaultCurrency,
+    currencyRates: getCurrencyRates,
+    transactions: getInvoicesTransactions
+  }),
+  params => {
+    const {
+      accounts,
+      defaultCurrency,
+      currencyRates,
+      transactions
+    } = params
+    const accountsBalance = {}
+    if (
+      !areAllCollectionsReady({
+        accounts,
+        currencyRates
+      })
+    ) {
+      return accountsBalance
+    }
+    const creditcardBalance = {}
+    for (const transaction of transactions) {
+      const {issuer, status} = transaction
+      if (isCreditcardAccount(issuer, accounts) && isDue(status)) {
+        creditcardBalance[issuer] = creditcardBalance[issuer] || {
+          balance: 0,
+          bills: {}
+        }
+        creditcardBalance[issuer].balance += transaction.amount
+        const {dueDate} = transaction
+        const bill = (creditcardBalance[issuer].bills[
+          dueDate
+        ] = creditcardBalance[issuer].bills[dueDate] || {
+          balance: 0,
+          transactions: []
+        })
+        bill.balance += transaction.amount
+        bill.transactions.push(transaction)
+      }
+    }
+    for (const id of Object.keys(accounts)) {
+      const account = accounts[id]
+      let bills
+      if (!account.deletedAt) {
+        const {type} = account
+        let balance
+        if (isCreditcard(type)) {
+          balance = get(creditcardBalance, `${id}.balance`, 0)
+          const issuerBills = get(
+            creditcardBalance,
+            `${id}.bills`,
+            {}
+          )
+          bills = Object.keys(issuerBills)
+            .sort()
+            .map(dueDate => {
+              return {
+                dueDate,
+                balance: issuerBills[dueDate].balance,
+                transactions: issuerBills[dueDate].transactions
+              }
+            })
+        } else {
+          balance = account.balance || 0
+        }
+        if (account.currency !== defaultCurrency) {
+          balance = Math.round(
+            balance *
+              getCurrencyRate(
+                currencyRates,
+                account.currency,
+                defaultCurrency
+              )
+          )
+        }
+        accountsBalance[type] = accountsBalance[type] || []
+        accountsBalance[type].push({
+          id,
+          balance,
+          account,
+          bills
+        })
+      }
+    }
+    return accountsBalance
   }
 )

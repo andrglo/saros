@@ -1805,7 +1805,7 @@ test('Get transactions by time periods', t => {
     }
   })
   periods = mapPeriods(periods)
-  // console.log('TCL: calendar', util.inspect(periods, {depth: null}))
+  // console.log('TCL: periods', util.inspect(periods, {depth: null}))
   t.deepEqual(periods, [
     {
       from: '2019-10-08',
@@ -1837,5 +1837,37 @@ test('Get transactions by time periods', t => {
         '2019-08-09'
       ]
     }
+  ])
+})
+
+test('Get accounts balance', t => {
+  const {getAccountsBalance} = t.context
+  const localState = {...state, atlas: {holidays}}
+  localState.docs['atlas/currencyRates'] = {data: currencyRates}
+  const accountsBalance = getAccountsBalance(localState)
+  const mapBalance = map(ab => {
+    const {id, balance, bills} = ab
+    return {
+      id,
+      balance,
+      bills: bills && bills.length
+    }
+  })
+  let ab = mapBalance(accountsBalance.regular)
+  // console.log('TCL: accountsBalance', util.inspect(ab, {depth: null}))
+  t.deepEqual(ab, [
+    {id: 'CYbteYpzdA6', balance: 5390, bills: undefined},
+    {id: 'AHIhOdX7cxo', balance: 3409, bills: undefined}
+  ])
+  ab = mapBalance(accountsBalance.foreignCurrency)
+  // console.log('TCL: accountsBalance', util.inspect(ab, {depth: null}))
+  t.deepEqual(ab, [{id: 'Gh7_Clk6Mu9', balance: 0, bills: undefined}])
+  ab = mapBalance(accountsBalance.creditcard)
+  // console.log('TCL: accountsBalance', util.inspect(ab, {depth: null}))
+  t.deepEqual(ab, [
+    {id: 'zi1OhUwoLhA', balance: -172800, bills: 9},
+    {id: 'aCnwNryvhfp', balance: -23252, bills: 1},
+    {id: 'CQ5B2aXn5QZ', balance: 0, bills: 0},
+    {id: '-ssZsPnhWoo', balance: 0, bills: 0}
   ])
 })
