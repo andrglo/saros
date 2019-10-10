@@ -12,7 +12,8 @@ import {
   getCurrentDate,
   addMonths,
   extractYearMonth,
-  toDateString
+  toDateString,
+  getCurrentMonth
 } from '../lib/date'
 import {createSelector} from '../lib/reselect'
 import t from '../lib/translate'
@@ -24,15 +25,24 @@ const VariableCostPanel = props => {
   const {className, transactions, month} = props
   // log('render', props)
   const {income, expense} = transactions
+  let period
+  const currentMonth = getCurrentMonth()
+  if (month === addMonths(currentMonth, -1)) {
+    period = t`Last month`
+  } else if (month === addMonths(currentMonth, 1)) {
+    period = t`Next month`
+  } else {
+    period = capitalize(
+      toDateString(month, {
+        month: 'long',
+        year: 'numeric'
+      })
+    )
+  }
   return (
     <div className={cn('border-b pb-1', className)}>
       <p className="px-1 font-semibold tracking-wider italic">
-        {capitalize(
-          toDateString(month, {
-            month: 'long',
-            year: 'numeric'
-          })
-        )}
+        {period}
       </p>
       <p className="px-1 text-sm italic text-income">{t`Incomes`}</p>
       <VariableCostList transactions={income} />

@@ -80,18 +80,24 @@ const VariableCostView = props => {
   const {description, amount, forecast} = transaction
   // log('transaction', description, transaction)
   const [isOpen, setIsOpen] = useState()
-  const isInflow = amount > 0
-  const isOutflow = amount < 0
+  const isInflow = (amount || forecast) > 0
+  const isOutflow = (amount || forecast) < 0
   const currencySymbol =
     (currencies[defaultCurrency] || {}).symbol || defaultCurrency
   const toggleOpen = () => {
     setIsOpen(!isOpen)
   }
+  let balance
   const amountOverflow =
     typeof forecast !== 'number' ||
     Math.abs(amount) > Math.abs(forecast)
   const isPast = transaction.month < getCurrentMonth()
-  const showAmount = amountOverflow || isPast
+  if (isPast) {
+    balance = amount
+  } else {
+    balance = amountOverflow ? 0 : forecast - amount
+  }
+  // const showAmount = amountOverflow || isPast
   return (
     <div
       {...rest}
@@ -120,13 +126,13 @@ const VariableCostView = props => {
             'text-income': isInflow,
             'bg-warning': amountOverflow && isOutflow,
             'bg-info': amountOverflow && isInflow,
-            'font-hairline italic': !showAmount
+            'font-hairline italic': !isPast
           })}
         >
           <span className="text-xs tracking-tighter pr-1">
             {currencySymbol}
           </span>
-          {formatCurrency(showAmount ? amount : forecast)}
+          {formatCurrency(balance)}
         </p>
       </div>
       {isOpen && (

@@ -107,6 +107,10 @@
     "en": "Language",
     "pt-BR": "Língua"
   },
+  "last_month": {
+    "en": "Last month",
+    "pt-BR": "Mês passado"
+  },
   "last_name": {
     "en": "Last name",
     "pt-BR": "Sobrenome"
@@ -174,6 +178,10 @@
   "name": {
     "en": "Name",
     "pt-BR": "Nome"
+  },
+  "next_month": {
+    "en": "Next month",
+    "pt-BR": "Próximo mês"
   },
   "no_options_available": {
     "en": "No options available",
