@@ -59,6 +59,10 @@
     "en": "Expenses",
     "pt-BR": "Despesas"
   },
+  "foreign_currency": {
+    "en": "Foreign currency",
+    "pt-BR": "Moeda estrangeira"
+  },
   "from_a_month": {
     "en": "From a month",
     "pt-BR": "Até um mês"
@@ -211,6 +215,10 @@
     "en": "Preferences",
     "pt-BR": "Preferências"
   },
+  "prepaid_card": {
+    "en": "Prepaid card",
+    "pt-BR": "Cartão pré-pago"
+  },
   "privacy_policy": {
     "en": "Privacy Policy",
     "pt-BR": "Política de privacidade"
@@ -218,6 +226,10 @@
   "redo": {
     "en": "Redo?",
     "pt-BR": "Recuperar?"
+  },
+  "regular_account": {
+    "en": "Available",
+    "pt-BR": "Disponível"
   },
   "reset": {
     "en": "Reset",
@@ -238,6 +250,10 @@
   "saving": {
     "en": "Saving",
     "pt-BR": "Salvando"
+  },
+  "savings": {
+    "en": "Savings",
+    "pt-BR": "Investimento"
   },
   "sign_in": {
     "en": "Sign in",
