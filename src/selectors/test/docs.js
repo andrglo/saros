@@ -1841,7 +1841,7 @@ test('Get transactions by time periods', t => {
 })
 
 test('Get accounts balance', t => {
-  const {getAccountsBalance} = t.context
+  const {getAccountsBalance, sumAccountsBalance} = t.context
   const localState = {...state, atlas: {holidays}}
   localState.docs['atlas/currencyRates'] = {data: currencyRates}
   const accountsBalance = getAccountsBalance(localState)
@@ -1870,4 +1870,24 @@ test('Get accounts balance', t => {
     {id: 'CQ5B2aXn5QZ', balance: 0, bills: 0},
     {id: '-ssZsPnhWoo', balance: 0, bills: 0}
   ])
+
+  let totals = sumAccountsBalance({...localState, pin: {}})
+  // console.log('TCL: totals', util.inspect(totals, {depth: null}))
+  t.deepEqual(totals, {
+    total: -187253,
+    type: {regular: 8799, creditcard: -196052, foreignCurrency: 0}
+  })
+  totals = sumAccountsBalance({
+    ...localState,
+    pin: {CYbteYpzdA6: true}
+  })
+  // console.log('TCL: totals', util.inspect(totals, {depth: null}))
+  t.deepEqual(totals, {
+    total: -187253,
+    pinned: {
+      total: 5390,
+      type: {regular: 5390}
+    },
+    type: {regular: 8799, creditcard: -196052, foreignCurrency: 0}
+  })
 })

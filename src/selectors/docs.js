@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import set from 'lodash/set'
 import sumBy from 'lodash/sumBy'
 import sortBy from 'lodash/sortBy'
 import debug from 'debug'
@@ -41,6 +42,7 @@ import {
 import t from '../lib/translate'
 import {formatCurrency} from '../lib/format'
 import {getHierarchy} from './tree'
+import {getPin} from './pin'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('selectors:docs')
@@ -1553,5 +1555,33 @@ export const getAccountsBalance = createSelector(
       }
     }
     return accountsBalance
+  }
+)
+
+export const sumAccountsBalance = createSelector(
+  getAccountsBalance,
+  getPin,
+  (accountsBalance, pin) => {
+    const result = {total: 0}
+    for (const type of Object.keys(accountsBalance)) {
+      let typeTotal = 0
+      let pinned
+      let pinnedTypeTotal = 0
+      for (const ab of accountsBalance[type]) {
+        result.total += ab.balance
+        typeTotal += ab.balance
+        if (pin[ab.id]) {
+          result.pinned = result.pinned || {total: 0}
+          result.pinned.total += ab.balance
+          pinnedTypeTotal += ab.balance
+          pinned = true
+        }
+      }
+      set(result, `type.${type}`, typeTotal)
+      if (pinned) {
+        set(result, `pinned.type.${type}`, pinnedTypeTotal)
+      }
+    }
+    return result
   }
 )
