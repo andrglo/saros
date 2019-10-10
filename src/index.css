@@ -40,7 +40,7 @@ a:focus {
 .workspace {
   transition: background-color 1s ease;
   display: grid;
-  grid-template-columns: fit-content(12em) 1fr;
+  grid-template-columns: fit-content(16em) 1fr;
   grid-template-rows: 4em 1fr;
 }
 

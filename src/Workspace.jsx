@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import cn from 'classnames'
 import debug from 'debug'
 
+import Drawer from './Drawer'
 import {disconnect} from './controller'
 import t from './lib/translate'
 import {getUser, getBrowserLocation} from './selectors/app'
@@ -19,15 +20,10 @@ import {
 } from './assets/icons'
 import useOnClickOutside from './hooks/useOnClickOutside'
 import DirtyForms from './components/DirtyForms'
-import Version from './components/Version'
 
 const log = debug('workspace')
 
 const SLIDE_LEFT_TIMESPAN = 300 // --slide-left-timespan: 0.3s
-
-const Drawer = () => {
-  return <Version />
-}
 
 const Workspace = props => {
   log('render', props)
@@ -127,7 +123,7 @@ const Workspace = props => {
             />
           )}
         </div>
-        <div className="w-0 sm:w-auto overflow-hidden shadow-lg text-drawer bg-drawer">
+        <div className="w-0 sm:w-auto overflow-x-hidden shadow-lg text-drawer bg-drawer">
           {drawer}
         </div>
         <div className="relative overflow-auto">{children}</div>
