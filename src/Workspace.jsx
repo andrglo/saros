@@ -61,7 +61,7 @@ const Workspace = props => {
             <BarsIcon />
           </button>
           <p className="ml-4 sm:ml-0 flex-1 text-3xl self-center">
-            Saros
+            {process.env.NODE_ENV === 'production' ? 'Saros' : ''}
           </p>
           <DirtyForms className="mr-2 pt-1 sm:pt-0" />
           {!isHome && (
@@ -85,12 +85,12 @@ const Workspace = props => {
           >
             {user.photoURL ? (
               <img
-                className="w-auto"
+                className="w-full h-full"
                 src={user.photoURL}
                 alt="Avatar of User"
               />
             ) : (
-              <FaceIcon className="w-6 h-6" />
+              <FaceIcon className="w-full h-full" />
             )}
           </button>
           {showUserMenu && (
