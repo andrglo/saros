@@ -1631,6 +1631,18 @@ test('Get variable cost transactions', t => {
               ],
               frequency: 'monthly',
               date: '2017-04-18'
+            },
+            ae6d3: {
+              type: 'mbud',
+              frequency: 'monthly',
+              endedAt: '2018-04-13',
+              partitions: [
+                {
+                  category: 'a8d1b',
+                  amount: -5000
+                }
+              ],
+              date: '2017-10-10'
             }
           }
         }
