@@ -410,7 +410,7 @@ export const getPartitions = (id, invoices) => {
 
 export const getInvoicesLastBill = memoize(invoices => {
   const invoicesLastBill = {issuers: {}, invoices: {}}
-  for (const id of Object.keys(invoices)) {
+  for (const id of Object.keys(invoices || {})) {
     if (invoices[id].billedFrom) {
       const {issuer, issueDate, billedFrom} = invoices[id]
       if (issuer) {
@@ -525,7 +525,7 @@ export const getRemainingPaymentsForCreditcard = ({
       ...relay,
       id: `${transaction.id}@${issueDate}`,
       billedFrom: transaction.id,
-      type: 'bill',
+      type: 'payment',
       amount,
       status: 'draft',
       issueDate,
@@ -542,10 +542,10 @@ export const getRemainingPaymentsForCreditcard = ({
   return payments
 }
 
-export const expandInvoice = (id, collections) => {
+export const expandInvoice = (id, invoice, collections) => {
   let transactions = []
   const {invoices, holidays, accounts} = collections
-  const {parcels = [], billedFrom, ...invoice} = invoices[id]
+  const {parcels = [], billedFrom, ...rawInvoice} = invoice
   let parcelIndex = 0
   const addTransaction = transaction => {
     transaction.id = id
@@ -590,7 +590,7 @@ export const expandInvoice = (id, collections) => {
     partitions = getPartitions(id, invoices)
   }
   addTransaction({
-    ...invoice,
+    ...rawInvoice,
     id,
     partitions: redistributeAmount(
       partitions,
@@ -599,9 +599,9 @@ export const expandInvoice = (id, collections) => {
   })
   for (const parcel of parcels) {
     partitions = parcel.partitions || partitions
-    const {payDate, ...relay} = invoice
+    const {payDate, ...rawParcel} = rawInvoice
     addTransaction({
-      ...relay,
+      ...rawParcel,
       ...parcel,
       partitions: redistributeAmount(
         partitions,
@@ -858,12 +858,7 @@ export const expandBudget = (id, from, to, collections) => {
       }
       transactions = [
         ...transactions,
-        ...expandInvoice(issueId, {
-          ...collections,
-          invoices: {
-            [issueId]: invoice
-          }
-        })
+        ...expandInvoice(issueId, invoice, collections)
       ]
     }
   }
@@ -896,7 +891,7 @@ export const getInvoicesTransactions = createSelector(
     for (const id of Object.keys(invoices)) {
       transactions = [
         ...transactions,
-        ...expandInvoice(id, {
+        ...expandInvoice(id, invoices[id], {
           invoices,
           holidays,
           accounts,
@@ -1397,12 +1392,15 @@ export const getTransactionsByDay = createSelector(
       const date = transaction.dueDate
       calendar[date] = calendar[date] || []
       if (
-        transaction.type === 'bill' &&
+        transaction.type === 'payment' &&
         transaction.status === 'draft' &&
         transaction.issuer
       ) {
         const draft = calendar[date].find(
-          t => t.issuer === transaction.issuer
+          t =>
+            t.type === 'bill' &&
+            t.status === 'draft' &&
+            t.issuer === transaction.issuer
         )
         if (draft) {
           draft.amount += transaction.amount

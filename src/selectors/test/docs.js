@@ -741,7 +741,7 @@ test('Expand invoice', t => {
       ]
     }
   }
-  let list = expandInvoice('9', {
+  let list = expandInvoice('9', invoices['9'], {
     invoices,
     categories: {},
     places: {}
@@ -791,7 +791,11 @@ test('Expand invoice', t => {
       ]
     }
   ])
-  list = expandInvoice('4', {invoices, categories: {}, places: {}})
+  list = expandInvoice('4', invoices['4'], {
+    invoices,
+    categories: {},
+    places: {}
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
@@ -803,7 +807,11 @@ test('Expand invoice', t => {
       ]
     }
   ])
-  list = expandInvoice('2', {invoices, categories: {}, places: {}})
+  list = expandInvoice('2', invoices['2'], {
+    invoices,
+    categories: {},
+    places: {}
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
@@ -827,7 +835,11 @@ test('Expand invoice', t => {
       id: '2/1'
     }
   ])
-  list = expandInvoice('1', {invoices, categories: {}, places: {}})
+  list = expandInvoice('1', invoices['1'], {
+    invoices,
+    categories: {},
+    places: {}
+  })
   // console.log('TCL: list', util.inspect(list, {depth: null}))
   t.deepEqual(removeDescriptions(list), [
     {
@@ -843,7 +855,7 @@ test('Expand invoice', t => {
   const accounts = getAccounts(state)
   const categories = getCategories(state)
   const places = getPlaces(state)
-  list = expandInvoice('3', {
+  list = expandInvoice('3', invoices['3'], {
     invoices,
     holidays,
     accounts,
@@ -864,7 +876,7 @@ test('Expand invoice', t => {
     {
       id: '3@2019-07-31',
       billedFrom: '3',
-      type: 'bill',
+      type: 'payment',
       amount: 3333,
       status: 'draft',
       issueDate: '2019-07-31',
@@ -880,7 +892,7 @@ test('Expand invoice', t => {
     {
       id: '3@2019-08-31',
       billedFrom: '3',
-      type: 'bill',
+      type: 'payment',
       amount: 3333,
       status: 'draft',
       issueDate: '2019-08-31',
@@ -896,7 +908,7 @@ test('Expand invoice', t => {
     {
       id: '3@2019-09-30',
       billedFrom: '3',
-      type: 'bill',
+      type: 'payment',
       amount: 3334,
       status: 'draft',
       issueDate: '2019-09-30',
@@ -911,7 +923,7 @@ test('Expand invoice', t => {
     }
   ])
 
-  list = expandInvoice('5', {
+  list = expandInvoice('5', invoices['5'], {
     invoices,
     holidays,
     accounts,
@@ -932,7 +944,7 @@ test('Expand invoice', t => {
     {
       id: '5@2019-03-31',
       billedFrom: '5',
-      type: 'bill',
+      type: 'payment',
       amount: 500,
       status: 'draft',
       issueDate: '2019-03-31',
@@ -948,7 +960,7 @@ test('Expand invoice', t => {
     {
       id: '5@2019-04-30',
       billedFrom: '5',
-      type: 'bill',
+      type: 'payment',
       amount: 500,
       status: 'draft',
       issueDate: '2019-04-30',
@@ -963,7 +975,7 @@ test('Expand invoice', t => {
     }
   ])
 
-  list = expandInvoice('6', {
+  list = expandInvoice('6', invoices['6'], {
     invoices,
     holidays,
     accounts,
@@ -1292,7 +1304,7 @@ test('Expand budget', t => {
     {
       id: 'b@2019-03-10@2019-04-08',
       billedFrom: 'b@2019-03-10',
-      type: 'bill',
+      type: 'payment',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       billedDate: '2019-03-08',
@@ -1324,7 +1336,7 @@ test('Expand budget', t => {
     {
       id: 'b@2019-03-10@2019-05-08',
       billedFrom: 'b@2019-03-10',
-      type: 'bill',
+      type: 'payment',
       place: 'vxbJp9WfTu0',
       notes: 'Health plan',
       billedDate: '2019-03-08',
@@ -1432,6 +1444,84 @@ test('Expand budget', t => {
       }
     ],
     'Error expanding single due date budget'
+  )
+
+  transactions = expandBudget('b', null, '2019-12-31', {
+    budget: {
+      partitions: [
+        {
+          costCenter: '93',
+          category: '197',
+          amount: 1000
+        }
+      ],
+      type: 'pbud',
+      place: '11',
+      account: '2',
+      frequency: 'yearly',
+      dayOfMonth: 24,
+      months: [8],
+      date: '2019-01-01'
+    },
+    invoices: {
+      b: {
+        issuer: '2',
+        issueDate: '2019-09-08',
+        billedFrom: []
+      }
+    },
+    holidays,
+    categories: {},
+    places: {},
+    accounts
+  })
+  // console.log(
+  //   'TCL: transactions',
+  //   util.inspect(transactions, {depth: null})
+  // )
+  t.deepEqual(
+    transactions,
+    [
+      {
+        type: 'pbud',
+        place: '11',
+        notes: undefined,
+        status: 'due',
+        currency: undefined,
+        partitions: [
+          {costCenter: '93', category: '197', amount: 1000}
+        ],
+        issueDate: '2019-08-24',
+        dueDate: '2019-08-24',
+        amount: 1000,
+        account: '2',
+        id: 'b@2019-08-24',
+        description: ''
+      },
+      {
+        type: 'payment',
+        place: '11',
+        notes: undefined,
+        status: 'draft',
+        currency: undefined,
+        partitions: [
+          {costCenter: '93', category: '197', amount: 1000}
+        ],
+        issueDate: '2019-10-08',
+        dueDate: '2019-10-08',
+        amount: 1000,
+        account: '1',
+        id: 'b@2019-08-24@2019-10-08',
+        billedFrom: 'b@2019-08-24',
+        billedDate: '2019-08-24',
+        issuer: '2',
+        installment: 1,
+        installments: 1,
+        balance: 0,
+        description: ''
+      }
+    ],
+    'Error expanding budget of an old creditcard payment'
   )
 })
 
@@ -1831,7 +1921,6 @@ test('Get transactions by time periods', t => {
       to: '2019-08-29',
       calendar: [
         '2019-07-03',
-        '2019-07-10',
         '2019-08-02',
         '2019-08-03',
         '2019-08-09'
