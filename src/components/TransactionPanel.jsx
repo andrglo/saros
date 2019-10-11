@@ -120,20 +120,18 @@ TransactionPanel.propTypes = {
 
 const getNonPaid = ({status}) => isDue(status)
 
-const selectPeriods = createSelector(
+const calcBalance = createSelector(
   createStructuredSelector({
     periods: getTransactionsByTimePeriods,
     accountsBalanceTotals: sumAccountsBalance,
     accounts: getAccounts,
     pin: getPin,
-    today: (_, {today}) => today,
-    scope: (_, {scope}) => scope
+    today: (_, {today}) => today
   }),
   params => {
-    let {
+    const {
       periods,
       today,
-      scope,
       accounts = {},
       accountsBalanceTotals,
       pin
@@ -143,8 +141,7 @@ const selectPeriods = createSelector(
       'pinned.total',
       accountsBalanceTotals.total || 0
     )
-    periods = sortBy(periods, 'to')
-    periods = periods.map(period => {
+    return sortBy(periods, 'to').map(period => {
       const {calendar} = period
       if (!calendar) {
         return period
@@ -171,9 +168,19 @@ const selectPeriods = createSelector(
           }
         }
       }
-
       return period
     })
+  }
+)
+
+const selectPeriods = createSelector(
+  createStructuredSelector({
+    periods: calcBalance,
+    today: (_, {today}) => today,
+    scope: (_, {scope}) => scope
+  }),
+  params => {
+    let {periods, today, scope} = params
     periods = periods.filter(period => {
       switch (scope) {
         case 'overdue':
