@@ -17,7 +17,7 @@ const AmountRow = props => {
   const isPositive = amount > 0
   const isNegative = amount < 0
   return (
-    <div className={cn('flex', className)}>
+    <div className={cn('flex px-1', className)}>
       <p
         className={cn(
           'flex-1',

@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import debug from 'debug'
 
 import {formatCurrency} from '../lib/format'
-import {getAccounts} from '../selectors/docs'
+import {getAccounts, isCreditcardAccount} from '../selectors/docs'
 import {getBankIcon} from '../assets/banks'
 
 // eslint-disable-next-line no-unused-vars
@@ -25,6 +25,8 @@ const TransactionView = props => {
   const isOutflow = Math.isNegative(amount)
   const accountDoc = accounts[account] || {}
   const BankIcon = getBankIcon(accountDoc)
+  const isBudget = type === 'rbud' || type === 'pbud'
+  const isCreditTransaction = isCreditcardAccount(account, accounts)
   return (
     <div className="px-1 ">
       <button
@@ -51,7 +53,8 @@ const TransactionView = props => {
           className={cn('my-auto', {
             'text-expense': isOutflow && !isTranfer,
             'text-income': !isOutflow && !isTranfer,
-            'font-hairline italic': type === 'rbud' || type === 'pbud'
+            'font-hairline italic': isBudget,
+            'opacity-50': isCreditTransaction
           })}
         >
           <span className="text-xs tracking-tighter pr-1">

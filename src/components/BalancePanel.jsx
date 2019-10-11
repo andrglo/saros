@@ -60,7 +60,7 @@ const BalancePanel = props => {
     <div className={cn('', className)}>
       <AmountRow
         descriptionClass="pb-2 px-1 text-xl"
-        description={t`Balance`}
+        description={t`Available`}
         amount={balance}
       />
       {accountsBalance.map(ab => {
@@ -113,7 +113,8 @@ export default connect(state => {
   const balance = get(
     accountsBalanceTotals,
     'pinned.total',
-    accountsBalanceTotals.total || 0
+    (accountsBalanceTotals.total || 0) +
+      Math.abs(get(accountsBalanceTotals, 'type.creditcard', 0))
   )
   return {
     accountsBalance,

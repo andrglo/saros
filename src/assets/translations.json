@@ -7,9 +7,9 @@
     "en": "at",
     "pt-BR": "em"
   },
-  "balance": {
-    "en": "Balance",
-    "pt-BR": "Balanço"
+  "available": {
+    "en": "Available",
+    "pt-BR": "Disponível"
   },
   "balance_adjustment": {
     "en": "Account balance adjustment:",
