@@ -14,7 +14,7 @@
   "author": "Andre Gloria <andredagloria@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@babel/core": "^7.6.3",
+    "@babel/core": "^7.6.4",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-modules-commonjs": "^7.6.0",
     "@babel/preset-react": "^7.6.3",
@@ -67,7 +67,7 @@
     "classnames": "^2.2.6",
     "date-easter": "^0.2.5",
     "debug": "^4.1.1",
-    "firebase": "^7.1.0",
+    "firebase": "^7.2.0",
     "lodash": "^4.17.15",
     "memoizee": "^0.4.14",
     "prop-types": "^15.7.2",
