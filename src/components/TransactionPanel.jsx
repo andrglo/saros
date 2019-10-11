@@ -4,7 +4,6 @@ import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
 import sortBy from 'lodash/sortBy'
-import sumBy from 'lodash/sumBy'
 import capitalize from 'lodash/capitalize'
 import get from 'lodash/get'
 
@@ -28,6 +27,7 @@ import {
   createSelector,
   createStructuredSelector
 } from '../lib/reselect'
+import {getPin} from '../selectors/pin'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('transaction:panel')
@@ -125,6 +125,7 @@ const selectPeriods = createSelector(
     periods: getTransactionsByTimePeriods,
     accountsBalanceTotals: sumAccountsBalance,
     accounts: getAccounts,
+    pin: getPin,
     today: (_, {today}) => today,
     scope: (_, {scope}) => scope
   }),
@@ -134,7 +135,8 @@ const selectPeriods = createSelector(
       today,
       scope,
       accounts = {},
-      accountsBalanceTotals
+      accountsBalanceTotals,
+      pin
     } = params
     let balance = get(
       accountsBalanceTotals,
@@ -155,17 +157,21 @@ const selectPeriods = createSelector(
         period.calendar[date] = {
           transactions
         }
-        if (date >= today) {
+        const isPast = date < today
+        if (!isPast) {
           period.calendar[date].balance = balance
-          for (const transaction of transactions) {
-            if (!isCreditcardAccount(transaction.account, accounts)) {
-              balance += transaction.amount
-            } else {
-              console.log('cc', transaction)
-            }
+        }
+        for (const transaction of transactions) {
+          const {id, account} = transaction
+          if (
+            !isCreditcardAccount(account, accounts) &&
+            ((isPast && pin[id]) || (!isPast && !pin[id]))
+          ) {
+            balance += transaction.amount
           }
         }
       }
+
       return period
     })
     periods = periods.filter(period => {
@@ -179,11 +185,8 @@ const selectPeriods = createSelector(
       }
       return true
     })
-    if (scope === 'due') {
+    if (scope === 'overdue') {
       periods = sortBy(periods, 'to').reverse()
-    }
-    if (scope === 'forecast') {
-      periods = sortBy(periods, 'from')
     }
     return periods
   }
