@@ -7,6 +7,10 @@
     "en": "at",
     "pt-BR": "em"
   },
+  "balance": {
+    "en": "Balance",
+    "pt-BR": "Balanço"
+  },
   "balance_adjustment": {
     "en": "Account balance adjustment:",
     "pt-BR": "Ajuste de saldo em"
@@ -211,6 +215,10 @@
     "en": "Page not found!",
     "pt-BR": "Página não encontrada!"
   },
+  "pin": {
+    "en": "Pin",
+    "pt-BR": "Fixar"
+  },
   "preferences": {
     "en": "Preferences",
     "pt-BR": "Preferências"
@@ -322,6 +330,10 @@
   "transfer_from": {
     "en": "Transfer from",
     "pt-BR": "Transferência de"
+  },
+  "unpin": {
+    "en": "Unpin",
+    "pt-BR": "Soltar"
   },
   "update_available": {
     "en": "Update available!",

@@ -2,11 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import cn from 'classnames'
 import sortBy from 'lodash/sortBy'
+import get from 'lodash/get'
 import {connect} from 'react-redux'
 import debug from 'debug'
 
+import AmountRow from './AmountRow'
 import BalanceList from './BalanceList'
-import {getAccountsBalance} from '../selectors/docs'
+import {
+  getAccountsBalance,
+  sumAccountsBalance
+} from '../selectors/docs'
 import t from '../lib/translate'
 import {createSelector} from '../lib/reselect'
 
@@ -49,16 +54,23 @@ const getTypeOrder = type => {
 }
 
 const BalancePanel = props => {
-  const {className, accountsBalance} = props
+  const {className, accountsBalance, balance} = props
   // log('render', props)
   return (
     <div className={cn('', className)}>
+      <AmountRow
+        descriptionClass="pb-2 px-1 text-xl"
+        description={t`Balance`}
+        amount={balance}
+      />
       {accountsBalance.map(ab => {
         return (
           <React.Fragment key={ab.type}>
-            <p className="px-1 font-semibold tracking-wider italic">
-              {getTypeName(ab.type)}
-            </p>
+            <AmountRow
+              descriptionClass="px-1 font-semibold tracking-wider italic"
+              description={getTypeName(ab.type)}
+              amount={ab.balance}
+            />
             <BalanceList
               type={ab.type}
               accountsBalance={ab.accounts}
@@ -72,15 +84,22 @@ const BalancePanel = props => {
 
 BalancePanel.propTypes = {
   className: PropTypes.string,
-  accountsBalance: PropTypes.array.isRequired
+  accountsBalance: PropTypes.array.isRequired,
+  balance: PropTypes.number.isRequired
 }
 
 const sortAccounts = createSelector(
   getAccountsBalance,
-  accountsBalance =>
+  sumAccountsBalance,
+  (accountsBalance, accountsBalanceTotals) =>
     sortBy(
       Object.keys(accountsBalance).map(type => ({
         type,
+        balance: get(
+          accountsBalanceTotals,
+          `pinned.type.${type}`,
+          get(accountsBalanceTotals, `type.${type}`, 0)
+        ),
         order: getTypeOrder(type),
         accounts: sortBy(accountsBalance[type], 'account.name')
       })),
@@ -90,7 +109,14 @@ const sortAccounts = createSelector(
 
 export default connect(state => {
   const accountsBalance = sortAccounts(state)
+  const accountsBalanceTotals = sumAccountsBalance(state)
+  const balance = get(
+    accountsBalanceTotals,
+    'pinned.total',
+    accountsBalanceTotals.total || 0
+  )
   return {
-    accountsBalance
+    accountsBalance,
+    balance
   }
 })(BalancePanel)

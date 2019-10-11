@@ -10,7 +10,7 @@ const log = debug('balance:list')
 
 const BalanceList = props => {
   const {accountsBalance, className, ...rest} = props
-  log('render', props)
+  // log('render', props)
   return (
     <ol {...rest} className={cn('pl-3', className)}>
       {accountsBalance.map(accountBalance => {
