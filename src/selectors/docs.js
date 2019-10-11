@@ -1337,12 +1337,12 @@ export const getTimePeriods = memoize(today => {
   ]
 })
 
-export const getTransactionsByDay = createSelector(
+export const getTransactions = createSelector(
   createStructuredSelector({
     from: (state, {from} = {}) =>
       from === undefined ? getCurrentDate() : from,
     to: (state, {to} = {}) => to,
-    filter: (state, {filter}) => filter,
+    filter: (state, {filter} = {}) => filter,
     invoicesTransactions: getInvoicesTransactions,
     transfersTransactions: getTransfersTransactions,
     budgetsTransactions: getBudgetsTransactions,
@@ -1354,41 +1354,51 @@ export const getTransactionsByDay = createSelector(
     const {
       from,
       to,
-      filter = () => true,
+      filter,
       invoicesTransactions,
       transfersTransactions,
       budgetsTransactions,
       ...currenciesConversionData
     } = params
-    const transactions = sortBy(
-      [
-        ...invoicesTransactions,
-        ...transfersTransactions,
-        ...budgetsTransactions
-      ].filter(transaction => {
-        const date = transaction.dueDate
-        if (process.env.NOD_ENV !== 'production') {
-          if (!date) {
-            throw new Error(
-              `Transaction has no due date: ${JSON.stringify(
-                transaction
-              )}`
+    const transactions = [
+      ...invoicesTransactions,
+      ...transfersTransactions,
+      ...budgetsTransactions
+    ]
+    const selected = []
+    for (const transaction of transactions) {
+      const date = transaction.dueDate
+      if (process.env.NOD_ENV !== 'production') {
+        if (!date) {
+          throw new Error(
+            `Transaction has no due date: ${JSON.stringify(
+              transaction
+            )}`
+          )
+        }
+      }
+      if ((!from || date >= from) && date <= to) {
+        if (!filter || filter(transaction)) {
+          selected.push(
+            convertTransactionCurrency(
+              transaction,
+              currenciesConversionData
             )
-          }
+          )
         }
-        if ((!from || date >= from) && date <= to) {
-          return filter(transaction)
-        }
-        return false
-      }),
-      ['dueDate', 'createdAt']
-    )
+      }
+    }
+    log('getTransactions result', selected)
+    return selected
+  }
+)
+
+export const getTransactionsByDay = createSelector(
+  getTransactions,
+  transactions => {
+    transactions = sortBy(transactions, ['dueDate', 'createdAt'])
     const calendar = {}
-    for (let transaction of transactions) {
-      transaction = convertTransactionCurrency(
-        transaction,
-        currenciesConversionData
-      )
+    for (const transaction of transactions) {
       const date = transaction.dueDate
       calendar[date] = calendar[date] || []
       if (
