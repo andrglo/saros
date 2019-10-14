@@ -9,35 +9,20 @@ import LinkMenu from './LinkMenu'
 
 import {FormIcon} from '../assets/icons'
 import {getDirtyForms, getForm} from '../selectors/forms'
-import t from '../lib/translate'
+import {getElapsedTimeDescription} from '../lib/date'
 
 const log = debug('form:dirty')
-
-const MINUTE = 60000
-const HOUR = 60 * MINUTE
-const DAY = 24 * HOUR
-
-const toHuman = elapsed => {
-  if (elapsed < HOUR) {
-    return `${Math.floor(elapsed / MINUTE)}m`
-  }
-  if (elapsed < DAY) {
-    return `${Math.floor(elapsed / HOUR)}h`
-  }
-  return `${Math.floor(elapsed / DAY)}d`
-}
 
 const DirtyForm = props => {
   const {editStartTime, formName} = props
   log('DirtyForm', props)
   const title = props.title || startCase(formName)
-  const elapsed = editStartTime ? Date.now() - editStartTime : 0
   return (
     <div>
       <div className="px-2">{title}</div>
-      {elapsed > 0 && (
+      {editStartTime && (
         <div className="pr-2 float-right text-xs italic">
-          {elapsed < MINUTE ? t`Now` : toHuman(elapsed)}
+          {getElapsedTimeDescription(editStartTime)}
         </div>
       )}
     </div>

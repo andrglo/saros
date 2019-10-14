@@ -8,7 +8,11 @@ import {
 } from '@js-joda/core'
 import easter from 'date-easter'
 
-import {getCurrentLocale} from './translate'
+import t, {getCurrentLocale} from './translate'
+
+export const MINUTE = 60000
+export const HOUR = 60 * MINUTE
+export const DAY = 24 * HOUR
 
 export const isYearMonth = date => date && date.length === 7
 export const extractMonth = date => date && date.substring(5, 2)
@@ -250,3 +254,26 @@ export const toDateString = (date, options = {}) =>
   new Date(
     `${isYearMonth(date) ? date + '-01' : date}T00:00`
   ).toLocaleDateString(getCurrentLocale(), options)
+
+export const getElapsedTimeDescription = (
+  time,
+  since = Date.now()
+) => {
+  if (typeof time === 'string') {
+    time = new Date(time).getTime()
+  }
+  if (typeof since === 'string') {
+    since = new Date(since).getTime()
+  }
+  const elapsed = time ? since - time : 0
+  if (elapsed < MINUTE) {
+    return t`Now`
+  }
+  if (elapsed < HOUR) {
+    return t`${Math.floor(elapsed / MINUTE)}m`
+  }
+  if (elapsed < DAY) {
+    return t`${Math.floor(elapsed / HOUR)}h`
+  }
+  return t`${Math.floor(elapsed / DAY)}d`
+}
