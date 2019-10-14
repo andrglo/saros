@@ -6,6 +6,7 @@ import debug from 'debug'
 
 import TransactionPanel from './components/TransactionPanel'
 import VariableCostPanel from './components/VariableCostPanel'
+import RecentActivityPanel from './components/RecentActivityPanel'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('dashboard')
@@ -15,6 +16,7 @@ const Dashboard = () => {
   return (
     <div className="w-full h-full overflow-x-hidden p-3 sm:p-1">
       <div className="dashboard">
+        <RecentActivityPanel className="dashboard-panel" />
         <TransactionPanel
           className="dashboard-panel"
           scope="overdue"

@@ -1,4 +1,12 @@
 {
+  "account": {
+    "en": "Account",
+    "pt-BR": "Conta"
+  },
+  "adjustment": {
+    "en": "Adjustment",
+    "pt-BR": "Ajuste"
+  },
   "and": {
     "en": "and",
     "pt-BR": "e"
@@ -19,9 +27,17 @@
     "en": "Bank",
     "pt-BR": "Banco"
   },
+  "budget": {
+    "en": "Budget",
+    "pt-BR": "Orçamento"
+  },
   "by_using": {
     "en": "By using",
     "pt-BR": "Ao usar"
+  },
+  "category": {
+    "en": "Category",
+    "pt-BR": "Categoria"
   },
   "changes_canceled": {
     "en": "Changes canceled!",
@@ -31,9 +47,21 @@
     "en": "City",
     "pt-BR": "Cidade"
   },
+  "cost_center": {
+    "en": "Cost center",
+    "pt-BR": "Centro de custo"
+  },
+  "cost_centers_reordered": {
+    "en": "Cost centers reordered",
+    "pt-BR": "Centros de custos reordenados"
+  },
   "country": {
     "en": "Country",
     "pt-BR": "País"
+  },
+  "created": {
+    "en": "created",
+    "pt-BR": "criado"
   },
   "credit_card": {
     "en": "Credit card",
@@ -47,6 +75,10 @@
     "en": "Delete",
     "pt-BR": "Excluir"
   },
+  "deleted": {
+    "en": "deleted",
+    "pt-BR": "excluído"
+  },
   "deleting": {
     "en": "Deleting",
     "pt-BR": "Excluindo"
@@ -59,6 +91,10 @@
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
   },
+  "expense_categories_reordered": {
+    "en": "Expense categories reordered",
+    "pt-BR": "Categorias de despesa reordenadas"
+  },
   "expenses": {
     "en": "Expenses",
     "pt-BR": "Despesas"
@@ -67,6 +103,10 @@
     "en": "Foreign currency",
     "pt-BR": "Moeda estrangeira"
   },
+  "from": {
+    "en": "from",
+    "pt-BR": "de"
+  },
   "from_a_month": {
     "en": "From a month",
     "pt-BR": "Até um mês"
@@ -74,6 +114,10 @@
   "from_a_week": {
     "en": "From a week",
     "pt-BR": "Até uma semana"
+  },
+  "in": {
+    "en": "in",
+    "pt-BR": "em"
   },
   "in_a_month": {
     "en": "In a month",
@@ -103,6 +147,10 @@
       "em * meses"
     ]
   },
+  "income_categories_reordered": {
+    "en": "Income categories reordered",
+    "pt-BR": "Categorias de receita reordenadas"
+  },
   "incomes": {
     "en": "Incomes",
     "pt-BR": "Receitas"
@@ -110,6 +158,10 @@
   "installment": {
     "en": "Installment",
     "pt-BR": "Parcela"
+  },
+  "invoice": {
+    "en": "Invoice",
+    "pt-BR": "Nota"
   },
   "language": {
     "en": "Language",
@@ -187,9 +239,39 @@
     "en": "Name",
     "pt-BR": "Nome"
   },
+  "nd": {
+    "en": [
+      "*d",
+      "*d"
+    ],
+    "pt-BR": [
+      "*d",
+      "*d"
+    ]
+  },
   "next_month": {
     "en": "Next month",
     "pt-BR": "Próximo mês"
+  },
+  "nh": {
+    "en": [
+      "*h",
+      "*h"
+    ],
+    "pt-BR": [
+      "*h",
+      "*h"
+    ]
+  },
+  "nm": {
+    "en": [
+      "*m",
+      "*m"
+    ],
+    "pt-BR": [
+      "*m",
+      "*m"
+    ]
   },
   "no_options_available": {
     "en": "No options available",
@@ -219,6 +301,10 @@
     "en": "Pin",
     "pt-BR": "Fixar"
   },
+  "place": {
+    "en": "Place",
+    "pt-BR": "Local"
+  },
   "preferences": {
     "en": "Preferences",
     "pt-BR": "Preferências"
@@ -230,6 +316,10 @@
   "privacy_policy": {
     "en": "Privacy Policy",
     "pt-BR": "Política de privacidade"
+  },
+  "recent_activity": {
+    "en": "Recent activity",
+    "pt-BR": "Atividade recente"
   },
   "redo": {
     "en": "Redo?",
@@ -327,6 +417,10 @@
     "en": "Total",
     "pt-BR": "Total"
   },
+  "transfer": {
+    "en": "Transfer",
+    "pt-BR": "Transferência"
+  },
   "transfer_from": {
     "en": "Transfer from",
     "pt-BR": "Transferência de"
@@ -346,6 +440,10 @@
   "update_now": {
     "en": "Update now?",
     "pt-BR": "Atualizar agora?"
+  },
+  "updated": {
+    "en": "updated",
+    "pt-BR": "alterado"
   },
   "version": {
     "en": "Version",

@@ -1980,3 +1980,80 @@ test('Get accounts balance', t => {
     type: {regular: 8799, creditcard: -196052, foreignCurrency: 0}
   })
 })
+
+test('Get recent activity', t => {
+  const {getRecentActivity} = t.context
+  const localState = {...state, atlas: {holidays}}
+  let recentActivity = getRecentActivity(localState)
+  t.is(Array.isArray(recentActivity), true)
+  recentActivity = getRecentActivity(localState, {from: '2019-08-06'})
+  const mapActivity = map(({collection, id, method, at}) => {
+    return {
+      collection,
+      id,
+      at,
+      method
+    }
+  })
+  recentActivity = mapActivity(recentActivity)
+  // console.log(
+  //   'TCL: recentActivity',
+  //   util.inspect(recentActivity, {depth: null})
+  // )
+  t.deepEqual(recentActivity, [
+    {
+      collection: 'costCenters',
+      id: 'eBhqeuMtrBu',
+      at: 1567007291786,
+      method: 'updated'
+    },
+    {
+      collection: 'accounts',
+      id: 'CYbteYpzdA6',
+      at: 1567007291786,
+      method: 'updated'
+    },
+    {
+      collection: 'costCenters',
+      id: 'BXE9vs32ZBA',
+      at: 1566833413342,
+      method: 'updated'
+    },
+    {
+      collection: 'accounts',
+      id: 'AHIhOdX7cxo',
+      at: 1566820672674,
+      method: 'updated'
+    },
+    {
+      collection: 'transfers',
+      id: 'HqoeVnU7yapt',
+      at: 1566818794912,
+      method: 'created'
+    },
+    {
+      collection: 'costCenters',
+      id: 'f_MMwRtJIfj',
+      at: 1566818782766,
+      method: 'updated'
+    },
+    {
+      collection: 'transfers',
+      id: '9YXiZnWpqf8k',
+      at: 1566818367284,
+      method: 'created'
+    },
+    {
+      collection: 'costCenters',
+      id: 'LXrJM4zYSjJ',
+      at: 1566246145240,
+      method: 'updated'
+    },
+    {
+      collection: 'transfers',
+      id: 'gZxGMyv47-np',
+      at: 1565111084553,
+      method: 'created'
+    }
+  ])
+})
