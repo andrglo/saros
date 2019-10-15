@@ -1986,13 +1986,13 @@ test('Get recent activity', t => {
   const localState = {...state, atlas: {holidays}}
   let recentActivity = getRecentActivity(localState)
   t.is(Array.isArray(recentActivity), true)
-  recentActivity = getRecentActivity(localState, {from: '2019-08-06'})
-  const mapActivity = map(({collection, id, method, at}) => {
+  recentActivity = getRecentActivity(localState, {from: '2019-01-29'})
+  const mapActivity = map(({collection, id, type, time}) => {
     return {
       collection,
       id,
-      at,
-      method
+      time,
+      type
     }
   })
   recentActivity = mapActivity(recentActivity)
@@ -2002,58 +2002,40 @@ test('Get recent activity', t => {
   // )
   t.deepEqual(recentActivity, [
     {
-      collection: 'costCenters',
-      id: 'eBhqeuMtrBu',
-      at: 1567007291786,
-      method: 'updated'
-    },
-    {
-      collection: 'accounts',
-      id: 'CYbteYpzdA6',
-      at: 1567007291786,
-      method: 'updated'
-    },
-    {
-      collection: 'costCenters',
-      id: 'BXE9vs32ZBA',
-      at: 1566833413342,
-      method: 'updated'
-    },
-    {
-      collection: 'accounts',
-      id: 'AHIhOdX7cxo',
-      at: 1566820672674,
-      method: 'updated'
-    },
-    {
       collection: 'transfers',
       id: 'HqoeVnU7yapt',
-      at: 1566818794912,
-      method: 'created'
-    },
-    {
-      collection: 'costCenters',
-      id: 'f_MMwRtJIfj',
-      at: 1566818782766,
-      method: 'updated'
+      time: 1566818794912,
+      type: 'created'
     },
     {
       collection: 'transfers',
       id: '9YXiZnWpqf8k',
-      at: 1566818367284,
-      method: 'created'
-    },
-    {
-      collection: 'costCenters',
-      id: 'LXrJM4zYSjJ',
-      at: 1566246145240,
-      method: 'updated'
+      time: 1566818367284,
+      type: 'created'
     },
     {
       collection: 'transfers',
       id: 'gZxGMyv47-np',
-      at: 1565111084553,
-      method: 'created'
+      time: 1565111084553,
+      type: 'created'
+    },
+    {
+      collection: 'transfers',
+      id: 'lGzJl4KiYINF',
+      time: 1565005449218,
+      type: 'created'
+    },
+    {
+      collection: 'invoices',
+      id: 'BFMTePgome85',
+      time: 1562856382788,
+      type: 'updated'
+    },
+    {
+      collection: 'invoices',
+      id: 'LdfdmhY7wZMr',
+      time: 1548791898760,
+      type: 'updated'
     }
   ])
 })

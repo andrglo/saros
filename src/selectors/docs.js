@@ -53,9 +53,9 @@ const UNCLASSIFIED = 'UNCLASSIFIED'
 const PREVIOUS_MONTHS_TO_BE_CACHED = 3
 const BUDGET_VALIDITY = PREVIOUS_MONTHS_TO_BE_CACHED
 const RECENT_ACTIVITY_ITEMS = 100
-const CREATED = 'created'
-const UPDATED = 'updated'
-const DELETED = 'deleted'
+export const CREATED = 'created'
+export const UPDATED = 'updated'
+export const DELETED = 'deleted'
 const MIN_ELAPSED_TIME_FROM_CREATE_TO_REPORT_UPDATE = 5 * MINUTE
 
 export const getCollection = (state, options) => {
@@ -251,7 +251,7 @@ export const isAcquittance = status =>
 
 export const isDue = status => status === 'due' || status === 'draft'
 
-const concatDescription = (
+export const concatDescription = (
   description,
   complement,
   separator = '. '
@@ -260,7 +260,10 @@ const concatDescription = (
     description && complement ? separator : ''
   }${complement || ''}`
 
-const getDescriptionFromPartitions = (partitions, categories) => {
+export const getDescriptionFromPartitions = (
+  partitions,
+  categories
+) => {
   let description
   let lastCategory = null
   for (const partition of partitions) {
@@ -1609,143 +1612,11 @@ export const sumAccountsBalance = createSelector(
   }
 )
 
-const getInvoiceDescription = (id, collections) => {
-  const {invoices, categories} = collections
-  const invoice = invoices[id]
-  const description = concatDescription(
-    invoice.notes,
-    getDescriptionFromPartitions(invoice.partitions || [], categories)
-  )
-  return t`Invoice` + ` "${description}"`
-}
-
-const getBudgetDescription = (id, collections) => {
-  const {budgets, categories} = collections
-  let budget = budgets[id]
-  const lastReview = budgets.reviews
-    ? budgets.reviews[budgets.reviews.length - 1]
-    : {}
-  budget = {...budget, ...lastReview}
-  const description = concatDescription(
-    budget.notes,
-    getDescriptionFromPartitions(budget.partitions, categories)
-  )
-  return t`Budget` + ` "${description}"`
-}
-
-const getTransferDescription = (id, collections) => {
-  const {transfers, accounts} = collections
-  const transfer = transfers[id]
-  if (transfer.counterpart) {
-    return (
-      t`Transfer` +
-      ' ' +
-      (transfer.amount < 0 ? t`from` : t`to`) +
-      ' ' +
-      t`account`.toLowerCase() +
-      ' "' +
-      accounts[transfer.account].name +
-      '" ' +
-      (transfer.amount < 0 ? t`to` : t`from`) +
-      ' "' +
-      accounts[transfer.counterpart].name +
-      '"'
-    )
-  }
-  return (
-    t`Adjustment` +
-    ' ' +
-    t`in` +
-    ' ' +
-    t`account` +
-    ` "${accounts[transfer.account].name}"`
-  )
-}
-
-const getAccountDescription = (id, collections) => {
-  const {accounts} = collections
-  const account = accounts[id]
-  return t`Account` + ` "${account.name}"`
-}
-
-const getCategoryDescription = (id, collections) => {
-  const {categories} = collections
-  const category = categories[id]
-  return t`Category` + ` "${category.name}"`
-}
-
-const getCostCenterDescription = (id, collections) => {
-  const {costCenters} = collections
-  const costCenter = costCenters[id]
-  return t`Cost center` + ` "${costCenter.name}"`
-}
-
-const getPlaceDescription = (id, collections) => {
-  const {places} = collections
-  const place = places[id]
-  return t`Place` + ` "${place.name}"`
-}
-
-const getActivityDescription = (activity, allCollections) => {
-  let {id, collection, method} = activity
-  switch (method) {
-    case CREATED:
-      method = t`created`
-      break
-    case UPDATED:
-      method = t`updated`
-      break
-    case DELETED:
-      method = t`deleted`
-      break
-  }
-  let description
-  switch (collection) {
-    case 'invoices':
-      description = getInvoiceDescription(id, allCollections)
-      description = concatDescription(description, method, ' ')
-      break
-    case 'budgets':
-      description = getBudgetDescription(id, allCollections)
-      description = concatDescription(description, method, ' ')
-      break
-    case 'transfers':
-      description = getTransferDescription(id, allCollections)
-      break
-    case 'accounts':
-      description = getAccountDescription(id, allCollections)
-      description = concatDescription(description, method, ' ')
-      break
-    case 'categories':
-      if (id === 'income') {
-        description = t`Income categories reordered`
-      } else if (id === 'expense') {
-        description = t`Expense categories reordered`
-      } else {
-        description = getCategoryDescription(id, allCollections)
-        description = concatDescription(description, method, ' ')
-      }
-      break
-    case 'costCenters':
-      if (id === 'root') {
-        description = t`Cost centers reordered`
-      } else {
-        description = getCostCenterDescription(id, allCollections)
-        description = concatDescription(description, method, ' ')
-      }
-      break
-    case 'places':
-      description = getPlaceDescription(id, allCollections)
-      description = concatDescription(description, method, ' ')
-      break
-    default:
-      console.error(`Invalid collection: ${collection}`)
-  }
-  return description
-}
-
 export const getRecentActivity = createSelector(
-  getAllCollections,
+  createStructuredSelector({
+    invoices: getInvoices,
+    transfers: getTransfers
+  }),
   (
     state,
     {
@@ -1764,45 +1635,33 @@ export const getRecentActivity = createSelector(
       const collection = allCollections[name]
       for (const id of Object.keys(collection)) {
         const doc = collection[id]
-        if (doc.createdAt >= from) {
-          recentActivity.push({
-            method: CREATED,
-            at: doc.createdAt,
-            collection: name,
-            id,
-            doc
-          })
+        const {createdAt = 0, updatedAt = 0, deletedAt = 0} = doc
+        const lastChange = {
+          type: CREATED,
+          time: createdAt,
+          collection: name,
+          id,
+          doc
         }
         if (
-          doc.updatedAt >= from &&
-          doc.updatedAt - doc.createdAt >
+          updatedAt >
+          lastChange.time +
             MIN_ELAPSED_TIME_FROM_CREATE_TO_REPORT_UPDATE
         ) {
-          recentActivity.push({
-            method: UPDATED,
-            at: doc.updatedAt,
-            collection: name,
-            id,
-            doc
-          })
+          lastChange.type = UPDATED
+          lastChange.time = updatedAt
         }
-        if (doc.deletedAt >= from) {
-          recentActivity.push({
-            method: DELETED,
-            at: doc.deletedAt,
-            collection: name,
-            id,
-            doc
-          })
+        if (deletedAt > lastChange.time) {
+          lastChange.type = DELETED
+          lastChange.time = deletedAt
+        }
+        if (lastChange.time >= from) {
+          recentActivity.push(lastChange)
         }
       }
     }
-    return sortBy(recentActivity, 'at')
+    return sortBy(recentActivity, 'time')
       .reverse()
       .slice(0, RECENT_ACTIVITY_ITEMS)
-      .map(activity => ({
-        ...activity,
-        description: getActivityDescription(activity, allCollections)
-      }))
   }
 )

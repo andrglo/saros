@@ -1,7 +1,7 @@
 {
   "account": {
-    "en": "Account",
-    "pt-BR": "Conta"
+    "en": "account",
+    "pt-BR": "conta"
   },
   "adjustment": {
     "en": "Adjustment",
@@ -27,17 +27,9 @@
     "en": "Bank",
     "pt-BR": "Banco"
   },
-  "budget": {
-    "en": "Budget",
-    "pt-BR": "Orçamento"
-  },
   "by_using": {
     "en": "By using",
     "pt-BR": "Ao usar"
-  },
-  "category": {
-    "en": "Category",
-    "pt-BR": "Categoria"
   },
   "changes_canceled": {
     "en": "Changes canceled!",
@@ -47,21 +39,9 @@
     "en": "City",
     "pt-BR": "Cidade"
   },
-  "cost_center": {
-    "en": "Cost center",
-    "pt-BR": "Centro de custo"
-  },
-  "cost_centers_reordered": {
-    "en": "Cost centers reordered",
-    "pt-BR": "Centros de custos reordenados"
-  },
   "country": {
     "en": "Country",
     "pt-BR": "País"
-  },
-  "created": {
-    "en": "created",
-    "pt-BR": "criado"
   },
   "credit_card": {
     "en": "Credit card",
@@ -76,8 +56,8 @@
     "pt-BR": "Excluir"
   },
   "deleted": {
-    "en": "deleted",
-    "pt-BR": "excluído"
+    "en": "Deleted",
+    "pt-BR": "Excluído"
   },
   "deleting": {
     "en": "Deleting",
@@ -90,10 +70,6 @@
   "email_has_been_sent": {
     "en": "The email with the sign in link has been sent, please verify your inbox",
     "pt-BR": "O email com o link para acesso foi enviado, favor verificar sua caixa de entrada"
-  },
-  "expense_categories_reordered": {
-    "en": "Expense categories reordered",
-    "pt-BR": "Categorias de despesa reordenadas"
   },
   "expenses": {
     "en": "Expenses",
@@ -147,10 +123,6 @@
       "em * meses"
     ]
   },
-  "income_categories_reordered": {
-    "en": "Income categories reordered",
-    "pt-BR": "Categorias de receita reordenadas"
-  },
   "incomes": {
     "en": "Incomes",
     "pt-BR": "Receitas"
@@ -158,10 +130,6 @@
   "installment": {
     "en": "Installment",
     "pt-BR": "Parcela"
-  },
-  "invoice": {
-    "en": "Invoice",
-    "pt-BR": "Nota"
   },
   "language": {
     "en": "Language",
@@ -249,6 +217,10 @@
       "*d"
     ]
   },
+  "new": {
+    "en": "New",
+    "pt-BR": "Novo"
+  },
   "next_month": {
     "en": "Next month",
     "pt-BR": "Próximo mês"
@@ -300,10 +272,6 @@
   "pin": {
     "en": "Pin",
     "pt-BR": "Fixar"
-  },
-  "place": {
-    "en": "Place",
-    "pt-BR": "Local"
   },
   "preferences": {
     "en": "Preferences",
@@ -440,10 +408,6 @@
   "update_now": {
     "en": "Update now?",
     "pt-BR": "Atualizar agora?"
-  },
-  "updated": {
-    "en": "updated",
-    "pt-BR": "alterado"
   },
   "version": {
     "en": "Version",
