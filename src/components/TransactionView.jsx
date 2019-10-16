@@ -4,6 +4,8 @@ import cn from 'classnames'
 import {connect} from 'react-redux'
 import debug from 'debug'
 
+import {ArrowForwardIcon} from '../assets/icons'
+
 import {formatCurrency} from '../lib/format'
 import {getAccounts, isCreditcardAccount} from '../selectors/docs'
 import {getBankIcon} from '../assets/banks'
@@ -13,17 +15,42 @@ import {setIsPinned} from '../reducers/pin'
 import t from '../lib/translate'
 
 import ExpandableRow from './ExpandableRow'
+import {openForm} from '../actions/forms'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('transaction:view')
 
+const isInvoice = type => type === 'pyb' || type === 'rcv'
+
 const DetailView = props => {
-  const {className, isPinned, togglePin} = props
+  const {
+    className,
+    isPinned,
+    togglePin,
+    transaction,
+    dispatch
+  } = props
+  let onEdit
+  if (isInvoice(transaction.type)) {
+    onEdit = event => {
+      event.stopPropagation()
+      dispatch(openForm('dashboard/InvoiceEdit', transaction.id))
+    }
+  }
   return (
     <div className={cn('', className)}>
       {togglePin && (
         <button className="btn px-1 py-0 mt-1" onClick={togglePin}>
           {isPinned ? t`Unpin` : t`Pin`}
+        </button>
+      )}
+      {onEdit && (
+        <button
+          className="btn inline-flex px-1 py-0 mt-1"
+          onClick={onEdit}
+        >
+          {t`Edit`}
+          <ArrowForwardIcon className="my-auto ml-1" />
         </button>
       )}
     </div>
@@ -32,8 +59,10 @@ const DetailView = props => {
 
 DetailView.propTypes = {
   className: PropTypes.string,
+  transaction: PropTypes.object.isRequired,
   isPinned: PropTypes.bool,
-  togglePin: PropTypes.func
+  togglePin: PropTypes.func,
+  dispatch: PropTypes.func.isRequired
 }
 
 const TransactionView = props => {
@@ -108,8 +137,10 @@ const TransactionView = props => {
       {isOpen && (
         <DetailView
           className="inline-block"
+          transaction={transaction}
           isPinned={isPinned}
           togglePin={togglePin}
+          dispatch={dispatch}
         />
       )}
     </ExpandableRow>

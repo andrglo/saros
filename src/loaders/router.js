@@ -21,26 +21,40 @@ for (const fullName of routesFiles) {
       fullName
     )}'))`
   )
-  const route =
-    path.dirname(fullName.substring(root.length)) +
+  const route = path.join(
+    path.dirname(fullName.substring(root.length)),
     normalize(kebabCase(name))
+  )
   routes.push(
     `case '${route}': {
-        return React.createElement(${name}, {pathname: url.pathname, search: url.search})
+        return React.createElement(${name}, props)
       }`
   )
 }
 
 const source = `
     import React from 'react'
+    import qs from 'query-string'
     const PageNotFound = React.lazy(() => import('${__dirname}/../PageNotFound.jsx'))
     ${imports.join('\n')}
-    export default pathname => {
+    export default location => {
       let url
+      let pathname = location.pathname
+      if (location.query) {
+        pathname= \`\${pathname}?\${qs.stringify(location.query)}\`
+      } else if (location.search) {
+        pathname = pathname + location.search
+      }
       if (process.env.NODE_ENV === 'test') {
         url = {pathname}
       } else {
         url = new URL(pathname, window.location.origin)
+      }
+      const props = {
+        pathname: url.pathname
+      }
+      if (url.search) {
+        props.query = qs.parse(url.search)
       }
       switch (url.pathname) {
         case '/':

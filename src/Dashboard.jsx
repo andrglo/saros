@@ -1,6 +1,6 @@
 import React from 'react'
-// eslint-disable-next-line no-unused-vars
 import PropTypes from 'prop-types'
+import cn from 'classnames'
 import {hot} from 'react-hot-loader/root'
 import debug from 'debug'
 
@@ -11,10 +11,16 @@ import RecentActivityPanel from './components/RecentActivityPanel'
 // eslint-disable-next-line no-unused-vars
 const log = debug('dashboard')
 
-const Dashboard = () => {
+const Dashboard = props => {
+  const {className} = props
   // log('render', props)
   return (
-    <div className="w-full h-full overflow-x-hidden p-3 sm:p-1">
+    <div
+      className={cn(
+        'w-full h-full overflow-x-hidden p-3 sm:p-1',
+        className
+      )}
+    >
       <div className="dashboard">
         <RecentActivityPanel className="dashboard-panel" />
         <TransactionPanel
@@ -40,6 +46,8 @@ const Dashboard = () => {
   )
 }
 
-Dashboard.propTypes = {}
+Dashboard.propTypes = {
+  className: PropTypes.string
+}
 
 export default hot(Dashboard)

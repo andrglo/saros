@@ -22,6 +22,9 @@ import t, {fetchLocale} from './lib/translate'
 
 import getView from './loaders/router'
 import {getQuery} from './lib/history'
+import usePreviousValue from './hooks/usePreviousValue'
+import {ArrowBackIcon} from './assets/icons'
+import {goBackBrowserLocation} from './actions/app'
 
 const log = debug('app')
 
@@ -54,6 +57,52 @@ const Fallback = props => (
 
 Fallback.propTypes = {
   className: PropTypes.string
+}
+
+const View = props => {
+  const {location, dispatch} = props
+  const panel = getView(location)
+  const showDashboard =
+    !panel || location.pathname.startsWith('/dashboard/')
+  const thereIsRightPanel = Boolean(panel && showDashboard)
+  const thereWasRightPanel = usePreviousValue(thereIsRightPanel)
+  let dashboardClass
+  const handlePanel = thereIsRightPanel || thereWasRightPanel
+  if (handlePanel) {
+    dashboardClass = thereIsRightPanel
+      ? 'slide-out-left'
+      : 'slide-in-left'
+  }
+  return (
+    <div className="flex">
+      {showDashboard && <Dashboard className={dashboardClass} />}
+      {handlePanel ? (
+        <div
+          className={cn('absolute w-full h-full top-0 bg-default', {
+            'slide-in-right': Boolean(panel),
+            'slide-out-right': !panel
+          })}
+        >
+          <button
+            className="btn absolute top-0 left-0 ml-1 mt-1 p-0 h-10 w-10 rounded-full border-0 shadow-none"
+            onClick={() => {
+              dispatch(goBackBrowserLocation())
+            }}
+          >
+            <ArrowBackIcon className="h-6 w-6 mx-auto" />
+          </button>
+          {panel}
+        </div>
+      ) : (
+        panel
+      )}
+    </div>
+  )
+}
+
+View.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired
 }
 
 class App extends Component {
@@ -141,10 +190,9 @@ class App extends Component {
   }
 
   renderView() {
-    const {uid, browserLocation = {}} = this.props
-    let pathname =
-      browserLocation.pathname || window.location.pathname
-    switch (pathname) {
+    const {uid, browserLocation = {}, dispatch} = this.props
+    let location = browserLocation || window.location
+    switch (location.pathname) {
       case '/agreement':
         return <Agreement />
       case '/privacy':
@@ -153,7 +201,7 @@ class App extends Component {
         if (!uid) {
           return <Signin />
         }
-        pathname = '/'
+        location = {pathname: '/'}
     }
     if (!uid) {
       return <Presentation />
@@ -164,7 +212,7 @@ class App extends Component {
         return (
           <div className="w-screen h-screen">
             <div className="w-full h-full bg-default text-default">
-              {getView(pathname) || <Dashboard />}
+              {getView(location) || <Dashboard />}
             </div>
           </div>
         )
@@ -201,7 +249,7 @@ class App extends Component {
     return (
       <Workspace>
         <Suspense fallback={<Fallback />}>
-          {getView(pathname) || <Dashboard />}
+          <View location={location} dispatch={dispatch} />
         </Suspense>
       </Workspace>
     )
@@ -243,10 +291,14 @@ App.propTypes = {
 export default connect(state => {
   const browserLocation = getBrowserLocation(state)
   if (process.env.NODE_ENV === 'development') {
+    let pathname = browserLocation.pathname
+    if (browserLocation.query) {
+      const qs = require('query-string')
+      pathname += '?' + qs.stringify(browserLocation.query || {})
+    }
     if (
       browserLocation !== window.location &&
-      browserLocation.pathname !==
-        window.location.pathname + window.location.search
+      pathname !== window.location.pathname + window.location.search
     ) {
       console.error(
         'browserLocation pathname mismatch',
