@@ -24,7 +24,9 @@ export {
   MdClose as CloseIcon,
   MdWarning as WarningIcon,
   MdError as ErrorIcon,
-  MdWeb as FormIcon
+  MdWeb as FormIcon,
+  MdArrowBack as ArrowBackIcon,
+  MdArrowForward as ArrowForwardIcon
 } from 'react-icons/md'
 
 export const ItauIcon = ({className}) => null // todo
