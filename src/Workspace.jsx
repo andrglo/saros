@@ -126,7 +126,9 @@ const Workspace = props => {
         <div className="w-0 sm:w-auto overflow-x-hidden shadow-lg text-drawer bg-drawer">
           {drawer}
         </div>
-        <div className="relative overflow-auto">{children}</div>
+        <div className="relative overflow-y-auto overflow-x-hidden">
+          {children}
+        </div>
       </div>
       {isDrawerOpen !== null && (
         <div className="fixed inset-0 overlay">
