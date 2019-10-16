@@ -29,6 +29,8 @@ export const replaceBrowserLocation = location => {
 export const goBackBrowserLocation = () => {
   return dispatch => {
     history.back()
-    dispatch(setBrowserLocation(window.location))
+    setTimeout(() => {
+      dispatch(setBrowserLocation(window.location))
+    })
   }
 }
