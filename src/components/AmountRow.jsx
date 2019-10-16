@@ -40,7 +40,7 @@ const AmountRow = props => {
           amountClass
         )}
       >
-        {formatCurrency(amount)}
+        {typeof amount === 'number' ? formatCurrency(amount) : ''}
       </p>
     </div>
   )
@@ -51,7 +51,7 @@ AmountRow.propTypes = {
   descriptionClass: PropTypes.string,
   amountClass: PropTypes.string,
   description: PropTypes.string.isRequired,
-  amount: PropTypes.number.isRequired,
+  amount: PropTypes.number,
   truncate: PropTypes.bool,
   isPinned: PropTypes.bool
 }

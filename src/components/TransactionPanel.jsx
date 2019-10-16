@@ -49,7 +49,7 @@ const TransactionPanel = props => {
               <AmountRow
                 descriptionClass="pb-1 italic font-semibold tracking-wider"
                 description={period.name}
-                amount={get(calendar, `${today}.balance`, 0)}
+                amount={get(calendar, `${today}.balance`)}
               />
             ) : (
               <p className="pb-1 px-1 italic font-semibold tracking-wider">
