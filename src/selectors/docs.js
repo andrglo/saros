@@ -241,7 +241,7 @@ export const isCreditcardAccount = (id, accounts = {}) =>
   isCreditcard((accounts[id] || {}).type)
 
 export const getDocProp = (id, path, collection, defaultValue = '') =>
-  get(collection[id], path) || defaultValue
+  get(collection, `${id}.${path}`, defaultValue)
 
 export const getName = (id, collection) =>
   getDocProp(id, 'name', collection)

@@ -30,11 +30,11 @@ const getTransferDescription = (transfer, accounts) => {
       ' ' +
       t`account` +
       ' "' +
-      accounts[transfer.account].name +
+      getName(transfer.account, accounts) +
       '" ' +
       (transfer.amount < 0 ? t`to` : t`from`) +
       ' "' +
-      accounts[transfer.counterpart].name +
+      getName(transfer.counterpart, accounts) +
       '"'
     )
   }
@@ -44,7 +44,7 @@ const getTransferDescription = (transfer, accounts) => {
     t`in` +
     ' ' +
     t`account` +
-    ` "${accounts[transfer.account].name}"`
+    ` "${getName(transfer.account, accounts)}"`
   )
 }
 
