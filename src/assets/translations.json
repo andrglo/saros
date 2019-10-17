@@ -389,6 +389,10 @@
     "en": "Total",
     "pt-BR": "Total"
   },
+  "transaction": {
+    "en": "Transaction",
+    "pt-BR": "Transação"
+  },
   "transfer": {
     "en": "Transfer",
     "pt-BR": "Transferência"
