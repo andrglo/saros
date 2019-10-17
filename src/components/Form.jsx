@@ -3,18 +3,20 @@ import React, {
   useCallback,
   useState,
   useEffect,
-  useMemo
+  useMemo,
+  useRef
 } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import debug from 'debug'
+
 import {
   getForm,
   getFormValues,
   getFormInitialValues,
   getFormUndo
 } from '../selectors/forms'
-import {getDoc} from '../selectors/docs'
+import {getCollection} from '../selectors/docs'
 import {
   setForm,
   mergeDocInFormValues,
@@ -27,11 +29,14 @@ import {saveForm} from '../actions/forms'
 import Alert from './Alert'
 import t from '../lib/translate'
 import {goBackBrowserLocation} from '../actions/app'
+import {fetchDoc} from '../controller'
 
 // eslint-disable-next-line no-unused-vars
 const log = debug('form')
 
 export const FormContext = React.createContext()
+
+const DELAY_TO_FETCH_FIRESTORE_WHEN_DOC_UNAVAILABLE = 1000 // ms
 
 const Form = props => {
   // log('render', props)
@@ -47,12 +52,32 @@ const Form = props => {
     initialValues,
     doc,
     collection,
+    selector,
     id,
     undo,
+    isCollectionAvailable,
+    isNew,
     ...rest
   } = props
 
+  const self = useRef({})
+  self.current.doc = doc
   useLayoutEffect(() => {
+    if (
+      !isNew &&
+      !doc &&
+      isCollectionAvailable &&
+      !self.current.fetchTriggered
+    ) {
+      self.current.fetchTriggered = {collection, id}
+      setTimeout(() => {
+        if (!self.current.doc) {
+          const {collection, id} = self.current.fetchTriggered
+          fetchDoc(collection, id)
+        }
+        self.current.fetchTriggered = null
+      }, DELAY_TO_FETCH_FIRESTORE_WHEN_DOC_UNAVAILABLE)
+    }
     let values = doc
     if (onGetInitialValues) {
       values = onGetInitialValues(values)
@@ -87,7 +112,9 @@ const Form = props => {
     collection,
     id,
     title,
-    descriptionFields
+    descriptionFields,
+    isCollectionAvailable,
+    isNew
   ])
 
   const [unmounted, unmount] = useState(false)
@@ -185,25 +212,34 @@ Form.propTypes = {
   initialValues: PropTypes.object,
   title: PropTypes.string,
   collection: PropTypes.string,
+  selector: PropTypes.func,
   id: PropTypes.string,
-  undo: PropTypes.object
+  undo: PropTypes.object,
+  isCollectionAvailable: PropTypes.bool.isRequired,
+  isNew: PropTypes.bool
 }
 
 export default connect((state, props) => {
-  const {formName, id, collection} = props
+  const {formName, id, collection, selector} = props
   const form = getForm(state, {formName})
-  let doc
-
+  let data
   if (collection) {
-    doc =
-      typeof collection === 'function'
-        ? collection(state, {id})
-        : getDoc(state, {id, collection})
+    if (selector) {
+      data = selector(state)
+    } else {
+      data = getCollection(state, {collection})
+    }
+  }
+  const isCollectionAvailable = Boolean(data)
+  let doc
+  if (isCollectionAvailable) {
+    doc = data[id]
   }
   return {
     initialValues: form && getFormInitialValues(form),
     formHasValues: Boolean(form && getFormValues(form)),
     undo: form && getFormUndo(form),
-    doc
+    doc,
+    isCollectionAvailable
   }
 })(Form)
