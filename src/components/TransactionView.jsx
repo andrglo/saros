@@ -7,7 +7,11 @@ import debug from 'debug'
 import {ArrowForwardIcon} from '../assets/icons'
 
 import {formatCurrency} from '../lib/format'
-import {getAccounts, isCreditcardAccount} from '../selectors/docs'
+import {
+  getAccounts,
+  isCreditcardAccount,
+  getIdAndParcelIndex
+} from '../selectors/docs'
 import {getBankIcon} from '../assets/banks'
 import {getIsPinned} from '../selectors/pin'
 import {getCurrentDate} from '../lib/date'
@@ -34,7 +38,8 @@ const DetailView = props => {
   if (isInvoice(transaction.type)) {
     onEdit = event => {
       event.stopPropagation()
-      dispatch(openForm('dashboard/InvoiceEdit', transaction.id))
+      const [id] = getIdAndParcelIndex(transaction.id)
+      dispatch(openForm('dashboard/InvoiceEdit', id))
     }
   }
   return (
