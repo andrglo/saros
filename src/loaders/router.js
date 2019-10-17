@@ -58,6 +58,8 @@ const source = `
       }
       switch (url.pathname) {
         case '/':
+        case '/dashboard':
+        case '/dashboard/':
         case '/index.html':
           return null
         ${routes.join('\n')}

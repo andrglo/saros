@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import cn from 'classnames'
 import debug from 'debug'
+import trim from 'lodash/trim'
 
 import Drawer from './Drawer'
 import {disconnect} from './controller'
@@ -162,7 +163,9 @@ export default connect(state => {
   return {
     user: getUser(state),
     isHome: Boolean(
-      !browserLocation || browserLocation.pathname === '/'
+      !browserLocation ||
+        browserLocation.pathname === '/' ||
+        trim(browserLocation.pathname, '/') === 'dashboard'
     )
   }
 })(Workspace)
