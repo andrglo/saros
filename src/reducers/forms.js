@@ -31,7 +31,13 @@ const setValues = (source, target = {}) => {
 }
 
 const createForm = action => {
-  let {type, descriptionFields = '', values = {}, ...rest} = action
+  let {
+    formName,
+    type,
+    descriptionFields = '',
+    values = {},
+    ...rest
+  } = action
   values = setValues(values)
   return {
     ...rest,
