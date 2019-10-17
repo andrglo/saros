@@ -58,6 +58,9 @@ export const UPDATED = 'updated'
 export const DELETED = 'deleted'
 const MIN_ELAPSED_TIME_FROM_CREATE_TO_REPORT_UPDATE = 5 * MINUTE
 
+export const getCollectionFullName = (state, name) =>
+  `dbs/${getDb(state)}/${name}`
+
 export const getCollection = (state, options) => {
   const {collection, ...rest} = options
   subscribeCollection(collection, rest)
@@ -101,7 +104,7 @@ const getMonthSpan = memoize((from, to, currentMonth) => {
   return monthSpan
 })
 
-const getIdAndParcelIndex = id => {
+export const getIdAndParcelIndex = id => {
   let [invoiceId, parcelIndex] = id.split('/')
   if (parcelIndex) {
     parcelIndex = Number(parcelIndex) - 1
