@@ -62,13 +62,17 @@ Fallback.propTypes = {
 const View = props => {
   const {location, dispatch} = props
   const panel = getView(location)
+  const dashboardPath = '/dashboard/'
   const showDashboard =
-    !panel || location.pathname.startsWith('/dashboard/')
+    !panel ||
+    (location.pathname.startsWith(dashboardPath) &&
+      location.pathname.length > dashboardPath.length)
   const thereIsRightPanel = Boolean(panel && showDashboard)
   const thereWasRightPanel = usePreviousValue(thereIsRightPanel)
   let dashboardClass
-  const handlePanel = thereIsRightPanel || thereWasRightPanel
-  if (handlePanel) {
+  const shouldScrollDashboard =
+    thereIsRightPanel || thereWasRightPanel
+  if (shouldScrollDashboard) {
     dashboardClass = thereIsRightPanel
       ? 'slide-out-left'
       : 'slide-in-left'
@@ -76,12 +80,15 @@ const View = props => {
   return (
     <div className="flex">
       {showDashboard && <Dashboard className={dashboardClass} />}
-      {handlePanel ? (
+      {shouldScrollDashboard ? (
         <div
-          className={cn('absolute w-full h-full top-0 bg-default', {
-            'slide-in-right': Boolean(panel),
-            'slide-out-right': !panel
-          })}
+          className={cn(
+            'absolute w-full h-full top-0 bg-default text-default',
+            {
+              'slide-in-right': Boolean(panel),
+              'slide-out-right': !panel
+            }
+          )}
         >
           <button
             className="btn absolute top-0 left-0 ml-1 mt-1 p-0 h-10 w-10 rounded-full border-0 shadow-none"
