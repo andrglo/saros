@@ -809,6 +809,42 @@ const saveDocChangesToLocalDb = async ({
   await localDb.save(DOC_STORE_NAME, collection, bundle)
 }
 
+export const fetchDoc = async (path, id) => {
+  const subscription = subscribedCollections.get(path) || {}
+  log('fetchDocsForIds', path, id, subscription)
+  try {
+    const ref = await firestoreDb
+      .collection(path)
+      .doc(id)
+      .get()
+    if (ref.exists) {
+      let doc = {...ref.data()}
+      convertRecordTimestamps(doc)
+      delete doc.keywords
+      delete doc.monthSpan
+      const {transform, monthSpan} = subscription.options || {}
+      const bundle = store.getState().docs[path] || {data: {}}
+      if (transform) {
+        transform(bundle.data, id, doc)
+        doc = bundle.data[id]
+      }
+      updateBundle(path, bundle)
+      if (monthSpan) {
+        saveDocChangesToLocalDb({
+          collection: path,
+          changes: [{id, doc, monthSpan: '*'}],
+          bundle,
+          hasMonthlyCache: true
+        })
+      } else {
+        localDb.save(DOC_STORE_NAME, path, bundle)
+      }
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const subscribeCollection = async (path, options) => {
   const subscription = subscribedCollections.get(path)
   const isSubscribed = Boolean(subscription)
