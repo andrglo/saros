@@ -25,3 +25,6 @@ export const getDirtyForms = createSelector(
     return dirtyForms
   }
 )
+
+export const makeFormName = (baseName, collection, id) =>
+  `${baseName}#${collection}${id ? `/${id}` : ''}`
