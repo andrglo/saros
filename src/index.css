@@ -1,6 +1,6 @@
 /*! purgecss start ignore */
 :root {
-  --slide-left-timespan: 0.3s;
+  --slide-left-timespan: 0.6s;
 }
 
 @tailwind base;
