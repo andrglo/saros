@@ -25,6 +25,7 @@ const Alert = props => {
     type
   } = props
 
+  const [isClosed, close] = useState(false)
   const [isOpen, setIsOpen] = useState(true)
   const onAction = useCallback(
     event => {
@@ -42,6 +43,7 @@ const Alert = props => {
         if (onClose) {
           onClose(event)
         }
+        close(true)
       }, SLIDE_LEFT_TIMESPAN)
     },
     [onClick, onClose]
@@ -86,47 +88,49 @@ const Alert = props => {
   }
   const hasButton = Boolean(onClick)
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        color,
-        'fixed bottom-0 left-0 m-4',
-        'rounded shadow border',
-        'grid grid-columns-4 items-center p-2',
-        {
-          'slide-in-left': isOpen,
-          'slide-out-left': !isOpen
-        }
-      )}
-      style={{
-        gridTemplateColumns: `1.5em auto ${
-          hasButton ? '6' : '1'
-        }em 1.5em`
-      }}
-    >
-      <Icon className="h-6 w-6" />
-      <div className="mx-2">
-        {title && <p className="font-bold">{title}</p>}
-        <p className="text-sm">{message}</p>
-      </div>
-      <button
+    !isClosed && (
+      <div
+        ref={containerRef}
         className={cn(
-          'font-semibold mx-3 py-1 px-1 btn btn-primary normal-case hover:bg-highlight',
           color,
+          'fixed bottom-0 left-0 m-4',
+          'rounded shadow border',
+          'grid grid-columns-4 items-center p-2',
           {
-            invisible: !hasButton
+            'slide-in-left': isOpen,
+            'slide-out-left': !isOpen
           }
         )}
-        type="button"
-        onClick={onAction}
+        style={{
+          gridTemplateColumns: `1.5em auto ${
+            hasButton ? '6' : '1'
+          }em 1.5em`
+        }}
       >
-        {buttonCaption}
-      </button>
-      <CloseIcon
-        className="close self-start w-6 h-6 -mt-2 ml-2"
-        onClick={onAction}
-      />
-    </div>
+        <Icon className="h-6 w-6" />
+        <div className="mx-2">
+          {title && <p className="font-bold">{title}</p>}
+          <p className="text-sm">{message}</p>
+        </div>
+        <button
+          className={cn(
+            'font-semibold mx-3 py-1 px-1 btn btn-primary normal-case hover:bg-highlight',
+            color,
+            {
+              invisible: !hasButton
+            }
+          )}
+          type="button"
+          onClick={onAction}
+        >
+          {buttonCaption}
+        </button>
+        <CloseIcon
+          className="close self-start w-6 h-6 -mt-2 ml-2"
+          onClick={onAction}
+        />
+      </div>
+    )
   )
 }
 
