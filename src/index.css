@@ -130,13 +130,12 @@ a:focus {
  * w: http://animista.net, t: @cssanimista
  * ---------------------------------------------- */
 .slide-in-left {
-  animation: slide-in-left var(--slide-left-timespan)
-    cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-left var(--slide-left-timespan);
 }
 
 @keyframes slide-in-left {
   0% {
-    transform: translateX(-100vw);
+    transform: translateX(-100%);
   }
   100% {
     transform: translateX(0);
@@ -144,26 +143,35 @@ a:focus {
 }
 
 .slide-out-left {
-  animation: slide-out-left var(--slide-left-timespan)
-    cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-left var(--slide-left-timespan) forwards;
 }
 
 @keyframes slide-out-left {
   0% {
     transform: translateX(0);
   }
+  50% {
+    height: inherit;
+    opacity: 1;
+  }
+  90% {
+    height: inherit;
+    opacity: 0;
+  }
   100% {
-    transform: translateX(-100vw);
+    transform: translateX(-100%);
+    height: 0;
+    opacity: 0;
   }
 }
 
 .slide-in-right {
-	animation: slide-in-right var(--slide-left-timespan) cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+	animation: slide-in-right var(--slide-left-timespan);
 }
 
  @keyframes slide-in-right {
   0% {
-    transform: translateX(100vw);
+    transform: translateX(100%);
   }
   100% {
     transform: translateX(0);
@@ -171,15 +179,25 @@ a:focus {
 }
 
 .slide-out-right {
-	animation: slide-out-right var(--slide-left-timespan) cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+  animation: slide-out-right var(--slide-left-timespan) forwards;
 }
 
  @keyframes slide-out-right {
   0% {
     transform: translateX(0);
   }
+  50% {
+    height: inherit;
+    opacity: 1;
+  }
+  90% {
+    height: inherit;
+    opacity: 0;
+  }
   100% {
-    transform: translateX(100vw);
+    transform: translateX(100%);
+    height: 0;
+    opacity: 0;
   }
 }
 

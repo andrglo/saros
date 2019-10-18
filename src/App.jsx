@@ -24,7 +24,7 @@ import getView from './loaders/router'
 import {getQuery} from './lib/history'
 import usePreviousValue from './hooks/usePreviousValue'
 import {ArrowBackIcon} from './assets/icons'
-import {goBackBrowserLocation} from './actions/app'
+import {pushBrowserLocation} from './actions/app'
 
 const log = debug('app')
 
@@ -68,10 +68,13 @@ const View = props => {
     (location.pathname.startsWith(dashboardPath) &&
       location.pathname.length > dashboardPath.length)
   const thereIsRightPanel = Boolean(panel && showDashboard)
-  const thereWasRightPanel = usePreviousValue(thereIsRightPanel)
+  const previousDashboardRightPanel = usePreviousValue(
+    showDashboard && panel
+  )
   let dashboardClass
   const shouldScrollDashboard =
-    thereIsRightPanel || thereWasRightPanel
+    showDashboard &&
+    (thereIsRightPanel || previousDashboardRightPanel)
   if (shouldScrollDashboard) {
     dashboardClass = thereIsRightPanel
       ? 'slide-out-left'
@@ -83,7 +86,7 @@ const View = props => {
       {shouldScrollDashboard ? (
         <div
           className={cn(
-            'absolute w-full h-full top-0 bg-default text-default',
+            'absolute w-full top-0 bg-default text-default',
             {
               'slide-in-right': Boolean(panel),
               'slide-out-right': !panel
@@ -93,12 +96,12 @@ const View = props => {
           <button
             className="btn absolute top-0 left-0 ml-1 mt-1 p-0 h-10 w-10 rounded-full border-0 shadow-none"
             onClick={() => {
-              dispatch(goBackBrowserLocation())
+              dispatch(pushBrowserLocation('/'))
             }}
           >
             <ArrowBackIcon className="h-6 w-6 mx-auto" />
           </button>
-          {panel}
+          {panel || previousDashboardRightPanel}
         </div>
       ) : (
         panel
