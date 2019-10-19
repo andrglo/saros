@@ -64,6 +64,7 @@ const Form = props => {
   self.current.doc = doc
   useLayoutEffect(() => {
     if (
+      id &&
       !isNew &&
       !doc &&
       isCollectionAvailable &&
@@ -82,6 +83,7 @@ const Form = props => {
     if (onGetInitialValues) {
       values = onGetInitialValues(values)
     }
+    log({formHasValues, values, initialValues, doc})
     if (!formHasValues) {
       dispatch(
         setForm({
@@ -233,7 +235,7 @@ export default connect((state, props) => {
   const isCollectionAvailable = Boolean(data)
   let doc
   if (isCollectionAvailable) {
-    doc = data[id]
+    doc = id ? data[id] : data
   }
   return {
     initialValues: form && getFormInitialValues(form),
