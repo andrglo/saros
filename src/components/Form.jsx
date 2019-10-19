@@ -83,7 +83,6 @@ const Form = props => {
     if (onGetInitialValues) {
       values = onGetInitialValues(values)
     }
-    log({formHasValues, values, initialValues, doc})
     if (!formHasValues) {
       dispatch(
         setForm({
