@@ -133,6 +133,9 @@ const mergeValues = (form, refreshedValues) => {
           value: vFrom
         })
       }
+    } else if (vFrom === vTo) {
+      delete fieldErrors[rootKey]
+      changedByUser = changedByUser.filter(key => key !== rootKey)
     }
   }
 
@@ -144,11 +147,16 @@ const mergeValues = (form, refreshedValues) => {
         to[k] = to[k] || []
         let i = 0
         while (to[k][i]) {
-          mergeObject(rootKey, (from[k] || {})[i] || {}, to[k][i])
+          mergeObject(
+            `${rootKey}[${i}]`,
+            (from[k] || {})[i] || {},
+            to[k][i]
+          )
           i++
         }
         while (from[k][i]) {
-          mergeObject(rootKey, from[k][i], {})
+          to[k].push({})
+          mergeObject(`${rootKey}[${i}]`, from[k][i], to[k][i])
           i++
         }
       } else if (v && typeof v === 'object') {
