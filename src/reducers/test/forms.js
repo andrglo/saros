@@ -96,10 +96,10 @@ test('Merge values into dirty form', t => {
       changedByUser: [
         'height',
         'phones',
-        'phones[0].number',
-        'phones[4].number'
+        'phones.0.number',
+        'phones.4.number'
       ],
-      fieldErrors: {'phones[4].number': 'err'}
+      fieldErrors: {'phones.4.number': 'err'}
     }
   }
   const state = reducer(
@@ -141,12 +141,12 @@ test('Merge values into dirty form', t => {
   // log('form.fieldErrors', state[formName].fieldErrors)
   t.deepEqual(state[formName].fieldErrors, {
     height: 'Update conflict, now is "3"',
-    'phones[0].number': 'Update conflict, now is "111"'
+    'phones.0.number': 'Update conflict, now is "111"'
   })
   // log('form.changedByUser', state[formName].changedByUser)
   t.deepEqual(state[formName].changedByUser, [
     'height',
     'phones',
-    'phones[0].number'
+    'phones.0.number'
   ])
 })

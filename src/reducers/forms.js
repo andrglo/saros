@@ -1,11 +1,11 @@
 import clone from 'lodash/cloneDeep'
 import set from 'lodash/fp/set'
-import get from 'lodash/fp/get'
-import uniq from 'lodash/uniq'
+import get from 'lodash/get'
 
 import createReducer from '../lib/createReducer'
 import createAction from '../lib/createAction'
 import t from '../lib/translate'
+import getObjectPaths from '../lib/getObjectPaths'
 
 const SET_FORM = 'SET_FORM'
 
@@ -111,69 +111,25 @@ export const fixRowsReference = (op, fieldName, fields, index) => {
 }
 
 const mergeValues = (form, refreshedValues) => {
-  const merged = []
   let {changedByUser = [], fieldErrors = {}} = form
-  const values = clone(form.values)
+  let values = form.values
   const initialValues = clone(refreshedValues)
-  changedByUser = [...changedByUser]
   fieldErrors = {...fieldErrors}
-
-  const mergeValue = (rootKey, key, from, to) => {
-    const getValue = get(key)
-    const vFrom = getValue(from)
-    const vTo = getValue(to)
-    if (vFrom !== undefined && vFrom !== vTo) {
-      if (!changedByUser.includes(rootKey)) {
-        to[key] = vFrom
-        delete fieldErrors[rootKey]
-        changedByUser = changedByUser.filter(key => key !== rootKey)
-      } else {
-        merged.push({
-          key: rootKey,
-          value: vFrom
-        })
+  for (const path of getObjectPaths(refreshedValues)) {
+    const value = get(refreshedValues, path)
+    if (
+      !changedByUser.includes(path) ||
+      value === get(values, path)
+    ) {
+      if (value !== undefined) {
+        values = set(path, value, values)
       }
-    } else if (vFrom === vTo) {
-      delete fieldErrors[rootKey]
-      changedByUser = changedByUser.filter(key => key !== rootKey)
+      delete fieldErrors[path]
+      changedByUser = changedByUser.filter(key => key !== path)
+    } else {
+      fieldErrors[path] = t`Update conflict, now is` + ` "${value}"`
     }
   }
-
-  const mergeObject = (key, from, to) => {
-    uniq([...Object.keys(from), ...Object.keys(to)]).forEach(k => {
-      const v = from[k] || to[k]
-      const rootKey = `${key ? `${key}.` : ''}${k}`
-      if (Array.isArray(v)) {
-        to[k] = to[k] || []
-        let i = 0
-        while (to[k][i]) {
-          mergeObject(
-            `${rootKey}[${i}]`,
-            (from[k] || {})[i] || {},
-            to[k][i]
-          )
-          i++
-        }
-        while (from[k][i]) {
-          to[k].push({})
-          mergeObject(`${rootKey}[${i}]`, from[k][i], to[k][i])
-          i++
-        }
-      } else if (v && typeof v === 'object') {
-        to[k] = to[k] || {}
-        mergeObject(rootKey, from[k] || {}, to[k])
-      } else {
-        mergeValue(rootKey, k, from, to)
-      }
-    })
-  }
-
-  mergeObject('', refreshedValues, values)
-
-  for (const {key, value} of merged) {
-    fieldErrors[key] = t`Update conflict, now is` + ` "${value}"`
-  }
-
   return {
     ...form,
     initialValues,
