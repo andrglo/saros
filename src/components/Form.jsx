@@ -236,6 +236,7 @@ export default connect((state, props) => {
   if (isCollectionAvailable) {
     doc = id ? data[id] : data
   }
+  log('form', form && form.values, form)
   return {
     initialValues: form && getFormInitialValues(form),
     formHasValues: Boolean(form && getFormValues(form)),

@@ -13,6 +13,7 @@ import {
   getCollectionFullName,
   getInvoices
 } from '../../selectors/docs'
+import FormButtons from '../../components/FormButtons'
 import SmartInput from '../../components/SmartInput'
 
 const form = 'invoice:edit'
@@ -43,6 +44,7 @@ const InvoiceEdit = props => {
         isNew={isNew === 'true'}
       >
         <SmartInput id="notes" />
+        <FormButtons className="" />
       </Form>
     </React.Fragment>
   )
