@@ -70,11 +70,7 @@ const reducers = new Map()
 const middleware = [thunk]
 
 if (process.env.NODE_ENV === 'development') {
-  const actionsBlacklist = [
-    'IDLE',
-    REHYDRATE_STATE_KEY,
-    REHYDRATE_BUNDLE
-  ]
+  const actionsBlacklist = ['IDLE']
   const {createLogger} = require('redux-logger')
   middleware.push(
     createLogger({
