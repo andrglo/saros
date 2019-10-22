@@ -42,7 +42,7 @@
     "eslint-plugin-react-hooks": "^2.1.2",
     "fake-indexeddb": "^2.1.1",
     "favicons": "^5.4.1",
-    "glob": "^7.1.4",
+    "glob": "^7.1.5",
     "http-server": "^0.11.1",
     "marked": "^0.7.0",
     "mockery": "^2.1.0",
