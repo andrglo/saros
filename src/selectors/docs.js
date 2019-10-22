@@ -329,8 +329,12 @@ const buildTransactionDescription = (
 
 export const getTotal = recordset => sumBy(recordset, 'amount')
 
-export const getInvoiceTotal = ({amount = 0, parcels = []}) =>
-  getTotal([{amount}, ...parcels])
+export const getInvoiceTotal = invoice => {
+  if (invoice) {
+    const {amount = 0, parcels = []} = invoice
+    return getTotal([{amount}, ...parcels])
+  }
+}
 
 export const redistributeAmount = (partitions, newAmount) => {
   const total = getTotal(partitions)
