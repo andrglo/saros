@@ -8,26 +8,28 @@ import debug from 'debug'
 import Form from '../../components/Form'
 
 import t from '../../lib/translate'
-import {makeFormName} from '../../selectors/forms'
+import {
+  makeFormName,
+  getForm,
+  getFormValues
+} from '../../selectors/forms'
 import {
   getCollectionFullName,
-  getInvoices
+  getInvoices,
+  getInvoiceTotal
 } from '../../selectors/docs'
 import FormButtons from '../../components/FormButtons'
 import SmartInput from '../../components/SmartInput'
-
-const form = 'invoice:edit'
+import coalesce from '../../lib/coalesce'
 
 // eslint-disable-next-line no-unused-vars
-const log = debug(form)
+const log = debug('invoice:edit')
 
 const InvoiceEdit = props => {
-  const {className, query, collection} = props
+  const {className, query, collection, formName, totalAmount} = props
   log('render', props)
   const {id, isNew} = query
-  const formName = makeFormName(form, collection, id)
   const title = t`Transaction`
-  // toBeContinued...
   return (
     <React.Fragment>
       <p className="title">{title}</p>
@@ -43,7 +45,18 @@ const InvoiceEdit = props => {
         id={id}
         isNew={isNew === 'true'}
       >
-        <SmartInput id="notes" />
+        <SmartInput
+          id="issueDate"
+          label={t`Issue date`}
+          type="date"
+        />
+        <SmartInput
+          id="totalAmount"
+          label={t`Total amount`}
+          type="currency"
+          value={totalAmount}
+        />
+        <SmartInput label={t`Notes`} id="notes" />
         <FormButtons className="" />
       </Form>
     </React.Fragment>
@@ -53,6 +66,8 @@ const InvoiceEdit = props => {
 InvoiceEdit.propTypes = {
   className: PropTypes.string,
   collection: PropTypes.string.isRequired,
+  formName: PropTypes.string.isRequired,
+  totalAmount: PropTypes.number,
   query: PropTypes.shape({
     id: PropTypes.string.isRequired,
     isNew: PropTypes.string
@@ -60,10 +75,21 @@ InvoiceEdit.propTypes = {
 }
 
 export default hot(
-  connect(state => {
-    const collection = getCollectionFullName(state, 'invoices')
+  connect((state, props) => {
+    let {query, collection} = props
+    const {id} = query
+    collection = getCollectionFullName(state, 'invoices')
+    const formName = makeFormName('InvoiceEdit', collection, id)
+    const form = getForm(state, {formName})
+    const values = getFormValues(form) || {}
+    const totalAmount = coalesce(
+      values.totalAmount,
+      getInvoiceTotal(values)
+    )
     return {
-      collection
+      collection,
+      formName,
+      totalAmount
     }
   })(InvoiceEdit)
 )

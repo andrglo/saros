@@ -135,6 +135,10 @@
     "en": "Installment",
     "pt-BR": "Parcela"
   },
+  "issue_date": {
+    "en": "Issue date",
+    "pt-BR": "Data de emissão"
+  },
   "language": {
     "en": "Language",
     "pt-BR": "Língua"
@@ -252,6 +256,10 @@
   "no_options_available": {
     "en": "No options available",
     "pt-BR": "Nenhuma opção disponível"
+  },
+  "notes": {
+    "en": "Notes",
+    "pt-BR": "Anotações"
   },
   "now": {
     "en": "Now",
@@ -388,6 +396,10 @@
   "total": {
     "en": "Total",
     "pt-BR": "Total"
+  },
+  "total_amount": {
+    "en": "Total amount",
+    "pt-BR": "Valor total"
   },
   "transaction": {
     "en": "Transaction",
