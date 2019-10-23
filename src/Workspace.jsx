@@ -24,7 +24,7 @@ import DirtyForms from './components/DirtyForms'
 
 const log = debug('workspace')
 
-const SLIDE_LEFT_TIMESPAN = 600 // --slide-left-timespan: 0.3s
+const SLIDE_LEFT_TIMESPAN = 600 // --slide-left-timespan: 0.6s
 
 const Workspace = props => {
   log('render', props)

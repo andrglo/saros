@@ -12,7 +12,7 @@ import {
 } from '../assets/icons'
 import useOnClickOutside from '../hooks/useOnClickOutside'
 
-const SLIDE_LEFT_TIMESPAN = 600 // --slide-left-timespan: 0.3s
+const SLIDE_LEFT_TIMESPAN = 600 // --slide-left-timespan: 0.6s
 
 const Alert = props => {
   const {
