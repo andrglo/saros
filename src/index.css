@@ -151,11 +151,11 @@ a:focus {
     transform: translateX(0);
   }
   50% {
-    height: inherit;
+    height: unset;
     opacity: 1;
   }
   90% {
-    height: inherit;
+    height: unset;
     opacity: 0;
   }
   100% {
@@ -187,11 +187,11 @@ a:focus {
     transform: translateX(0);
   }
   50% {
-    height: inherit;
+    height: unset;
     opacity: 1;
   }
   90% {
-    height: inherit;
+    height: unset;
     opacity: 0;
   }
   100% {
