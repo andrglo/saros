@@ -6,6 +6,7 @@ import get from 'lodash/get'
 import debug from 'debug'
 
 import Select from './Select'
+import CurrencyInput from './CurrencyInput'
 
 import {FormContext} from './Form'
 import {
@@ -31,17 +32,12 @@ const checkMinLength = (value, minLength) => {
   }
 }
 
-const SimpleInput = props => {
-  return (
-    <input
-      {...props}
-      className={cn(
-        extractClassesByComponent(props.className).container,
-        'text-default bg-default'
-      )}
-    />
-  )
-}
+const SimpleInput = props => (
+  <input
+    {...props}
+    className={extractClassesByComponent(props.className).container}
+  />
+)
 
 SimpleInput.propTypes = {
   className: PropTypes.string
@@ -89,7 +85,7 @@ const Input = props => {
     }
   }
 
-  const onSelectChange = value => {
+  const onValueChange = value => {
     log('onSelectChange', id, value)
     updateValue(value, id)
   }
@@ -103,11 +99,18 @@ const Input = props => {
   const error = fieldErrors[id]
 
   const inputProps = {}
+  let textRight
+  const type = rest.type
   let Component
-  if (options) {
+  if (type === 'currency') {
+    Component = CurrencyInput
+    textRight = true
+    delete rest.type
+    inputProps.onChange = onValueChange
+  } else if (options) {
     Component = Select
     inputProps.options = options
-    inputProps.onChange = onSelectChange
+    inputProps.onChange = onValueChange
     inputProps.caption = label
     inputProps.isLoading = isLoading
   } else {
@@ -118,9 +121,14 @@ const Input = props => {
   const isSelect = Component === Select
 
   return (
-    <div className={cn(className, 'w-full')} style={style}>
+    <div
+      className={cn(className, 'w-full', {
+        'text-right': textRight
+      })}
+      style={style}
+    >
       <label
-        className="leading-tight text-sm tracking-tight"
+        className={cn('leading-tight text-sm tracking-tight w-full')}
         htmlFor={id}
       >
         {label}
@@ -129,6 +137,7 @@ const Input = props => {
           id={id}
           required
           className={cn(
+            'text-default bg-default',
             {
               'text-error': Boolean(error),
               'content-single {}': isSelect,
@@ -200,7 +209,7 @@ Input.propTypes = {
     PropTypes.func
   ]),
   isLoading: PropTypes.bool,
-  type: PropTypes.oneOf(['']),
+  type: PropTypes.oneOf(['date', 'currency']),
   dispatch: PropTypes.func.isRequired,
   _: checkProps
 }
