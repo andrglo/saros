@@ -118,15 +118,20 @@ const Form = props => {
     isNew
   ])
 
-  const [unmounted, unmount] = useState(false)
-  useEffect(() => () => unmount(true), [])
+  const unmountedRef = useRef()
+  useEffect(
+    () => () => {
+      unmountedRef.current = true
+    },
+    []
+  )
   const onSubmit = useCallback(
     event => {
       event.preventDefault()
       dispatch(lockForm({formName, lock: 'saving'}))
       dispatch(saveForm({formName}))
         .then(() => {
-          if (!unmounted) {
+          if (!unmountedRef.current) {
             dispatch(goBackBrowserLocation())
           }
           dispatch(resetForm({formName, noUndo: true}))
@@ -136,7 +141,7 @@ const Form = props => {
           dispatch(lockForm({formName, lock: null}))
         })
     },
-    [dispatch, formName, unmounted]
+    [dispatch, formName]
   )
   const onDelete = useCallback(
     event => {
@@ -149,7 +154,7 @@ const Form = props => {
       )
       dispatch(saveForm({formName, toBeDeleted: true}))
         .then(() => {
-          if (!unmounted) {
+          if (!unmountedRef.current) {
             dispatch(goBackBrowserLocation())
           }
           dispatch(resetForm({formName, noUndo: true}))
@@ -159,7 +164,7 @@ const Form = props => {
           dispatch(lockForm({formName, lock: null}))
         })
     },
-    [dispatch, formName, unmounted]
+    [dispatch, formName]
   )
   const onReset = useCallback(
     event => {

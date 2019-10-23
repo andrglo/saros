@@ -25,6 +25,13 @@ const Alert = props => {
     type
   } = props
 
+  const unmountedRef = useRef()
+  useEffect(
+    () => () => {
+      unmountedRef.current = true
+    },
+    []
+  )
   const [isClosed, close] = useState(false)
   const [isOpen, setIsOpen] = useState(true)
   const onAction = useCallback(
@@ -43,7 +50,9 @@ const Alert = props => {
         if (onClose) {
           onClose(event)
         }
-        close(true)
+        if (!unmountedRef.current) {
+          close(true)
+        }
       }, SLIDE_LEFT_TIMESPAN)
     },
     [onClick, onClose]
