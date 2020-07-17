@@ -68,7 +68,7 @@
     "date-easter": "^0.2.5",
     "debug": "^4.1.1",
     "firebase": "^7.13.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "memoizee": "^0.4.14",
     "prop-types": "^15.7.2",
     "query-string": "^6.11.1",
